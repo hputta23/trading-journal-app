@@ -1,0 +1,609 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════
+   CYBER COCKPIT MAKE OVER — ROBINHOOD x PALANTIR COHESIVE THEME
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  --bg-app: #000000; /* Pure pitch-black Robinhood void */
+  --bg-sidebar: #08080a; /* Sleek secondary deep black */
+  --bg-card: rgba(12, 12, 15, 0.85); /* Frosted dark card */
+  --border-card: rgba(255, 255, 255, 0.08); /* Faint reflective border */
+  --border-active: #00c805; /* Robinhood signature green */
+  --text-primary: #e5e5ea; /* Vibrant iOS-style white text */
+  --text-secondary: #8e8e93; /* Readable iOS secondary slate */
+  --text-dark: #ffffff; /* Crisp white headers */
+  --text-accent: #00c805; /* Neon green active accents */
+  
+  --bg-badge-profit: rgba(0, 200, 5, 0.15);
+  --color-profit: #00e676; /* Vivid neon profit green on dark */
+  --border-profit: rgba(0, 200, 5, 0.35);
+  
+  --bg-badge-loss: rgba(255, 59, 92, 0.15);
+  --color-loss: #ff3b30; /* Vibrant neon loss red on dark */
+  --border-loss: rgba(255, 59, 92, 0.35);
+  
+  --bg-badge-cyan: rgba(0, 199, 190, 0.15);
+  --color-cyan: #64d2ff;
+  --border-cyan: rgba(0, 199, 190, 0.35);
+
+  --bg-kpi-profit: rgba(0, 200, 5, 0.06);
+  --border-kpi-profit: rgba(0, 200, 5, 0.25);
+  
+  --bg-kpi-loss: rgba(255, 59, 92, 0.06);
+  --border-kpi-loss: rgba(255, 59, 92, 0.25);
+  
+  --bg-kpi-cyan: rgba(100, 210, 255, 0.06);
+  --border-kpi-cyan: rgba(100, 210, 255, 0.25);
+
+  --bg-kpi-slate: rgba(142, 142, 147, 0.06);
+  --border-kpi-slate: rgba(142, 142, 147, 0.2);
+  
+  --bg-input: #121214;
+  --border-input: #242428;
+  --text-input: #e5e5ea;
+  --heatmap-empty: #1a1a1f; /* visible dark grey cell */
+  --color-cyan: #64d2ff; /* theme-aware cyan */
+  
+  --scrollbar-track: #000000;
+  --scrollbar-thumb: #2c2c2e;
+  --accent-glow: rgba(0, 200, 5, 0.15);
+}
+
+[data-theme='light'] {
+  --bg-app: #ffffff; /* Crisp pure white Robinhood light theme */
+  --bg-sidebar: #f2f2f7; /* Very soft light grey background sidebar */
+  --bg-card: rgba(255, 255, 255, 0.95); /* Airy pure white glass card */
+  --border-card: rgba(0, 0, 0, 0.08); /* Subtle border */
+  --border-active: #00c805; /* Robinhood vibrant green active indicator */
+  --text-primary: #1c1c1e; /* Sleek high-contrast dark text */
+  --text-secondary: #555559; /* Medium contrast Apple grey */
+  --text-dark: #000000; /* Pure black titles */
+  --text-accent: #008a04; /* Highly visible forest green active text */
+  
+  --bg-badge-profit: rgba(0, 135, 17, 0.08);
+  --color-profit: #008711; /* Dark high-contrast green for absolute readability on white */
+  --border-profit: rgba(0, 135, 17, 0.25);
+  
+  --bg-badge-loss: rgba(179, 0, 30, 0.08);
+  --color-loss: #b3001e; /* Dark high-contrast red for absolute readability on white */
+  --border-loss: rgba(179, 0, 30, 0.25);
+  
+  --bg-badge-cyan: rgba(2, 132, 199, 0.08);
+  --color-cyan: #0284c7; /* Dark readable cyan on white */
+  --border-cyan: rgba(2, 132, 199, 0.25);
+
+  --bg-kpi-profit: rgba(0, 135, 17, 0.04);
+  --border-kpi-profit: rgba(0, 135, 17, 0.15);
+  
+  --bg-kpi-loss: rgba(179, 0, 30, 0.04);
+  --border-kpi-loss: rgba(179, 0, 30, 0.15);
+  
+  --bg-kpi-cyan: rgba(2, 132, 199, 0.04);
+  --border-kpi-cyan: rgba(2, 132, 199, 0.15);
+
+  --bg-kpi-slate: rgba(85, 85, 89, 0.04);
+  --border-kpi-slate: rgba(85, 85, 89, 0.12);
+  
+  --bg-input: #ffffff;
+  --border-input: #d1d1d6;
+  --text-input: #1c1c1e;
+  --heatmap-empty: #e5e5ea; /* visible light grey cell */
+  --color-cyan: #0284c7; /* readable cyan on white */
+  
+  --scrollbar-track: #ffffff;
+  --scrollbar-thumb: #d1d1d6;
+  --accent-glow: rgba(0, 200, 5, 0.08);
+}
+
+/* ── Reset & Core Tokens ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, color 0.15s ease;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif; /* Clean, modern tech aesthetic */
+  font-weight: 400; 
+  background: var(--bg-app);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+#root {
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* ── Scrollbars ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px !important;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-active);
+}
+
+/* ── Forms & Focus Handling (Beautiful Palantir Rounded Inputs) ── */
+input, select, textarea, button {
+  font-family: inherit;
+  border-radius: 10px; /* Elegant inputs/buttons by default */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--border-active) !important;
+  box-shadow: 0 0 14px var(--accent-glow);
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M3 5l3 3 3-3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px !important;
+}
+
+/* Remove number input spin buttons */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* ── Selection ── */
+::selection {
+  background: var(--accent-glow);
+  color: var(--text-dark);
+}
+
+/* ── Frosted Palantir Glassmorphism Cards ── */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-card);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  border-radius: 14px !important; /* Smooth modern rounded edges */
+}
+
+[data-theme='light'] .glass-panel {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.glass-panel-glow {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-active);
+  box-shadow: 0 0 30px var(--accent-glow), 0 12px 32px rgba(0,0,0,0.4);
+  border-radius: 14px !important;
+}
+
+.heatmap-cell {
+  border-radius: 2.5px !important; /* Exact GitHub rounded square cell override */
+}
+
+/* ── Glowing Overrides ── */
+.neon-glow-cyan {
+  box-shadow: 0 0 18px rgba(0, 212, 255, 0.15);
+  border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.neon-glow-green {
+  box-shadow: 0 0 18px rgba(0, 200, 5, 0.15);
+  border-color: rgba(0, 200, 5, 0.4) !important;
+}
+
+.neon-glow-red {
+  box-shadow: 0 0 18px rgba(255, 59, 92, 0.15);
+  border-color: rgba(255, 59, 92, 0.4) !important;
+}
+
+/* ── Extremely Visible Pill Badges for Numbers ── */
+.badge-profit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap !important;
+  background: var(--bg-badge-profit) !important;
+  color: var(--color-profit) !important;
+  border: 1.5px solid var(--border-profit) !important;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 4px 10px;
+  letter-spacing: 0.02em;
+  border-radius: 6px !important;
+}
+
+.badge-loss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap !important;
+  background: var(--bg-badge-loss) !important;
+  color: var(--color-loss) !important;
+  border: 1.5px solid var(--border-loss) !important;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 4px 10px;
+  letter-spacing: 0.02em;
+  border-radius: 6px !important;
+}
+
+.badge-open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap !important;
+  background: rgba(234, 179, 8, 0.15) !important;
+  color: #facc15 !important;
+  border: 1.5px solid rgba(234, 179, 8, 0.35) !important;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 4px 10px;
+  letter-spacing: 0.02em;
+  border-radius: 6px !important;
+}
+
+.badge-cyan {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap !important;
+  background: var(--bg-badge-cyan) !important;
+  color: var(--color-cyan) !important;
+  border: 1.5px solid var(--border-cyan) !important;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 4px 10px;
+  letter-spacing: 0.02em;
+  border-radius: 6px !important;
+}
+
+/* ── KPI Glowing Shaded Capsule Backdrops ── */
+.kpi-container-profit {
+  background: var(--bg-kpi-profit) !important;
+  border: 1.5px solid var(--border-kpi-profit) !important;
+  border-radius: 12px !important;
+}
+
+.kpi-container-loss {
+  background: var(--bg-kpi-loss) !important;
+  border: 1.5px solid var(--border-kpi-loss) !important;
+  border-radius: 12px !important;
+}
+
+.kpi-container-cyan {
+  background: var(--bg-kpi-cyan) !important;
+  border: 1.5px solid var(--border-kpi-cyan) !important;
+  border-radius: 12px !important;
+}
+
+.kpi-container-slate {
+  background: var(--bg-kpi-slate) !important;
+  border: 1.5px solid var(--border-kpi-slate) !important;
+  border-radius: 12px !important;
+}
+
+/* ── Typography and Heading Scale helpers ── */
+.heading-xl {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-dark);
+}
+
+.heading-lg {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.heading-md {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.label-caption {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+/* ── Animation Specifications ── */
+@keyframes pulse-yellow {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 3px #facc15); }
+  50% { opacity: 0.55; filter: drop-shadow(0 0 0px #facc15); }
+}
+.pulse-yellow {
+  animation: pulse-yellow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 3px #00ff88); }
+  50% { opacity: 0.55; filter: drop-shadow(0 0 0px #00ff88); }
+}
+.pulse-green {
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+@keyframes pulse-cyan {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+.pulse-cyan {
+  animation: pulse-cyan 1.5s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Monospace fonts for numbers and tickers */
+.font-mono-data {
+  font-family: 'JetBrains Mono', monospace !important;
+  white-space: nowrap !important;
+}
+
+/* ── Site-wide consistent label / value typography ── */
+.stat-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-secondary);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  gap: 4px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text-dark);
+  white-space: nowrap !important;
+}
+
+.stat-sub {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  white-space: nowrap !important;
+}
+
+/* Helper to force nowrap */
+.nowrap {
+  white-space: nowrap !important;
+}
+
+/* ── Text overflow protection ── */
+.truncate-text {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  min-width: 0 !important;
+}
+
+/* Ensure all KPI containers handle overflow */
+.kpi-container-profit,
+.kpi-container-loss,
+.kpi-container-cyan,
+.kpi-container-slate {
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Table cells should not wrap */
+td, th {
+  white-space: nowrap;
+}
+
+/* Prevent info-tooltip from breaking layout */
+.info-trigger {
+  flex-shrink: 0;
+}
+
+/* ── Gamification Animations ── */
+@keyframes rankPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes xpShimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.xp-bar-fill {
+  background-size: 200% auto;
+  animation: xpShimmer 2.5s linear infinite;
+  border-radius: 9999px;
+}
+
+@keyframes achievePop {
+  0%   { transform: scale(0.85); opacity: 0; }
+  65%  { transform: scale(1.06); }
+  100% { transform: scale(1);    opacity: 1; }
+}
+.achievement-badge {
+  animation: achievePop 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.achievement-badge-locked {
+  filter: grayscale(1);
+  opacity: 0.35;
+}
+
+@keyframes streakFlicker {
+  0%, 100% { text-shadow: 0 0 8px #ff6b35, 0 0 16px #ff6b3566; }
+  50%       { text-shadow: 0 0 4px #ff6b35; }
+}
+.streak-fire {
+  animation: streakFlicker 1.8s ease-in-out infinite;
+  color: #ff6b35;
+}
+
+/* ── Responsive grids and structures ── */
+.sidebar-left { /* Left-aligned vertical navigation deck */
+  background: var(--bg-sidebar); 
+  border-right: 1px solid var(--border-card);
+  overflow-y: auto;
+}
+
+.main-content {
+  overflow-y: auto;
+  background: var(--bg-app);
+}
+
+/* Hide mobile tab bar by default on desktop */
+.mobile-tab-bar {
+  display: none;
+}
+
+/* Mobile responsive navigation overrides (Right-Aligned Drawer Slide) */
+@media (max-width: 768px) {
+  .sidebar-left {
+    display: none;
+  }
+
+  .sidebar-left.mobile-open {
+    display: block;
+    position: fixed;
+    top: 56px;
+    right: 0;
+    left: 40px; /* Slides in from right, leaving left blur overlay */
+    bottom: 56px;
+    z-index: 40;
+    background: var(--bg-sidebar);
+    border-left: 1px solid var(--border-card);
+    border-right: none;
+    overflow-y: auto;
+    animation: slideInRight 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  .mobile-tab-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: var(--bg-sidebar);
+    border-top: 1px solid var(--border-card);
+    padding: 0;
+  }
+
+  .mobile-tab-bar button {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 12px 4px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .mobile-tab-bar button.active {
+    color: var(--border-active);
+  }
+
+  #root {
+    padding-bottom: 56px;
+  }
+}
+
+/* ── Info Tooltips for Headings ── */
+.info-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  color: var(--text-secondary);
+  transition: color 0.15s ease;
+}
+
+.info-trigger:hover {
+  color: var(--border-active);
+}
+
+.info-tooltip {
+  visibility: hidden;
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-card);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 500;
+  text-transform: none;
+  white-space: normal;
+  width: 220px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  border-radius: 8px !important;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.info-trigger:hover .info-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
