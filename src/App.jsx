@@ -384,6 +384,7 @@ export default function App() {
             onSync={handleSync}
             syncStatus={syncStatus}
             onLoadDemo={() => { handleLoadDemo(); setMobileMenuOpen(false); }}
+            userEmail={session.user.email}
           />
         </div>
 
@@ -439,6 +440,7 @@ export default function App() {
               settings={settings}
               onSave={handleSaveSettings}
               onLoadDemo={() => { handleLoadDemo(); setMobileMenuOpen(false); }}
+              userEmail={session.user.email}
             />
           )}
         </div>

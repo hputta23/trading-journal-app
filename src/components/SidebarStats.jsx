@@ -8,7 +8,8 @@ export default function SidebarStats({
   onOpenNewTrade,
   onSync,
   syncStatus,
-  onLoadDemo
+  onLoadDemo,
+  userEmail
 }) {
 
   const tabs = [
@@ -33,11 +34,18 @@ export default function SidebarStats({
       }}
     >
       {/* ── Cockpit Navigation Header ── */}
-      <div className="space-y-1 py-1 flex items-center gap-3 border-b border-[var(--border-card)] pb-3 mb-2 flex-nowrap whitespace-nowrap">
-        <Radio size={16} className="text-[var(--text-accent)] pulse-cyan flex-shrink-0" />
-        <div className="text-xs font-bold tracking-[0.2em] uppercase whitespace-nowrap" style={{ color: 'var(--text-dark)', fontFamily: "'Outfit', sans-serif" }}>
-          TRADE OS
+      <div className="space-y-1 py-1 border-b border-[var(--border-card)] pb-3 mb-2">
+        <div className="flex items-center gap-3 flex-nowrap whitespace-nowrap mb-1">
+          <Radio size={16} className="text-[var(--text-accent)] pulse-cyan flex-shrink-0" />
+          <div className="text-xs font-bold tracking-[0.2em] uppercase whitespace-nowrap" style={{ color: 'var(--text-dark)', fontFamily: "'Outfit', sans-serif" }}>
+            TRADE OS
+          </div>
         </div>
+        {userEmail && (
+          <div className="text-[10px] font-medium tracking-wide truncate" style={{ color: 'var(--text-secondary)' }}>
+            {userEmail}
+          </div>
+        )}
       </div>
 
       {/* ── Unified Vertical Tab Navigation Menu ── */}

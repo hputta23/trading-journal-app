@@ -385,6 +385,35 @@ export default function SettingsView({ settings, onSave, onLoadDemo }) {
             </div>
           </div>
 
+          {/* ── User Profile ── */}
+          <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px', border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+              <Shield size={20} style={{ color: 'var(--text-accent)' }} />
+              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>User Profile</h2>
+            </div>
+            
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+              <div style={{ flex: 1, minWidth: '300px', padding: '24px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)', marginBottom: '8px' }}>Signed in as</h3>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
+                  {userEmail}
+                </p>
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    padding: '10px 20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
+                    background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
+                    borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                >
+                  <LogOut size={14} /> Log Out
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* ── Danger Zone ── */}
           <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px', border: '1px solid rgba(255, 59, 92, 0.3)', gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
@@ -428,18 +457,6 @@ export default function SettingsView({ settings, onSave, onLoadDemo }) {
                   onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 59, 92, 0.1)'; e.currentTarget.style.color = 'var(--color-loss)'; }}
                 >
                   <Trash2 size={14} /> Factory Reset
-                </button>
-                <button
-                  onClick={handleLogout}
-                  style={{
-                    padding: '10px 20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
-                    background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
-                    borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-secondary)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; }}
-                >
-                  <LogOut size={14} /> Log Out Current User
                 </button>
               </div>
             </div>
