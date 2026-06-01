@@ -173,6 +173,8 @@ export default function App() {
     if (!session) return;
     
     const fetchCloudData = async () => {
+      const localTrades = loadTrades();
+      
       try {
         const { data, error } = await supabase
           .from('user_data')
@@ -180,17 +182,26 @@ export default function App() {
           .eq('user_id', session.user.id)
           .single();
           
-        if (data && data.trades) {
+        if (error) {
+          console.error("Supabase fetch error (table might not exist):", error.message);
+          // If table doesn't exist or row doesn't exist, fallback to local
+          setAllTrades(localTrades);
+          return;
+        }
+          
+        if (data && data.trades && Object.keys(data.trades).length > 0) {
           setAllTrades(data.trades);
         } else {
-          // New user, create row
-          await supabase.from('user_data').insert([{ user_id: session.user.id, trades: {} }]);
-          setAllTrades({});
+          // New user row but no trades, preserve local
+          const { error: insertErr } = await supabase.from('user_data').insert([{ user_id: session.user.id, trades: localTrades }]);
+          if (insertErr) {
+             console.error("Supabase insert error:", insertErr.message);
+          }
+          setAllTrades(localTrades);
         }
       } catch (err) {
-        console.error("Error fetching from Supabase:", err);
-        // Fallback to local storage
-        setAllTrades(loadTrades());
+        console.error("Exception fetching from Supabase:", err);
+        setAllTrades(localTrades);
       }
     };
     
