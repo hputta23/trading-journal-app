@@ -328,57 +328,57 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 mt-4">
           <div>
             <FieldLabel>Ticker</FieldLabel>
-            <input value={form.ticker} onChange={e => update('ticker', e.target.value.toUpperCase())} placeholder="AAPL" className="w-full px-3.5 py-3 text-sm border uppercase font-bold" style={whiteInputStyle} />
+            <input value={form.ticker} onChange={e => update('ticker', e.target.value.toUpperCase())} placeholder="AAPL" className="w-full px-4 py-4 text-base border uppercase font-bold" style={whiteInputStyle} />
           </div>
           <div>
             <FieldLabel>Asset</FieldLabel>
-            <select value={form.assetClass} onChange={e => update('assetClass', e.target.value)} className="w-full px-3.5 py-3 text-sm border cursor-pointer font-bold" style={inputStyle}>
+            <select value={form.assetClass} onChange={e => update('assetClass', e.target.value)} className="w-full px-4 py-4 text-base border cursor-pointer font-bold" style={inputStyle}>
               {ASSET_CLASSES.map(a => <option key={a} value={a}>{a.toUpperCase()}</option>)}
             </select>
           </div>
           <div>
             <FieldLabel>Direction</FieldLabel>
-            <select value={form.direction} onChange={e => update('direction', e.target.value)} className="w-full px-3.5 py-3 text-sm border cursor-pointer font-bold" style={inputStyle}>
+            <select value={form.direction} onChange={e => update('direction', e.target.value)} className="w-full px-4 py-4 text-base border cursor-pointer font-bold" style={inputStyle}>
               {['Long', 'Short'].map(d => <option key={d} value={d}>{d.toUpperCase()}</option>)}
             </select>
           </div>
           <div>
             <FieldLabel>Strategy</FieldLabel>
-            <input value={form.strategy} onChange={e => update('strategy', e.target.value)} placeholder="BREAKOUT" className="w-full px-3.5 py-3 text-sm border font-bold" style={whiteInputStyle} />
+            <input value={form.strategy} onChange={e => update('strategy', e.target.value)} placeholder="BREAKOUT" className="w-full px-4 py-4 text-base border font-bold" style={whiteInputStyle} />
           </div>
           <div>
             <FieldLabel>Entry $</FieldLabel>
-            <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-3.5 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+            <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           <div>
             <FieldLabel optional>Exit $</FieldLabel>
-            <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-3.5 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+            <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           <div>
             <FieldLabel>Qty</FieldLabel>
-            <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-3.5 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+            <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           <div>
             <FieldLabel>Fees</FieldLabel>
-            <input type="number" step="any" value={form.fees} onChange={e => update('fees', e.target.value)} placeholder="0.00" className="w-full px-3.5 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+            <input type="number" step="any" value={form.fees} onChange={e => update('fees', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           {form.assetClass === 'Future' && (
             <div>
               <FieldLabel>Multiplier</FieldLabel>
-              <input type="number" step="any" value={form.tickMultiplier} onChange={e => update('tickMultiplier', e.target.value)} placeholder="50" className="w-full px-3.5 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+              <input type="number" step="any" value={form.tickMultiplier} onChange={e => update('tickMultiplier', e.target.value)} placeholder="50" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
             </div>
           )}
           <div>
             <FieldLabel>Entry Time</FieldLabel>
             <div className="flex">
-              <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="09:30:00" className="w-full px-3.5 py-3 text-sm border-y border-l rounded-l-lg font-bold font-mono-data" style={whiteInputStyle} />
+              <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="09:30:00" className="w-full px-4 py-4 text-base border-y border-l rounded-l-lg font-bold font-mono-data" style={whiteInputStyle} />
               <NowButton onClick={() => update('entryTime', getNowTime())} />
             </div>
           </div>
           <div>
             <FieldLabel optional>Exit Time</FieldLabel>
             <div className="flex">
-              <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="15:45:00" className="w-full px-3.5 py-3 text-sm border-y border-l rounded-l-lg font-bold font-mono-data" style={whiteInputStyle} />
+              <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="15:45:00" className="w-full px-4 py-4 text-base border-y border-l rounded-l-lg font-bold font-mono-data" style={whiteInputStyle} />
               <NowButton onClick={() => update('exitTime', getNowTime())} />
             </div>
           </div>
@@ -387,7 +387,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             <select
               value={form.mistake}
               onChange={e => update('mistake', e.target.value)}
-              className="w-full px-3.5 py-3 text-sm border cursor-pointer font-bold focus:ring-1 focus:ring-[var(--border-active)] outline-none"
+              className="w-full px-4 py-4 text-base border cursor-pointer font-bold focus:ring-1 focus:ring-[var(--border-active)] outline-none"
               style={{ ...inputStyle, textOverflow: 'ellipsis' }}
             >
               {MISTAKES.map(m => <option key={m} value={m}>{m}</option>)}
@@ -395,11 +395,11 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           </div>
           <div className="col-span-2 lg:col-span-2">
             <FieldLabel optional>Image URL</FieldLabel>
-            <input value={form.imageUrl} onChange={e => update('imageUrl', e.target.value)} placeholder="https://imgur.com/..." className="w-full px-3.5 py-3 text-sm border font-bold" style={whiteInputStyle} />
+            <input value={form.imageUrl} onChange={e => update('imageUrl', e.target.value)} placeholder="https://imgur.com/..." className="w-full px-4 py-4 text-base border font-bold" style={whiteInputStyle} />
           </div>
           <div className="col-span-2 lg:col-span-4">
             <FieldLabel optional>Notes</FieldLabel>
-            <input value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Add any session notes here..." className="w-full px-3.5 py-3 text-sm border font-bold" style={whiteInputStyle} />
+            <input value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Add any session notes here..." className="w-full px-4 py-4 text-base border font-bold" style={whiteInputStyle} />
           </div>
         </div>
         <PnlPreview />
@@ -426,20 +426,20 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                 value={form.ticker} 
                 onChange={e => update('ticker', e.target.value.toUpperCase())} 
                 placeholder="E.G. AAPL" 
-                className="w-full px-4 py-3 text-xs border uppercase font-bold" 
+                className="w-full px-4 py-4 text-sm border uppercase font-bold" 
                 style={whiteInputStyle} 
                 autoFocus 
               />
             </div>
             <div>
               <FieldLabel>Asset Class</FieldLabel>
-              <select value={form.assetClass} onChange={e => update('assetClass', e.target.value)} className="w-full px-4 py-3 text-xs border cursor-pointer font-bold" style={inputStyle}>
+              <select value={form.assetClass} onChange={e => update('assetClass', e.target.value)} className="w-full px-4 py-4 text-sm border cursor-pointer font-bold" style={inputStyle}>
                 {ASSET_CLASSES.map(a => <option key={a} value={a}>{a.toUpperCase()}</option>)}
               </select>
             </div>
             <div>
               <FieldLabel>Direction</FieldLabel>
-              <select value={form.direction} onChange={e => update('direction', e.target.value)} className="w-full px-4 py-3 text-xs border cursor-pointer font-bold" style={inputStyle}>
+              <select value={form.direction} onChange={e => update('direction', e.target.value)} className="w-full px-4 py-4 text-sm border cursor-pointer font-bold" style={inputStyle}>
                 {['Long', 'Short'].map(d => <option key={d} value={d}>{d.toUpperCase()}</option>)}
               </select>
             </div>
@@ -449,7 +449,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                 value={form.strategy} 
                 onChange={e => update('strategy', e.target.value)} 
                 placeholder="E.G. BREAKOUT" 
-                className="w-full px-4 py-3 text-xs border font-bold" 
+                className="w-full px-4 py-4 text-sm border font-bold" 
                 style={whiteInputStyle} 
               />
             </div>
@@ -458,7 +458,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           {form.assetClass === 'Future' && (
             <div className="fade-in max-w-xs">
               <FieldLabel>Tick Multiplier</FieldLabel>
-              <input type="number" value={form.tickMultiplier} onChange={e => update('tickMultiplier', e.target.value)} placeholder="e.g. 50" className="w-full px-4 py-3 text-xs border font-bold" style={whiteInputStyle} />
+              <input type="number" value={form.tickMultiplier} onChange={e => update('tickMultiplier', e.target.value)} placeholder="e.g. 50" className="w-full px-4 py-4 text-sm border font-bold" style={whiteInputStyle} />
             </div>
           )}
 
@@ -501,15 +501,15 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <FieldLabel>Entry Price ($)</FieldLabel>
-                <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-3 text-xs border font-bold font-mono-data" style={whiteInputStyle} autoFocus />
+                <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} autoFocus />
               </div>
               <div>
                 <FieldLabel optional>Exit Price ($)</FieldLabel>
-                <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-3 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
+                <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
               </div>
               <div>
                 <FieldLabel>Shares / Qty</FieldLabel>
-                <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-3 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
+                <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
               </div>
             </div>
           ) : (
@@ -527,8 +527,8 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                   <div className="space-y-3 flex-1">
                     {form.entryLegs.map((leg, i) => (
                       <div key={`entry-${i}`} className="flex items-center gap-3">
-                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('entryLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-3 text-xs border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
-                        <input type="number" value={leg.qty} onChange={e => handleLegChange('entryLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-3 text-xs border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
+                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('entryLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
+                        <input type="number" value={leg.qty} onChange={e => handleLegChange('entryLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
                         <button type="button" onClick={() => removeLeg('entryLegs', i)} className="p-3 text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] rounded-lg transition-colors bg-[var(--bg-app)]">
                           <X size={16} />
                         </button>
@@ -558,8 +558,8 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                   <div className="space-y-3 flex-1">
                     {form.exitLegs.map((leg, i) => (
                       <div key={`exit-${i}`} className="flex items-center gap-3">
-                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('exitLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-3 text-xs border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
-                        <input type="number" value={leg.qty} onChange={e => handleLegChange('exitLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-3 text-xs border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
+                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('exitLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
+                        <input type="number" value={leg.qty} onChange={e => handleLegChange('exitLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
                         <button type="button" onClick={() => removeLeg('exitLegs', i)} className="p-3 text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] rounded-lg transition-colors bg-[var(--bg-app)]">
                           <X size={16} />
                         </button>
@@ -580,20 +580,20 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             <div>
               <FieldLabel>Entry Time</FieldLabel>
               <div className="flex gap-2">
-                <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-3.5 py-2.5 text-xs border font-bold font-mono-data" style={inputStyle} />
+                <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-4 py-4 text-sm border font-bold font-mono-data" style={inputStyle} />
                 <NowButton onClick={() => update('entryTime', getNowTime())} />
               </div>
             </div>
             <div>
               <FieldLabel>Exit Time</FieldLabel>
               <div className="flex gap-2">
-                <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-3.5 py-2.5 text-xs border font-bold font-mono-data" style={inputStyle} />
+                <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-4 py-4 text-sm border font-bold font-mono-data" style={inputStyle} />
                 <NowButton onClick={() => update('exitTime', getNowTime())} />
               </div>
             </div>
             <div>
               <FieldLabel>Rule / Mistake</FieldLabel>
-              <select value={form.mistake} onChange={e => update('mistake', e.target.value)} className="w-full px-4 py-3 text-xs border cursor-pointer font-bold font-mono-data" style={inputStyle}>
+              <select value={form.mistake} onChange={e => update('mistake', e.target.value)} className="w-full px-4 py-4 text-sm border cursor-pointer font-bold font-mono-data" style={inputStyle}>
                 {MISTAKES.map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
               </select>
             </div>
@@ -602,15 +602,15 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <FieldLabel>Fees accrued</FieldLabel>
-              <input type="number" step="any" value={form.fees} onChange={e => update('fees', e.target.value)} placeholder="0.00" className="w-full px-4 py-3 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
+              <input type="number" step="any" value={form.fees} onChange={e => update('fees', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
             </div>
             <div>
               <FieldLabel optional>Image URL</FieldLabel>
-              <input value={form.imageUrl} onChange={e => update('imageUrl', e.target.value)} placeholder="https://imgur.com/..." className="w-full px-4 py-3 text-xs border font-bold" style={whiteInputStyle} />
+              <input value={form.imageUrl} onChange={e => update('imageUrl', e.target.value)} placeholder="https://imgur.com/..." className="w-full px-4 py-4 text-sm border font-bold" style={whiteInputStyle} />
             </div>
             <div>
               <FieldLabel optional>Notes / reflections</FieldLabel>
-              <input value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Session notes..." className="w-full px-4 py-3 text-xs border font-bold" style={whiteInputStyle} />
+              <input value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Session notes..." className="w-full px-4 py-4 text-sm border font-bold" style={whiteInputStyle} />
             </div>
           </div>
 
