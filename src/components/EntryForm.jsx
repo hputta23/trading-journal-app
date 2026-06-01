@@ -513,54 +513,60 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               </div>
             </div>
           ) : (
-            <div className="space-y-4 p-4 border border-[var(--border-active)] rounded-xl bg-[var(--bg-sidebar)]">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-4 p-5 border border-[var(--border-active)] rounded-xl bg-[var(--bg-sidebar)] shadow-md">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 
                 {/* Entry Legs */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between mb-3">
                     <FieldLabel>Entry Executions</FieldLabel>
-                    <button type="button" onClick={() => addLeg('entryLegs')} className="text-[10px] font-bold text-[var(--text-accent)] uppercase tracking-wider flex items-center gap-1 hover:opacity-80">
-                      <Plus size={10} /> Add Leg
+                    <button type="button" onClick={() => addLeg('entryLegs')} className="px-3 py-1.5 text-[10px] font-bold text-[var(--bg-app)] bg-[var(--text-accent)] rounded uppercase tracking-wider flex items-center gap-1 hover:opacity-90 transition-opacity">
+                      <Plus size={12} /> Add Leg
                     </button>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-3 flex-1">
                     {form.entryLegs.map((leg, i) => (
-                      <div key={`entry-${i}`} className="flex items-center gap-2">
-                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('entryLegs', i, 'price', e.target.value)} placeholder="Price" className="w-1/2 px-3 py-2 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
-                        <input type="number" value={leg.qty} onChange={e => handleLegChange('entryLegs', i, 'qty', e.target.value)} placeholder="Qty" className="w-1/2 px-3 py-2 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
-                        <button type="button" onClick={() => removeLeg('entryLegs', i)} className="p-2 text-[var(--color-loss)] hover:bg-[var(--color-loss)] hover:text-white rounded transition-colors">
-                          <X size={14} />
+                      <div key={`entry-${i}`} className="flex items-center gap-3">
+                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('entryLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-3 text-xs border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
+                        <input type="number" value={leg.qty} onChange={e => handleLegChange('entryLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-3 text-xs border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
+                        <button type="button" onClick={() => removeLeg('entryLegs', i)} className="p-3 text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] rounded-lg transition-colors bg-[var(--bg-app)]">
+                          <X size={16} />
                         </button>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-2 text-[10px] font-mono-data font-bold text-[var(--text-secondary)]">
-                    Avg Entry: {form.entryPrice ? `$${form.entryPrice}` : '—'} | Total Qty: {form.qty || 0}
+                  <div className="mt-4 p-3 bg-[var(--bg-app)] rounded-lg border border-[var(--border-card)] flex justify-between items-center">
+                    <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Avg Entry</span>
+                    <span className="text-sm font-bold font-mono-data text-[var(--text-accent)]">{form.entryPrice ? `$${form.entryPrice}` : '—'}</span>
+                  </div>
+                  <div className="mt-2 p-3 bg-[var(--bg-app)] rounded-lg border border-[var(--border-card)] flex justify-between items-center">
+                    <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Total Qty</span>
+                    <span className="text-sm font-bold font-mono-data text-[var(--text-primary)]">{form.qty || 0}</span>
                   </div>
                 </div>
 
                 {/* Exit Legs */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between mb-3">
                     <FieldLabel optional>Exit Executions</FieldLabel>
-                    <button type="button" onClick={() => addLeg('exitLegs')} className="text-[10px] font-bold text-[var(--text-accent)] uppercase tracking-wider flex items-center gap-1 hover:opacity-80">
-                      <Plus size={10} /> Add Leg
+                    <button type="button" onClick={() => addLeg('exitLegs')} className="px-3 py-1.5 text-[10px] font-bold text-[var(--bg-app)] bg-[var(--text-accent)] rounded uppercase tracking-wider flex items-center gap-1 hover:opacity-90 transition-opacity">
+                      <Plus size={12} /> Add Leg
                     </button>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-3 flex-1">
                     {form.exitLegs.map((leg, i) => (
-                      <div key={`exit-${i}`} className="flex items-center gap-2">
-                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('exitLegs', i, 'price', e.target.value)} placeholder="Price" className="w-1/2 px-3 py-2 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
-                        <input type="number" value={leg.qty} onChange={e => handleLegChange('exitLegs', i, 'qty', e.target.value)} placeholder="Qty" className="w-1/2 px-3 py-2 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
-                        <button type="button" onClick={() => removeLeg('exitLegs', i)} className="p-2 text-[var(--color-loss)] hover:bg-[var(--color-loss)] hover:text-white rounded transition-colors">
-                          <X size={14} />
+                      <div key={`exit-${i}`} className="flex items-center gap-3">
+                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('exitLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-3 text-xs border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
+                        <input type="number" value={leg.qty} onChange={e => handleLegChange('exitLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-3 text-xs border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
+                        <button type="button" onClick={() => removeLeg('exitLegs', i)} className="p-3 text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] rounded-lg transition-colors bg-[var(--bg-app)]">
+                          <X size={16} />
                         </button>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-2 text-[10px] font-mono-data font-bold text-[var(--text-secondary)]">
-                    Avg Exit: {form.exitPrice ? `$${form.exitPrice}` : '—'}
+                  <div className="mt-4 p-3 bg-[var(--bg-app)] rounded-lg border border-[var(--border-card)] flex justify-between items-center">
+                    <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Avg Exit</span>
+                    <span className="text-sm font-bold font-mono-data text-[var(--text-accent)]">{form.exitPrice ? `$${form.exitPrice}` : '—'}</span>
                   </div>
                 </div>
 
