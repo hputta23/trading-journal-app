@@ -32,92 +32,93 @@ export default function AuthView() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4" style={{ background: '#f0f4f9', fontFamily: "'Inter', sans-serif" }}>
-      <div className="w-full max-w-[448px] bg-white rounded-3xl p-10" style={{ boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)' }}>
+    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-8 fade-in" style={{ background: 'var(--bg-app)', fontFamily: "'Inter', sans-serif" }}>
+      
+      {/* Simple, centered card matching site theme */}
+      <div className="w-full max-w-sm rounded-xl p-6 sm:p-8 glass-panel" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)' }}>
         
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L3 7V12.5C3 16.5 6.5 21 12 22C17.5 21 21 16.5 21 12.5V7L12 2Z" fill="#1a73e8" />
-              <path d="M12 22C17.5 21 21 16.5 21 12.5V7L12 2L12 22Z" fill="#174ea6" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-normal mb-2" style={{ color: '#202124' }}>
-            {isLogin ? 'Sign in' : 'Create account'}
+          <h1 className="text-2xl font-bold mb-2 tracking-tight" style={{ color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            TradeOS
           </h1>
-          <p className="text-base" style={{ color: '#5f6368' }}>
-            to continue to TradeOS
+          <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
+            {isLogin ? 'Sign in to your account' : 'Create a new profile'}
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-3 rounded bg-red-50 text-red-700 text-sm border border-red-200">
+          <div className="mb-6 p-3 rounded-lg text-xs font-bold border" style={{ background: 'rgba(255, 59, 92, 0.1)', color: 'var(--color-loss)', borderColor: 'rgba(255, 59, 92, 0.2)' }}>
             {error}
           </div>
         )}
 
         {message && (
-          <div className="mb-6 p-3 rounded bg-green-50 text-green-700 text-sm border border-green-200">
+          <div className="mb-6 p-3 rounded-lg text-xs font-bold border" style={{ background: 'rgba(0, 255, 136, 0.1)', color: 'var(--color-profit)', borderColor: 'rgba(0, 255, 136, 0.2)' }}>
             {message}
           </div>
         )}
 
         <form onSubmit={handleAuth} className="space-y-4">
           <div>
+            <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--text-secondary)' }}>
+              Email
+            </label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3.5 rounded border outline-none transition-colors"
-              style={{ borderColor: '#dadce0', color: '#202124', fontSize: '16px' }}
-              placeholder="Email or phone"
-              onFocus={(e) => e.target.style.borderColor = '#1a73e8'}
-              onBlur={(e) => e.target.style.borderColor = '#dadce0'}
+              className="w-full px-4 py-3 rounded-lg text-sm font-semibold outline-none transition-all focus:ring-1 focus:ring-[var(--border-active)]"
+              style={{ background: 'var(--bg-input)', border: '1px solid var(--border-input)', color: 'var(--text-primary)' }}
+              placeholder="trader@network.com"
             />
           </div>
 
           <div>
+            <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--text-secondary)' }}>
+              Password
+            </label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3.5 rounded border outline-none transition-colors"
-              style={{ borderColor: '#dadce0', color: '#202124', fontSize: '16px' }}
-              placeholder="Enter your password"
-              onFocus={(e) => e.target.style.borderColor = '#1a73e8'}
-              onBlur={(e) => e.target.style.borderColor = '#dadce0'}
+              className="w-full px-4 py-3 rounded-lg text-sm font-semibold outline-none transition-all focus:ring-1 focus:ring-[var(--border-active)]"
+              style={{ background: 'var(--bg-input)', border: '1px solid var(--border-input)', color: 'var(--text-primary)' }}
+              placeholder="••••••••"
             />
           </div>
 
-          <div className="flex items-center justify-between pt-8 mt-4">
-            <button
-              type="button"
-              onClick={() => { setIsLogin(!isLogin); setError(null); setMessage(null); }}
-              className="text-sm font-medium hover:bg-gray-50 px-3 py-2 rounded transition-colors"
-              style={{ color: '#1a73e8' }}
-            >
-              {isLogin ? 'Create account' : 'Sign in instead'}
-            </button>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-2 rounded shadow-sm text-sm font-medium transition-colors"
-              style={{ 
-                background: '#1a73e8', 
-                color: '#fff', 
-                opacity: loading ? 0.7 : 1,
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
-              onMouseEnter={e => { if(!loading) e.currentTarget.style.background = '#1b66c9'; }}
-              onMouseLeave={e => { if(!loading) e.currentTarget.style.background = '#1a73e8'; }}
-            >
-              {loading ? 'Working...' : 'Next'}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full mt-6 py-3.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all"
+            style={{ 
+              background: 'var(--border-active)', 
+              color: 'var(--bg-app)', 
+              border: 'none', 
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.7 : 1
+            }}
+            onMouseEnter={e => { if(!loading) e.currentTarget.style.opacity = '0.9'; }}
+            onMouseLeave={e => { if(!loading) e.currentTarget.style.opacity = '1'; }}
+          >
+            {loading ? 'Working...' : isLogin ? 'Sign In' : 'Sign Up'}
+          </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <button
+            type="button"
+            onClick={() => { setIsLogin(!isLogin); setError(null); setMessage(null); }}
+            className="text-xs font-medium transition-colors cursor-pointer"
+            style={{ color: 'var(--text-secondary)', background: 'none', border: 'none' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--text-dark)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+          >
+            {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+          </button>
+        </div>
       </div>
     </div>
   );
