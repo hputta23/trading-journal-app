@@ -39,7 +39,7 @@ export default function AuthView() {
         
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold mb-2 tracking-tight" style={{ color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-            TradeOS
+            Perseverance
           </h1>
           <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
             {isLogin ? 'Sign in to your account' : 'Create a new profile'}

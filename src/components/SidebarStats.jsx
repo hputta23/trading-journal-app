@@ -38,7 +38,7 @@ export default function SidebarStats({
         <div className="flex items-center gap-3 flex-nowrap whitespace-nowrap mb-1">
           <Radio size={16} className="text-[var(--text-accent)] pulse-cyan flex-shrink-0" />
           <div className="text-xs font-bold tracking-[0.2em] uppercase whitespace-nowrap" style={{ color: 'var(--text-dark)', fontFamily: "'Outfit', sans-serif" }}>
-            TRADE OS
+            PERSEVERANCE
           </div>
         </div>
         {userEmail && (

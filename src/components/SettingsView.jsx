@@ -10,7 +10,7 @@ const Tip = ({ text }) => (
   </span>
 );
 
-export default function SettingsView({ settings, onSave, onLoadDemo }) {
+export default function SettingsView({ settings, onSave, onLoadDemo, userEmail }) {
   const [googleSheetId, setGoogleSheetId] = useState(settings.googleSheetId || '');
   const [quickEntry, setQuickEntry] = useState(settings.quickEntry || false);
   const [theme, setTheme] = useState(settings.theme || 'dark');
