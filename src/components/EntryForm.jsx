@@ -514,7 +514,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             </div>
           ) : (
             <div className="space-y-4 p-5 border border-[var(--border-active)] rounded-xl bg-[var(--bg-sidebar)] shadow-md">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="flex flex-col gap-8">
                 
                 {/* Entry Legs */}
                 <div className="flex flex-col">
@@ -535,13 +535,15 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                       </div>
                     ))}
                   </div>
-                  <div className="mt-4 p-3 bg-[var(--bg-app)] rounded-lg border border-[var(--border-card)] flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Avg Entry</span>
-                    <span className="text-sm font-bold font-mono-data text-[var(--text-accent)]">{form.entryPrice ? `$${form.entryPrice}` : '—'}</span>
-                  </div>
-                  <div className="mt-2 p-3 bg-[var(--bg-app)] rounded-lg border border-[var(--border-card)] flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Total Qty</span>
-                    <span className="text-sm font-bold font-mono-data text-[var(--text-primary)]">{form.qty || 0}</span>
+                  <div className="mt-4 grid grid-cols-2 gap-4">
+                    <div className="p-3 bg-[var(--bg-app)] rounded-lg border border-[var(--border-card)] flex justify-between items-center">
+                      <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Avg Entry</span>
+                      <span className="text-sm font-bold font-mono-data text-[var(--text-accent)]">{form.entryPrice ? `$${form.entryPrice}` : '—'}</span>
+                    </div>
+                    <div className="p-3 bg-[var(--bg-app)] rounded-lg border border-[var(--border-card)] flex justify-between items-center">
+                      <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Total Qty</span>
+                      <span className="text-sm font-bold font-mono-data text-[var(--text-primary)]">{form.qty || 0}</span>
+                    </div>
                   </div>
                 </div>
 
