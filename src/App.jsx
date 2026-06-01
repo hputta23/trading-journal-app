@@ -241,9 +241,7 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', currentTheme);
   }, [settings.theme, session]);
 
-  if (!session) {
-    return <AuthView />;
-  }
+
 
   // Sync theme if Header toggle updates localStorage directly
   useEffect(() => {
@@ -357,6 +355,10 @@ export default function App() {
     setActiveTab(tab);
     setMobileMenuOpen(false);
   };
+
+  if (!session) {
+    return <AuthView />;
+  }
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden" style={{ background: 'var(--bg-app)' }}>
