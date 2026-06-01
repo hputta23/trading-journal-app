@@ -44,16 +44,16 @@ const StepIndicator = ({ currentStep }) => {
         <div key={s} className="flex items-center gap-0.5">
           <div className="flex items-center gap-2">
             <div
-              className="flex items-center justify-center w-6 h-6 text-xs font-bold shrink-0"
+              className="flex items-center justify-center w-8 h-8 text-sm font-bold shrink-0 rounded-lg"
               style={{
                 background: i <= currentStep ? 'var(--border-active)' : 'var(--bg-sidebar)',
                 color: i <= currentStep ? 'var(--bg-app)' : 'var(--text-secondary)',
               }}
             >
-              {i < currentStep ? <Check size={12} /> : i + 1}
+              {i < currentStep ? <Check size={16} /> : i + 1}
             </div>
             <span
-              className="text-xs uppercase tracking-wider font-bold hidden sm:inline"
+              className="text-sm uppercase tracking-wider font-bold hidden sm:inline"
               style={{ color: i <= currentStep ? 'var(--border-active)' : 'var(--text-secondary)' }}
             >
               {s}
@@ -72,11 +72,11 @@ const NowButton = ({ onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="px-3 py-2 text-xs border cursor-pointer hover:bg-[var(--border-active)] hover:text-[var(--bg-app)] transition-all shrink-0 flex items-center gap-1 bg-[var(--bg-sidebar)] text-[var(--text-accent)] border-[var(--border-card)] font-medium"
+    className="px-5 text-sm border cursor-pointer hover:bg-[var(--border-active)] hover:text-[var(--bg-app)] transition-all shrink-0 flex items-center justify-center gap-2 bg-[var(--bg-sidebar)] text-[var(--text-accent)] border-[var(--border-card)] font-bold rounded-lg"
     style={{ ...fontStyle }}
     title="Stamp current time"
   >
-    <Clock size={12} />
+    <Clock size={16} />
     <span>Now</span>
   </button>
 );
@@ -529,7 +529,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                       <div key={`entry-${i}`} className="flex items-center gap-3">
                         <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('entryLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
                         <input type="number" value={leg.qty} onChange={e => handleLegChange('entryLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
-                        <button type="button" onClick={() => removeLeg('entryLegs', i)} className="p-3 text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] rounded-lg transition-colors bg-[var(--bg-app)]">
+                        <button type="button" onClick={() => removeLeg('entryLegs', i)} className="px-4 flex items-center justify-center text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] rounded-lg transition-colors bg-[var(--bg-app)]">
                           <X size={16} />
                         </button>
                       </div>
@@ -560,7 +560,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                       <div key={`exit-${i}`} className="flex items-center gap-3">
                         <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('exitLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
                         <input type="number" value={leg.qty} onChange={e => handleLegChange('exitLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
-                        <button type="button" onClick={() => removeLeg('exitLegs', i)} className="p-3 text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] rounded-lg transition-colors bg-[var(--bg-app)]">
+                        <button type="button" onClick={() => removeLeg('exitLegs', i)} className="px-4 flex items-center justify-center text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] rounded-lg transition-colors bg-[var(--bg-app)]">
                           <X size={16} />
                         </button>
                       </div>
