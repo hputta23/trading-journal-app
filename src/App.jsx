@@ -152,13 +152,6 @@ export default function App() {
   // Load data on mount
   useEffect(() => {
     let trades = loadTrades();
-    // Auto-populate 154 days of dense mock data if the user has no logs in storage yet
-    if (Object.keys(trades).length === 0) {
-      const { trades: demoTrades, journals: demoJournals } = generateRichDemoData(getDateKey());
-      trades = demoTrades;
-      saveTrades(demoTrades);
-      localStorage.setItem('trading-journal-entries', JSON.stringify(demoJournals));
-    }
     setAllTrades(trades);
     const s = loadSettings();
     setSettings(s);
