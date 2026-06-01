@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronRight, ChevronLeft, Check, Clock, Zap, Target, BookOpen, AlertTriangle } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Check, Clock, Zap, Target, BookOpen, AlertTriangle, Plus, X, Calculator } from 'lucide-react';
 import { calcGrossPnl, calcNetPnl, formatCurrency } from '../utils/calculations';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -102,7 +102,10 @@ const emptyForm = {
   fees: '',
   notes: '',
   mistake: 'None / Plan Followed',
-  imageUrl: ''
+  imageUrl: '',
+  advancedExecution: false,
+  entryLegs: [{ price: '', qty: '' }],
+  exitLegs: [{ price: '', qty: '' }]
 };
 
 export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickEntry }) {
@@ -125,6 +128,9 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
         fees: editingTrade.fees || '',
         notes: editingTrade.notes || '',
         mistake: editingTrade.mistake || 'None / Plan Followed',
+        advancedExecution: false,
+        entryLegs: [{ price: editingTrade.entryPrice || '', qty: editingTrade.qty || '' }],
+        exitLegs: [{ price: editingTrade.exitPrice || '', qty: editingTrade.qty || '' }],
       });
       setStep(0);
     }
@@ -138,6 +144,63 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
   const update = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
+
+  const handleLegChange = (type, index, field, value) => {
+    const newLegs = [...form[type]];
+    newLegs[index][field] = value;
+    update(type, newLegs);
+  };
+
+  const addLeg = (type) => {
+    update(type, [...form[type], { price: '', qty: '' }]);
+  };
+
+  const removeLeg = (type, index) => {
+    const newLegs = [...form[type]];
+    newLegs.splice(index, 1);
+    if (newLegs.length === 0) newLegs.push({ price: '', qty: '' });
+    update(type, newLegs);
+  };
+
+  useEffect(() => {
+    if (form.advancedExecution) {
+      let totalEntryQty = 0;
+      let totalEntryCost = 0;
+      form.entryLegs.forEach(leg => {
+        const p = Number(leg.price) || 0;
+        const q = Number(leg.qty) || 0;
+        if (p > 0 && q > 0) {
+          totalEntryQty += q;
+          totalEntryCost += p * q;
+        }
+      });
+
+      let totalExitQty = 0;
+      let totalExitCost = 0;
+      form.exitLegs.forEach(leg => {
+        const p = Number(leg.price) || 0;
+        const q = Number(leg.qty) || 0;
+        if (p > 0 && q > 0) {
+          totalExitQty += q;
+          totalExitCost += p * q;
+        }
+      });
+
+      const avgEntry = totalEntryQty > 0 ? (totalEntryCost / totalEntryQty).toFixed(4).replace(/\.?0+$/, '') : '';
+      const avgExit = totalExitQty > 0 ? (totalExitCost / totalExitQty).toFixed(4).replace(/\.?0+$/, '') : '';
+      const finalQty = totalEntryQty > 0 ? totalEntryQty.toString() : '';
+
+      setForm(prev => {
+        if (prev.entryPrice === avgEntry && prev.exitPrice === avgExit && prev.qty === finalQty) return prev;
+        return {
+          ...prev,
+          entryPrice: avgEntry,
+          exitPrice: avgExit,
+          qty: finalQty
+        };
+      });
+    }
+  }, [form.advancedExecution, form.entryLegs, form.exitLegs]);
 
   const handleSubmit = useCallback(() => {
     const grossPnl = calcGrossPnl(form.entryPrice, form.exitPrice, form.qty, form.direction, form.assetClass, form.tickMultiplier);
@@ -416,20 +479,94 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
       {/* Step 2 — HOW */}
       {step === 1 && (
         <div className="space-y-4 fade-in">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <FieldLabel>Entry Price ($)</FieldLabel>
-              <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-3 text-xs border font-bold font-mono-data" style={whiteInputStyle} autoFocus />
-            </div>
-            <div>
-              <FieldLabel optional>Exit Price ($)</FieldLabel>
-              <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-3 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
-            </div>
-            <div>
-              <FieldLabel>Shares / Qty</FieldLabel>
-              <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-3 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
-            </div>
+          
+          <div className="flex justify-end mb-2">
+            <button
+              type="button"
+              onClick={() => update('advancedExecution', !form.advancedExecution)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest border transition-all"
+              style={{
+                background: form.advancedExecution ? 'var(--border-active)' : 'transparent',
+                color: form.advancedExecution ? 'var(--bg-app)' : 'var(--text-accent)',
+                borderColor: 'var(--border-active)',
+                borderRadius: '4px'
+              }}
+            >
+              <Calculator size={12} />
+              Scale In / Out Calculator
+            </button>
           </div>
+
+          {!form.advancedExecution ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <FieldLabel>Entry Price ($)</FieldLabel>
+                <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-3 text-xs border font-bold font-mono-data" style={whiteInputStyle} autoFocus />
+              </div>
+              <div>
+                <FieldLabel optional>Exit Price ($)</FieldLabel>
+                <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-3 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
+              </div>
+              <div>
+                <FieldLabel>Shares / Qty</FieldLabel>
+                <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-3 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4 p-4 border border-[var(--border-active)] rounded-xl bg-[var(--bg-sidebar)]">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {/* Entry Legs */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <FieldLabel>Entry Executions</FieldLabel>
+                    <button type="button" onClick={() => addLeg('entryLegs')} className="text-[10px] font-bold text-[var(--text-accent)] uppercase tracking-wider flex items-center gap-1 hover:opacity-80">
+                      <Plus size={10} /> Add Leg
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {form.entryLegs.map((leg, i) => (
+                      <div key={`entry-${i}`} className="flex items-center gap-2">
+                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('entryLegs', i, 'price', e.target.value)} placeholder="Price" className="w-1/2 px-3 py-2 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
+                        <input type="number" value={leg.qty} onChange={e => handleLegChange('entryLegs', i, 'qty', e.target.value)} placeholder="Qty" className="w-1/2 px-3 py-2 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
+                        <button type="button" onClick={() => removeLeg('entryLegs', i)} className="p-2 text-[var(--color-loss)] hover:bg-[var(--color-loss)] hover:text-white rounded transition-colors">
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-2 text-[10px] font-mono-data font-bold text-[var(--text-secondary)]">
+                    Avg Entry: {form.entryPrice ? `$${form.entryPrice}` : '—'} | Total Qty: {form.qty || 0}
+                  </div>
+                </div>
+
+                {/* Exit Legs */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <FieldLabel optional>Exit Executions</FieldLabel>
+                    <button type="button" onClick={() => addLeg('exitLegs')} className="text-[10px] font-bold text-[var(--text-accent)] uppercase tracking-wider flex items-center gap-1 hover:opacity-80">
+                      <Plus size={10} /> Add Leg
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {form.exitLegs.map((leg, i) => (
+                      <div key={`exit-${i}`} className="flex items-center gap-2">
+                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('exitLegs', i, 'price', e.target.value)} placeholder="Price" className="w-1/2 px-3 py-2 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
+                        <input type="number" value={leg.qty} onChange={e => handleLegChange('exitLegs', i, 'qty', e.target.value)} placeholder="Qty" className="w-1/2 px-3 py-2 text-xs border font-bold font-mono-data" style={whiteInputStyle} />
+                        <button type="button" onClick={() => removeLeg('exitLegs', i)} className="p-2 text-[var(--color-loss)] hover:bg-[var(--color-loss)] hover:text-white rounded transition-colors">
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-2 text-[10px] font-mono-data font-bold text-[var(--text-secondary)]">
+                    Avg Exit: {form.exitPrice ? `$${form.exitPrice}` : '—'}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
