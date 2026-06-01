@@ -139,7 +139,11 @@ const generateRichDemoData = (currentDate) => {
   return { trades, journals };
 };
 
+import { supabase } from './utils/supabaseClient';
+import AuthView from './components/AuthView';
+
 export default function App() {
+  const [session, setSession] = useState(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [currentDate, setCurrentDate] = useState(getDateKey());
   const [allTrades, setAllTrades] = useState({});
@@ -149,19 +153,86 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showGlobalTradeModal, setShowGlobalTradeModal] = useState(false);
 
+  // Auth Initialization
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   // Load data on mount
   useEffect(() => {
-    let trades = loadTrades();
-    setAllTrades(trades);
+    if (!session) return;
+    
+    const fetchCloudData = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('user_data')
+          .select('trades')
+          .eq('user_id', session.user.id)
+          .single();
+          
+        if (data && data.trades) {
+          setAllTrades(data.trades);
+        } else {
+          // New user, create row
+          await supabase.from('user_data').insert([{ user_id: session.user.id, trades: {} }]);
+          setAllTrades({});
+        }
+      } catch (err) {
+        console.error("Error fetching from Supabase:", err);
+        // Fallback to local storage
+        setAllTrades(loadTrades());
+      }
+    };
+    
+    fetchCloudData();
     const s = loadSettings();
     setSettings(s);
-  }, []);
+  }, [session]);
+
+  // Sync to Cloud whenever allTrades changes
+  useEffect(() => {
+    if (!session || Object.keys(allTrades).length === 0) return;
+    
+    // Save locally first for fast offline fallback
+    saveTrades(allTrades);
+    
+    // Then sync to Supabase
+    const syncToCloud = async () => {
+      try {
+        await supabase
+          .from('user_data')
+          .update({ trades: allTrades, updated_at: new Date() })
+          .eq('user_id', session.user.id);
+      } catch (err) {
+        console.error("Cloud sync failed:", err);
+      }
+    };
+    syncToCloud();
+  }, [allTrades, session]);
 
   // Apply theme to document element
   useEffect(() => {
+    if (!session) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      return;
+    }
     const currentTheme = settings.theme || 'dark';
     document.documentElement.setAttribute('data-theme', currentTheme);
-  }, [settings.theme]);
+  }, [settings.theme, session]);
+
+  if (!session) {
+    return <AuthView />;
+  }
 
   // Sync theme if Header toggle updates localStorage directly
   useEffect(() => {

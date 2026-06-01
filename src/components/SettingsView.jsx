@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
-import { Settings, Database, Sliders, Shield, Info, Download, Trash2, Sun, Moon, Upload, FileJson, FileSpreadsheet } from 'lucide-react';
+import { Settings, Database, Sliders, Shield, Info, Download, Trash2, Sun, Moon, Upload, FileJson, FileSpreadsheet, LogOut } from 'lucide-react';
+import { supabase } from '../utils/supabaseClient';
 
 /* ── Small reusable info tooltip ── */
 const Tip = ({ text }) => (
@@ -17,6 +18,10 @@ export default function SettingsView({ settings, onSave, onLoadDemo }) {
   
   const fileInputRef = useRef(null);
   const csvInputRef = useRef(null);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
 
   const handleSave = () => {
     onSave({ googleSheetId, quickEntry, theme });
@@ -417,12 +422,24 @@ export default function SettingsView({ settings, onSave, onLoadDemo }) {
                   style={{
                     padding: '10px 20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'rgba(255, 59, 92, 0.1)', border: '1px solid rgba(255, 59, 92, 0.3)', color: 'var(--color-loss)',
-                    borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
+                    borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-loss)'; e.currentTarget.style.color = '#fff'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 59, 92, 0.1)'; e.currentTarget.style.color = 'var(--color-loss)'; }}
                 >
                   <Trash2 size={14} /> Factory Reset
+                </button>
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    padding: '10px 20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
+                    background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
+                    borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-secondary)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; }}
+                >
+                  <LogOut size={14} /> Log Out Current User
                 </button>
               </div>
             </div>
