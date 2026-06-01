@@ -192,7 +192,7 @@ export default function AnalyticsView({ allTrades }) {
               
               <div className="w-full h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={equityCurveData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                  <AreaChart data={equityCurveData} margin={{ top: 10, right: 20, left: 40, bottom: 10 }}>
                     <defs>
                       <linearGradient id="colorEq" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="var(--color-cyan)" stopOpacity={0.3}/>
@@ -216,7 +216,7 @@ export default function AnalyticsView({ allTrades }) {
                       axisLine={false}
                       tickLine={false}
                       tickFormatter={(val) => `$${val}`}
-                      dx={-10}
+                      dx={-5}
                     />
                     <Tooltip content={<CustomTooltip />} />
                     <ReferenceLine y={0} stroke="var(--text-secondary)" strokeDasharray="3 3" opacity={0.5} />
@@ -249,7 +249,7 @@ export default function AnalyticsView({ allTrades }) {
                 
                 <div className="w-full h-[250px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={distributionData} margin={{ top: 0, right: 0, left: -20, bottom: 20 }}>
+                    <BarChart data={distributionData} margin={{ top: 10, right: 20, left: 0, bottom: 40 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border-card)" vertical={false} />
                       <XAxis 
                         dataKey="name" 
@@ -258,12 +258,14 @@ export default function AnalyticsView({ allTrades }) {
                         tickLine={false}
                         angle={-45}
                         textAnchor="end"
-                        dy={10}
+                        dy={15}
+                        dx={-5}
                       />
                       <YAxis 
                         tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}
                         axisLine={false}
                         tickLine={false}
+                        dx={-5}
                       />
                       <Tooltip 
                         cursor={{ fill: 'var(--border-card)', opacity: 0.5 }}
