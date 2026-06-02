@@ -333,6 +333,7 @@ export default function App() {
         theme={settings.theme}
         onToggleTheme={handleToggleTheme}
         cloudSyncStatus={cloudSyncStatus}
+        onManualSync={fetchCloudData}
       />
 
       <div className="flex-1 flex min-h-0 w-full overflow-hidden">
