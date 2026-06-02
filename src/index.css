@@ -147,7 +147,9 @@ body {
 /* ── Forms & Focus Handling (Beautiful Palantir Rounded Inputs) ── */
 input, select, textarea, button {
   font-family: inherit;
-  border-radius: 10px; /* Elegant inputs/buttons by default */
+  border-radius: 8px; /* Safe rounding that wont clip text */
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
