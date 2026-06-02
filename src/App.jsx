@@ -15,129 +15,6 @@ import { LayoutDashboard, FileText, TrendingUp, BarChart3, X } from 'lucide-reac
 
 const fontStyle = { fontFamily: "'JetBrains Mono', monospace" };
 
-// Generates 30 days of highly detailed dense historical data with at least 10 trades per day
-const generateRichDemoData = (currentDate) => {
-  const trades = {};
-  const journals = {};
-  const today = new Date();
-  
-  const tickers = ['NVDA', 'TSLA', 'SPY', 'AAPL', 'AMD', 'MSFT', 'QQQ', 'BTCUSD'];
-  const strategies = ['Breakout', 'Reversal', 'Scalp', 'Momentum', 'Other'];
-  const directions = ['Long', 'Short'];
-  const assetClasses = ['Stock', 'Option', 'Future'];
-  
-  const mistakes = [
-    'None / Plan Followed',
-    'FOMO / Chasing',
-    'Sloppy Entry / Bad Fill',
-    'Early Exit / Panicked',
-    'Held Too Long / Hoped',
-    'Over-leveraged / Large Size',
-    'Ignored Stop Loss',
-    'Over-traded'
-  ];
-
-  const marketConds = ['range', 'trending-up', 'trending-down', 'choppy', 'volatile'];
-
-  for (let i = 153; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    
-    const y = d.getFullYear();
-    const mStr = String(d.getMonth() + 1).padStart(2, '0');
-    const dStr = String(d.getDate()).padStart(2, '0');
-    const dateKey = `${y}-${mStr}-${dStr}`;
-
-    // Generate at least 10 trades per day (10 to 14)
-    const numTrades = 10 + Math.floor(Math.random() * 5);
-    const dayTrades = [];
-    let dayNetPnl = 0;
-
-    for (let t = 0; t < numTrades; t++) {
-      const ticker = tickers[Math.floor(Math.random() * tickers.length)];
-      const direction = directions[Math.floor(Math.random() * directions.length)];
-      const assetClass = assetClasses[Math.floor(Math.random() * assetClasses.length)];
-      const strategy = strategies[Math.floor(Math.random() * strategies.length)];
-      
-      const entryPrice = parseFloat((100 + Math.random() * 300).toFixed(2));
-      const isWin = Math.random() < 0.58;
-      let exitPrice;
-      let mistake = 'None / Plan Followed';
-
-      if (isWin) {
-        exitPrice = parseFloat((direction === 'Long' ? entryPrice * 1.028 : entryPrice * 0.972).toFixed(2));
-      } else {
-        exitPrice = parseFloat((direction === 'Long' ? entryPrice * 0.985 : entryPrice * 1.015).toFixed(2));
-        if (Math.random() < 0.7) {
-          mistake = mistakes[Math.floor(Math.random() * (mistakes.length - 1)) + 1];
-        }
-      }
-      
-      const qty = Math.floor(15 + Math.random() * 50) * (assetClass === 'Option' ? 2 : 5);
-      const fees = parseFloat((2.50 + Math.random() * 4).toFixed(2));
-      const dirMult = direction === 'Long' ? 1 : -1;
-      const assetMult = assetClass === 'Option' ? 100 : 1;
-      
-      const grossPnl = parseFloat(((exitPrice - entryPrice) * qty * dirMult * assetMult).toFixed(2));
-      const netPnl = parseFloat((grossPnl - fees).toFixed(2));
-      dayNetPnl += netPnl;
-
-      const entryHour = 9 + Math.floor(Math.random() * 6);
-      const entryMin = String(Math.floor(Math.random() * 60)).padStart(2, '0');
-      const entrySec = String(Math.floor(Math.random() * 60)).padStart(2, '0');
-      const entryTime = `${String(entryHour).padStart(2, '0')}:${entryMin}:${entrySec}`;
-
-      const exitHour = entryHour + (Math.random() < 0.6 ? 0 : 1);
-      const exitMin = String(Math.floor(Math.random() * 60)).padStart(2, '0');
-      const exitSec = String(Math.floor(Math.random() * 60)).padStart(2, '0');
-      const exitTime = `${String(exitHour).padStart(2, '0')}:${exitMin}:${exitSec}`;
-
-      dayTrades.push({
-        id: `demo-${dateKey}-${t}`,
-        date: dateKey,
-        time: entryTime,
-        exitTime: exitTime,
-        ticker,
-        direction,
-        assetClass,
-        tickMultiplier: 1,
-        entryPrice,
-        exitPrice,
-        qty,
-        fees,
-        strategy,
-        mistake,
-        notes: isWin ? 'Target reached smoothly, solid structure.' : `Stopped out. Mistake: ${mistake}`,
-        grossPnl,
-        netPnl,
-        isOpen: false,
-        isSynced: true,
-        createdAt: d.toISOString(),
-      });
-    }
-    
-    trades[dateKey] = dayTrades;
-
-    const dayGrade = dayNetPnl > 600 ? 'A+' : dayNetPnl > 200 ? 'A' : dayNetPnl > 0 ? 'B+' : dayNetPnl > -100 ? 'B' : dayNetPnl > -300 ? 'C' : 'D';
-    const dayMood = dayNetPnl > 400 ? 'confident' : dayNetPnl > 0 ? 'focused' : dayNetPnl > -200 ? 'neutral' : 'tilted';
-    
-    journals[dateKey] = {
-      date: dateKey,
-      grade: dayGrade,
-      discipline: dayNetPnl > 0 ? Math.floor(Math.random() * 2) + 4 : Math.floor(Math.random() * 3) + 1,
-      mood: dayMood,
-      marketConditions: marketConds[Math.floor(Math.random() * marketConds.length)],
-      preMarketPlan: `Checklists active. Pivot support levels loaded for tickers. Limit initial risk exposure.`,
-      postMarketReview: `Standard day review. Realized Net: ${formatCurrency(dayNetPnl)}. Managed stop orders.`,
-      lessonsLearned: dayNetPnl > 0 ? 'Patience paid off. Standard pullback trades worked well.' : 'Accept stops quickly. Do not hold positions past rules.',
-      mistakes: dayNetPnl > 0 ? 'None' : 'Allowed size to creep beyond parameters.',
-      whatWorked: dayNetPnl > 0 ? 'Trading at key daily VWAP curves.' : 'Cut loss on second reversal attempt.',
-      updatedAt: d.toISOString()
-    };
-  }
-
-  return { trades, journals };
-};
 
 import { supabase } from './utils/supabaseClient';
 import AuthView from './components/AuthView';
@@ -303,20 +180,6 @@ export default function App() {
     setAllTrades(updated);
     saveTrades(updated);
   }, []);
-
-  // Load detailed historical mock data
-  const handleLoadDemo = useCallback(() => {
-    if (window.confirm("This will overwrite your existing data with demo data. Proceed?")) {
-      const { trades, journals } = generateRichDemoData(currentDate);
-      saveTrades(trades);
-      
-      // Save journals to localStorage
-      localStorage.setItem('trading-journal-entries', JSON.stringify(journals));
-      
-      setAllTrades(trades);
-      setAllJournals(journals);
-    }
-  }, [currentDate]);
 
   // Derived state for the active selected day
   const todayTrades = allTrades[currentDate] || [];
@@ -503,7 +366,6 @@ export default function App() {
             <SettingsView
               settings={settings}
               onSave={handleSaveSettings}
-              onLoadDemo={() => { handleLoadDemo(); setMobileMenuOpen(false); }}
               onClearData={handleClearData}
               userEmail={session.user.email}
             />

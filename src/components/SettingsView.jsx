@@ -10,7 +10,7 @@ const Tip = ({ text }) => (
   </span>
 );
 
-export default function SettingsView({ settings, onSave, onLoadDemo, onClearData, userEmail }) {
+export default function SettingsView({ settings, onSave, onClearData, userEmail }) {
   const [googleSheetId, setGoogleSheetId] = useState(settings.googleSheetId || '');
   const [quickEntry, setQuickEntry] = useState(settings.quickEntry || false);
   const [theme, setTheme] = useState(settings.theme || 'dark');
@@ -422,25 +422,6 @@ export default function SettingsView({ settings, onSave, onLoadDemo, onClearData
             </div>
             
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-              <div style={{ flex: 1, minWidth: '300px', padding: '24px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)', marginBottom: '8px' }}>Generate Demo Data</h3>
-                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
-                  Populate your journal with 150+ days of dense, realistic mock trading data to visualize the platform's capabilities.
-                </p>
-                <button
-                  onClick={onLoadDemo}
-                  style={{
-                    padding: '10px 20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
-                    background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
-                    borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-                >
-                  <Download size={14} /> Load Dense Demo Data
-                </button>
-              </div>
-
               <div style={{ flex: 1, minWidth: '300px', padding: '24px', background: 'rgba(255, 59, 92, 0.03)', borderRadius: '12px', border: '1px solid rgba(255, 59, 92, 0.2)' }}>
                 <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--color-loss)', marginBottom: '8px' }}>Erase All Data</h3>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
