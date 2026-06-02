@@ -1,5 +1,7 @@
 // Journal entry data model and storage utilities
 
+import { logActivity } from './logger';
+
 const JOURNAL_KEY = 'trading-journal-entries';
 
 export const loadJournalEntries = () => {
@@ -24,6 +26,7 @@ export const saveJournalEntry = (date, entry) => {
   const entries = loadJournalEntries();
   entries[date] = { ...entry, date, updatedAt: new Date().toISOString() };
   saveJournalEntries(entries);
+  logActivity('JOURNAL_UPDATED', `Updated daily journal for ${date}`);
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event('journal_updated'));
   }

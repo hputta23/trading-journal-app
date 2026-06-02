@@ -35,10 +35,7 @@ export default function Header({ activeTab, onTabChange, onToggleMobileMenu, the
             className="text-[13px] font-extrabold tracking-[0.12em] uppercase"
             style={{ color: 'var(--text-dark)', fontFamily: "'Outfit', sans-serif" }}
           >
-            Perseverance
-            <span style={{ marginLeft: '6px', fontSize: '9px', background: 'var(--border-active)', color: 'var(--bg-app)', padding: '2px 4px', borderRadius: '4px', verticalAlign: 'middle', letterSpacing: 'normal' }}>
-              v1.2.0
-            </span>
+            TradeOS
           </span>
           <span
             className="text-[9px] font-semibold tracking-widest uppercase"

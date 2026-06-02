@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
-import { Settings, Database, Sliders, Shield, Info, Download, Trash2, Sun, Moon, Upload, FileJson, FileSpreadsheet, LogOut } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Settings, Database, Sliders, Shield, Info, Download, Trash2, Sun, Moon, Upload, FileJson, FileSpreadsheet, LogOut, Clock } from 'lucide-react';
 import { supabase } from '../utils/supabaseClient';
+import { loadActivityLogs, clearActivityLogs } from '../utils/logger';
 
 /* ── Small reusable info tooltip ── */
 const Tip = ({ text }) => (
@@ -15,9 +16,17 @@ export default function SettingsView({ settings, onSave, userEmail }) {
   const [quickEntry, setQuickEntry] = useState(settings.quickEntry || false);
   const [theme, setTheme] = useState(settings.theme || 'dark');
   const [saveStatus, setSaveStatus] = useState(null);
+  const [logs, setLogs] = useState([]);
   
   const fileInputRef = useRef(null);
   const csvInputRef = useRef(null);
+
+  useEffect(() => {
+    setLogs(loadActivityLogs());
+    const handleLogUpdate = () => setLogs(loadActivityLogs());
+    window.addEventListener('activity_log_updated', handleLogUpdate);
+    return () => window.removeEventListener('activity_log_updated', handleLogUpdate);
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -402,39 +411,59 @@ export default function SettingsView({ settings, onSave, userEmail }) {
             </div>
           </div>
 
-          {/* ── Version History ── */}
+          {/* ── Activity Log ── */}
           <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px', border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-              <Info size={20} style={{ color: 'var(--text-accent)' }} />
-              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Version History & Changelog</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Clock size={20} style={{ color: 'var(--text-accent)' }} />
+                <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Activity Log</h2>
+              </div>
+              {logs.length > 0 && (
+                <button
+                  onClick={() => { if (window.confirm('Clear all activity logs?')) clearActivityLogs(); }}
+                  style={{
+                    padding: '6px 12px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
+                    background: 'rgba(255, 59, 92, 0.1)', border: '1px solid rgba(255, 59, 92, 0.3)', color: 'var(--color-loss)',
+                    borderRadius: '6px', cursor: 'pointer'
+                  }}
+                >
+                  Clear Log
+                </button>
+              )}
             </div>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ padding: '20px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <h3 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-dark)' }}>v1.2.0 - Resilient Cloud Sync</h3>
-                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)', background: 'var(--bg-app)', padding: '4px 8px', borderRadius: '4px' }}>Latest</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '400px', overflowY: 'auto', paddingRight: '8px' }}>
+              {logs.length === 0 ? (
+                <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '13px' }}>
+                  No recent activity to display.
                 </div>
-                <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.6' }}>
-                  <li><strong>Feature:</strong> Full bi-directional cloud synchronization for all trading and journaling data.</li>
-                  <li><strong>Feature:</strong> Auto-refresh capability when switching back to the app from the background.</li>
-                  <li><strong>Fix:</strong> Graceful degradation for missing cloud database columns to prevent app crashes.</li>
-                  <li><strong>Fix:</strong> Resolved the "White Screen of Death" crash affecting mobile users on startup.</li>
-                </ul>
-              </div>
-
-              <div style={{ padding: '20px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)', opacity: 0.8 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <h3 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-dark)' }}>v1.1.0 - Mobile Responsiveness</h3>
-                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>June 2026</span>
-                </div>
-                <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.6' }}>
-                  <li><strong>Feature:</strong> Complete UI overhaul to support mobile and tablet devices perfectly.</li>
-                  <li><strong>Feature:</strong> Gamified Analytics View with a dynamic Trader Score calculation.</li>
-                  <li><strong>Feature:</strong> Added a dedicated Settings page to manage app preferences.</li>
-                  <li><strong>Update:</strong> Renamed the application to Perseverance.</li>
-                </ul>
-              </div>
+              ) : (
+                logs.map(log => {
+                  const d = new Date(log.timestamp);
+                  const timeString = d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                  
+                  let badgeColor = 'var(--text-secondary)';
+                  if (log.type === 'TRADE_ADDED') badgeColor = 'var(--color-profit)';
+                  else if (log.type === 'TRADE_DELETED') badgeColor = 'var(--color-loss)';
+                  else if (log.type === 'TRADE_EDITED') badgeColor = '#EAB308';
+                  else if (log.type === 'JOURNAL_UPDATED') badgeColor = 'var(--text-accent)';
+                  
+                  return (
+                    <div key={log.id} style={{ padding: '16px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <div style={{ 
+                        fontSize: '10px', fontWeight: '700', letterSpacing: '0.05em', padding: '4px 8px', borderRadius: '4px',
+                        background: `color-mix(in srgb, ${badgeColor} 15%, transparent)`, color: badgeColor, minWidth: '110px', textAlign: 'center'
+                      }}>
+                        {log.type.replace('_', ' ')}
+                      </div>
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <span style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{log.description}</span>
+                        <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace" }}>{timeString}</span>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 

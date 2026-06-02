@@ -11,6 +11,7 @@ import EntryForm from './components/EntryForm';
 
 import { loadTrades, saveTrades, loadSettings, saveSettings, getDateKey } from './utils/storage';
 import { calcDailyStats, formatCurrency } from './utils/calculations';
+import { loadActivityLogs, saveActivityLogs, logActivity } from './utils/logger';
 import { LayoutDashboard, FileText, TrendingUp, BarChart3, X } from 'lucide-react';
 
 const fontStyle = { fontFamily: "'JetBrains Mono', monospace" };
@@ -25,6 +26,7 @@ export default function App() {
   const [currentDate, setCurrentDate] = useState(getDateKey());
   const [allTrades, setAllTrades] = useState({});
   const [allJournals, setAllJournals] = useState({});
+  const [activityLogs, setActivityLogs] = useState([]);
   const [settings, setSettings] = useState({ googleSheetId: '', quickEntry: false, theme: 'dark' });
   const [editingTrade, setEditingTrade] = useState(null);
   const [syncStatus, setSyncStatus] = useState(null);
@@ -86,6 +88,14 @@ export default function App() {
         setAllJournals(localJournals);
       }
       
+      // Load activity logs safely
+      if ('activity_logs' in data && data.activity_logs) {
+        setActivityLogs(data.activity_logs);
+        saveActivityLogs(data.activity_logs);
+      } else {
+        setActivityLogs(loadActivityLogs());
+      }
+      
     } catch (err) {
       console.error("Exception fetching from Supabase:", err);
     }
@@ -108,13 +118,19 @@ export default function App() {
       const latestJournals = JSON.parse(localStorage.getItem('trading-journal-entries') || '{}');
       setAllJournals(latestJournals);
     };
+    
+    const handleLogUpdate = () => {
+      setActivityLogs(loadActivityLogs());
+    };
 
     document.addEventListener('visibilitychange', handleVisibility);
     window.addEventListener('journal_updated', handleJournalUpdate);
+    window.addEventListener('activity_log_updated', handleLogUpdate);
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('journal_updated', handleJournalUpdate);
+      window.removeEventListener('activity_log_updated', handleLogUpdate);
     };
   }, [session, fetchCloudData]);
 
@@ -141,6 +157,9 @@ export default function App() {
         if (data && 'journals' in data) {
           updatePayload.journals = allJournals;
         }
+        if (data && 'activity_logs' in data) {
+          updatePayload.activity_logs = activityLogs;
+        }
         
         await supabase
           .from('user_data')
@@ -151,7 +170,7 @@ export default function App() {
       }
     };
     syncToCloud();
-  }, [allTrades, allJournals, session]);
+  }, [allTrades, allJournals, activityLogs, session]);
 
   // Apply theme to document element
   useEffect(() => {
@@ -191,14 +210,21 @@ export default function App() {
     const updated = { ...allTrades };
     if (!updated[dateKey]) updated[dateKey] = [];
     const existingIdx = updated[dateKey].findIndex(t => t.id === trade.id);
+    let isEdit = false;
     if (existingIdx >= 0) {
       updated[dateKey][existingIdx] = trade;
+      isEdit = true;
     } else {
       updated[dateKey].push(trade);
     }
     persistTrades(updated);
     setEditingTrade(null);
     setShowGlobalTradeModal(false);
+    
+    logActivity(
+      isEdit ? 'TRADE_EDITED' : 'TRADE_ADDED', 
+      `${isEdit ? 'Updated' : 'Entered'} ${trade.direction} trade on ${trade.ticker} for ${dateKey}`
+    );
   }, [allTrades, currentDate, persistTrades]);
 
   const handleDeleteTrade = useCallback((id) => {
@@ -208,6 +234,7 @@ export default function App() {
       if (updated[currentDate].length === 0) delete updated[currentDate];
     }
     persistTrades(updated);
+    logActivity('TRADE_DELETED', `Deleted trade from ${currentDate}`);
   }, [allTrades, currentDate, persistTrades]);
 
   const handleEditTrade = useCallback((trade) => {
@@ -218,6 +245,7 @@ export default function App() {
   const handleSaveSettings = useCallback((s) => { 
     setSettings(s); 
     saveSettings(s); 
+    logActivity('SETTINGS_CHANGED', 'Updated application settings');
   }, []);
 
   const handleToggleTheme = useCallback(() => {
