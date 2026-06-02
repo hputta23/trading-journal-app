@@ -52,7 +52,12 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
         <button 
           onClick={onManualSync}
           className="flex items-center justify-center w-9 h-9 rounded-lg cursor-pointer transition-all duration-200"
-          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)', color: cloudSyncStatus === 'error' ? 'var(--color-loss)' : cloudSyncStatus === 'syncing' ? 'var(--text-accent)' : 'var(--text-secondary)' }}
+          style={{ 
+            background: 'var(--bg-card)', 
+            border: '1px solid var(--border-card)', 
+            color: cloudSyncStatus === 'error' ? 'var(--color-loss)' : cloudSyncStatus === 'syncing' ? 'var(--text-accent)' : 'var(--text-secondary)',
+            boxShadow: cloudSyncStatus === 'syncing' ? '0 0 10px rgba(0, 200, 5, 0.2)' : 'none'
+          }}
           title={cloudSyncStatus === 'error' ? 'Cloud Sync Failed (Click to retry)' : cloudSyncStatus === 'syncing' ? 'Syncing to Cloud...' : 'Cloud Synced (Click to refresh)'}
         >
           {cloudSyncStatus === 'error' ? <CloudOff size={16} /> : cloudSyncStatus === 'syncing' ? <RefreshCw size={14} className="animate-spin" /> : <Cloud size={16} />}

@@ -12,7 +12,7 @@ import EntryForm from './components/EntryForm';
 import { loadTrades, saveTrades, loadSettings, saveSettings, getDateKey } from './utils/storage';
 import { calcDailyStats } from './utils/calculations';
 import { loadActivityLogs, saveActivityLogs, logActivity } from './utils/logger';
-import { LayoutDashboard, FileText, TrendingUp, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, FileText, TrendingUp, BarChart3, RefreshCw } from 'lucide-react';
 
 import { supabase } from './utils/supabaseClient';
 import AuthView from './components/AuthView';
@@ -30,6 +30,36 @@ export default function App() {
   const [syncStatus, setSyncStatus] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showGlobalTradeModal, setShowGlobalTradeModal] = useState(false);
+
+  // Pull to Refresh State
+  const [pullY, setPullY] = useState(0);
+  const pullStart = useRef(0);
+  const scrollRef = useRef(null);
+
+  const handleTouchStart = (e) => {
+    if (scrollRef.current && scrollRef.current.scrollTop === 0) {
+      pullStart.current = e.touches[0].clientY;
+    } else {
+      pullStart.current = 0;
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (!pullStart.current) return;
+    const y = e.touches[0].clientY;
+    const diff = y - pullStart.current;
+    if (diff > 0) {
+      setPullY(Math.min(diff * 0.4, 70)); // Add resistance, max 70px
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (pullY >= 60) {
+      fetchCloudData(); // Trigger manual refresh
+    }
+    setPullY(0);
+    pullStart.current = 0;
+  };
 
   // Auth Initialization
   useEffect(() => {
@@ -357,8 +387,31 @@ export default function App() {
         </div>
 
         {/* ── Main View Panel Container (Right Side on Desktop) ── */}
-        <div className="flex-1 overflow-y-auto min-h-0 bg-[var(--bg-app)] pb-16 md:pb-0">
-          {activeTab === 'dashboard' && (
+        <div className="flex-1 min-h-0 bg-[var(--bg-app)] relative overflow-hidden">
+          
+          {/* Pull to Refresh Indicator */}
+          <div 
+            className="absolute top-0 left-0 right-0 flex justify-center items-center pointer-events-none transition-transform"
+            style={{ 
+              height: 60, 
+              transform: `translateY(${pullY > 0 ? (pullY - 60) : -60}px)`,
+              opacity: pullY / 60 
+            }}
+          >
+            <div className="bg-[var(--bg-card)] border border-[var(--border-card)] rounded-full p-2 shadow-lg">
+              <RefreshCw size={20} className={cloudSyncStatus === 'syncing' ? "animate-spin text-[var(--text-accent)]" : "text-[var(--text-secondary)]"} style={{ transform: `rotate(${pullY * 2}deg)` }} />
+            </div>
+          </div>
+
+          <div 
+            ref={scrollRef}
+            className="w-full h-full overflow-y-auto pb-16 md:pb-0 transition-transform duration-200"
+            style={{ transform: `translateY(${pullY}px)` }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {activeTab === 'dashboard' && (
             <DashboardView
               allTrades={allTrades}
               onSubmitTrade={handleSubmitTrade}
@@ -409,7 +462,8 @@ export default function App() {
               onSave={handleSaveSettings}
               userEmail={session.user.email}
             />
-          )}
+            )}
+          </div>
         </div>
       </div>
 
