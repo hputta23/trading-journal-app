@@ -215,20 +215,6 @@ export default function App() {
     setShowGlobalTradeModal(true);
   }, []);
 
-  const handleClearData = useCallback(async () => {
-    if (!session) return;
-    try {
-      await supabase.from('user_data').update({ trades: {}, journals: {} }).eq('user_id', session.user.id);
-      localStorage.removeItem('trading-journal-trades');
-      localStorage.removeItem('trading-journal-entries');
-      setAllTrades({});
-      setAllJournals({});
-      window.location.reload();
-    } catch (err) {
-      console.error("Failed to clear cloud data:", err);
-    }
-  }, [session]);
-
   const handleSaveSettings = useCallback((s) => { 
     setSettings(s); 
     saveSettings(s); 
@@ -366,7 +352,6 @@ export default function App() {
             <SettingsView
               settings={settings}
               onSave={handleSaveSettings}
-              onClearData={handleClearData}
               userEmail={session.user.email}
             />
           )}

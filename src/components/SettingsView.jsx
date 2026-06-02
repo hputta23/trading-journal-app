@@ -10,7 +10,7 @@ const Tip = ({ text }) => (
   </span>
 );
 
-export default function SettingsView({ settings, onSave, onClearData, userEmail }) {
+export default function SettingsView({ settings, onSave, userEmail }) {
   const [googleSheetId, setGoogleSheetId] = useState(settings.googleSheetId || '');
   const [quickEntry, setQuickEntry] = useState(settings.quickEntry || false);
   const [theme, setTheme] = useState(settings.theme || 'dark');
@@ -27,18 +27,6 @@ export default function SettingsView({ settings, onSave, onClearData, userEmail 
     onSave({ googleSheetId, quickEntry, theme });
     setSaveStatus('success');
     setTimeout(() => setSaveStatus(null), 3000);
-  };
-
-  const handleClearData = () => {
-    if (window.confirm("Are you sure you want to clear ALL trading data? This cannot be undone.")) {
-      if (onClearData) {
-        onClearData();
-      } else {
-        localStorage.removeItem('trading-journal-trades');
-        localStorage.removeItem('trading-journal-entries');
-        window.location.reload();
-      }
-    }
   };
 
   const handleExportJSON = () => {
@@ -414,31 +402,38 @@ export default function SettingsView({ settings, onSave, onClearData, userEmail 
             </div>
           </div>
 
-          {/* ── Danger Zone ── */}
-          <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px', border: '1px solid rgba(255, 59, 92, 0.3)', gridColumn: '1 / -1' }}>
+          {/* ── Version History ── */}
+          <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px', border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-              <Trash2 size={20} style={{ color: 'var(--color-loss)' }} />
-              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Factory Reset</h2>
+              <Info size={20} style={{ color: 'var(--text-accent)' }} />
+              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Version History & Changelog</h2>
             </div>
             
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-              <div style={{ flex: 1, minWidth: '300px', padding: '24px', background: 'rgba(255, 59, 92, 0.03)', borderRadius: '12px', border: '1px solid rgba(255, 59, 92, 0.2)' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--color-loss)', marginBottom: '8px' }}>Erase All Data</h3>
-                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
-                  Permanently delete all trades, journals, and local storage data. This action cannot be reversed.
-                </p>
-                <button
-                  onClick={handleClearData}
-                  style={{
-                    padding: '10px 20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
-                    background: 'rgba(255, 59, 92, 0.1)', border: '1px solid rgba(255, 59, 92, 0.3)', color: 'var(--color-loss)',
-                    borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px'
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-loss)'; e.currentTarget.style.color = '#fff'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 59, 92, 0.1)'; e.currentTarget.style.color = 'var(--color-loss)'; }}
-                >
-                  <Trash2 size={14} /> Factory Reset
-                </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ padding: '20px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <h3 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-dark)' }}>v1.2.0 - Resilient Cloud Sync</h3>
+                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)', background: 'var(--bg-app)', padding: '4px 8px', borderRadius: '4px' }}>Latest</span>
+                </div>
+                <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.6' }}>
+                  <li><strong>Feature:</strong> Full bi-directional cloud synchronization for all trading and journaling data.</li>
+                  <li><strong>Feature:</strong> Auto-refresh capability when switching back to the app from the background.</li>
+                  <li><strong>Fix:</strong> Graceful degradation for missing cloud database columns to prevent app crashes.</li>
+                  <li><strong>Fix:</strong> Resolved the "White Screen of Death" crash affecting mobile users on startup.</li>
+                </ul>
+              </div>
+
+              <div style={{ padding: '20px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)', opacity: 0.8 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <h3 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-dark)' }}>v1.1.0 - Mobile Responsiveness</h3>
+                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>June 2026</span>
+                </div>
+                <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.6' }}>
+                  <li><strong>Feature:</strong> Complete UI overhaul to support mobile and tablet devices perfectly.</li>
+                  <li><strong>Feature:</strong> Gamified Analytics View with a dynamic Trader Score calculation.</li>
+                  <li><strong>Feature:</strong> Added a dedicated Settings page to manage app preferences.</li>
+                  <li><strong>Update:</strong> Renamed the application to Perseverance.</li>
+                </ul>
               </div>
             </div>
           </div>
