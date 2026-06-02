@@ -98,6 +98,7 @@ const emptyForm = {
   entryTime: '',
   exitTime: '',
   fees: '',
+  netPnlOverride: '',
   notes: '',
   mistake: 'None / Plan Followed',
   imageUrl: '',
@@ -125,6 +126,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
         entryTime: editingTrade.time || '',
         exitTime: editingTrade.exitTime || '',
         fees: editingTrade.fees || '',
+        netPnlOverride: editingTrade.netPnlOverride !== undefined && editingTrade.netPnlOverride !== null ? editingTrade.netPnlOverride : '',
         notes: editingTrade.notes || '',
         mistake: editingTrade.mistake || 'None / Plan Followed',
         advancedExecution: false,
@@ -203,8 +205,14 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
   }, [form.advancedExecution, form.entryLegs, form.exitLegs]);
 
   const handleSubmit = useCallback(() => {
-    const grossPnl = calcGrossPnl(form.entryPrice, form.exitPrice, form.qty, form.direction, form.assetClass, form.tickMultiplier);
-    const netPnl = calcNetPnl(grossPnl, form.fees);
+    let grossPnl = calcGrossPnl(form.entryPrice, form.exitPrice, form.qty, form.direction, form.assetClass, form.tickMultiplier);
+    let netPnl = calcNetPnl(grossPnl, form.fees);
+    
+    if (form.netPnlOverride !== '' && form.netPnlOverride !== undefined && form.netPnlOverride !== null) {
+      netPnl = Number(form.netPnlOverride);
+      grossPnl = netPnl + (Number(form.fees) || 0);
+    }
+    
     const isOpen = !form.exitPrice || form.exitPrice === '';
     const now = new Date();
     const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -228,6 +236,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
       imageUrl: form.imageUrl || '',
       grossPnl,
       netPnl,
+      netPnlOverride: form.netPnlOverride !== '' && form.netPnlOverride !== undefined && form.netPnlOverride !== null ? Number(form.netPnlOverride) : null,
       isOpen,
       isSynced: editingTrade ? editingTrade.isSynced : false,
       createdAt: editingTrade ? editingTrade.createdAt : now.toISOString(),
@@ -361,6 +370,10 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           <div>
             <FieldLabel>Fees</FieldLabel>
             <input type="number" step="any" value={form.fees} onChange={e => update('fees', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
+          </div>
+          <div>
+            <FieldLabel optional>Net P&L Override</FieldLabel>
+            <input type="number" step="any" value={form.netPnlOverride} onChange={e => update('netPnlOverride', e.target.value)} placeholder="Auto" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           {form.assetClass === 'Future' && (
             <div>
@@ -599,10 +612,14 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <FieldLabel>Fees accrued</FieldLabel>
               <input type="number" step="any" value={form.fees} onChange={e => update('fees', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+            </div>
+            <div>
+              <FieldLabel optional>Net P&L Override</FieldLabel>
+              <input type="number" step="any" value={form.netPnlOverride} onChange={e => update('netPnlOverride', e.target.value)} placeholder="Auto" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
             </div>
             <div>
               <FieldLabel optional>Image URL</FieldLabel>
