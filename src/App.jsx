@@ -29,6 +29,7 @@ export default function App() {
   const [activityLogs, setActivityLogs] = useState([]);
   const [settings, setSettings] = useState({ googleSheetId: '', quickEntry: false, theme: 'dark' });
   const [editingTrade, setEditingTrade] = useState(null);
+  const [cloudSyncStatus, setCloudSyncStatus] = useState('synced');
   const [syncStatus, setSyncStatus] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showGlobalTradeModal, setShowGlobalTradeModal] = useState(false);
@@ -51,6 +52,7 @@ export default function App() {
   const fetchCloudData = useCallback(async () => {
     if (!session) return;
     
+    setCloudSyncStatus('syncing');
     const localTrades = loadTrades();
     const localJournals = JSON.parse(localStorage.getItem('trading-journal-entries') || '{}');
     
@@ -71,10 +73,23 @@ export default function App() {
         }
         setAllTrades(localTrades);
         setAllJournals(localJournals);
+        setCloudSyncStatus('error');
         return;
       }
         
       const cloudTrades = data.trades || {};
+      
+      // DATA SAFEGUARD: If cloud is completely empty, but local has data, 
+      // assume cloud wipe was accidental or a new device, and push local UP instead of pulling cloud DOWN.
+      const localTradesKeys = Object.keys(localTrades).length;
+      const cloudTradesKeys = Object.keys(cloudTrades).length;
+      if (cloudTradesKeys === 0 && localTradesKeys > 0) {
+        console.warn('Cloud is empty but local has data. Preserving local data.');
+        setAllTrades(localTrades);
+        setAllJournals(localJournals);
+        setCloudSyncStatus('synced');
+        return; // Early return to prevent overwriting local storage
+      }
       
       setAllTrades(cloudTrades);
       saveTrades(cloudTrades);
@@ -96,8 +111,10 @@ export default function App() {
         setActivityLogs(loadActivityLogs());
       }
       
+      setCloudSyncStatus('synced');
     } catch (err) {
       console.error("Exception fetching from Supabase:", err);
+      setCloudSyncStatus('error');
     }
   }, [session]);
 
@@ -149,6 +166,7 @@ export default function App() {
     localStorage.setItem('trading-journal-entries', JSON.stringify(allJournals));
     
     const syncToCloud = async () => {
+      setCloudSyncStatus('syncing');
       try {
         // First fetch to see if journals column exists
         const { data } = await supabase.from('user_data').select('*').eq('user_id', session.user.id).single();
@@ -165,8 +183,11 @@ export default function App() {
           .from('user_data')
           .update(updatePayload)
           .eq('user_id', session.user.id);
+          
+        setCloudSyncStatus('synced');
       } catch (err) {
         console.error("Cloud sync failed:", err);
+        setCloudSyncStatus('error');
       }
     };
     syncToCloud();
@@ -311,10 +332,10 @@ export default function App() {
         onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
         theme={settings.theme}
         onToggleTheme={handleToggleTheme}
+        cloudSyncStatus={cloudSyncStatus}
       />
 
       <div className="flex-1 flex min-h-0 w-full overflow-hidden">
-        
         {/* ── Persistent Global Left Navigation & Session Stats Sidebar (Left Side on Desktop) ── */}
         <div className={`sidebar-left shrink-0 w-[255px] md:block ${mobileMenuOpen ? 'mobile-open' : 'hidden'}`}>
           <SidebarStats

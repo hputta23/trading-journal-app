@@ -1,7 +1,7 @@
-import { Menu, TrendingUp, Sun, Moon, Activity } from 'lucide-react';
+import { Menu, TrendingUp, Sun, Moon, Activity, Cloud, CloudOff, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-export default function Header({ activeTab, onTabChange, onToggleMobileMenu, theme = 'dark', onToggleTheme }) {
+export default function Header({ activeTab, onTabChange, onToggleMobileMenu, theme = 'dark', onToggleTheme, cloudSyncStatus = 'synced' }) {
   const [now, setNow] = useState(new Date());
 
   // Keep clock ticking
@@ -48,6 +48,15 @@ export default function Header({ activeTab, onTabChange, onToggleMobileMenu, the
 
       {/* Right side: live clock + theme toggle + menu */}
       <div className="flex items-center gap-3">
+        {/* Cloud Sync Status */}
+        <div 
+          className="flex items-center justify-center w-9 h-9 rounded-lg"
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)', color: cloudSyncStatus === 'error' ? 'var(--color-loss)' : cloudSyncStatus === 'syncing' ? 'var(--text-accent)' : 'var(--text-secondary)' }}
+          title={cloudSyncStatus === 'error' ? 'Cloud Sync Failed' : cloudSyncStatus === 'syncing' ? 'Syncing to Cloud...' : 'Cloud Synced'}
+        >
+          {cloudSyncStatus === 'error' ? <CloudOff size={16} /> : cloudSyncStatus === 'syncing' ? <RefreshCw size={14} className="animate-spin" /> : <Cloud size={16} />}
+        </div>
+        
         {/* Live Clock — hidden on very small screens */}
         <div
           className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg"
