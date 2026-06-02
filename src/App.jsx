@@ -246,13 +246,14 @@ export default function App() {
   useEffect(() => {
     if (!session) return;
     
-    saveTrades(allTrades);
-    localStorage.setItem('trading-journal-entries', JSON.stringify(allJournals));
-    
     if (initialMount.current) {
       initialMount.current = false;
       return;
     }
+
+    // Only save to local storage AFTER the initial mount / cloud fetch has occurred
+    saveTrades(allTrades);
+    localStorage.setItem('trading-journal-entries', JSON.stringify(allJournals));
     
     const syncToCloud = async () => {
       try {
