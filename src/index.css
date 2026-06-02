@@ -512,13 +512,14 @@ td, th {
   }
 
   .sidebar-left.mobile-open {
-    display: block;
+    display: block !important;
     position: fixed;
     top: 56px;
     right: 0;
     left: 40px; /* Slides in from right, leaving left blur overlay */
-    bottom: 56px;
-    z-index: 40;
+    width: auto !important;
+    bottom: 0;
+    z-index: 50;
     background: var(--bg-sidebar);
     border-left: 1px solid var(--border-card);
     border-right: none;
@@ -565,7 +566,7 @@ td, th {
   }
 
   #root {
-    padding-bottom: 56px;
+    padding-bottom: 0;
   }
 }
 

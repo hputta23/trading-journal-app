@@ -336,9 +336,19 @@ export default function App() {
         onManualSync={fetchCloudData}
       />
 
-      <div className="flex-1 flex min-h-0 w-full overflow-hidden">
+      <div className="flex-1 flex min-h-0 w-full overflow-hidden relative">
+        
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div 
+            className="fixed inset-0 z-40 md:hidden backdrop-blur-sm"
+            style={{ background: 'rgba(0,0,0,0.6)' }}
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+        
         {/* ── Persistent Global Left Navigation & Session Stats Sidebar (Left Side on Desktop) ── */}
-        <div className={`sidebar-left shrink-0 w-[255px] md:block ${mobileMenuOpen ? 'mobile-open' : 'hidden'}`}>
+        <div className={`sidebar-left shrink-0 w-[255px] md:block ${mobileMenuOpen ? 'mobile-open z-50' : 'hidden'}`}>
           <SidebarStats
             stats={stats}
             activeTab={activeTab}
