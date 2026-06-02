@@ -24,6 +24,9 @@ export const saveJournalEntry = (date, entry) => {
   const entries = loadJournalEntries();
   entries[date] = { ...entry, date, updatedAt: new Date().toISOString() };
   saveJournalEntries(entries);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('journal_updated'));
+  }
   return entries;
 };
 

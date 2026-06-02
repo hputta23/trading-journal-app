@@ -147,6 +147,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [currentDate, setCurrentDate] = useState(getDateKey());
   const [allTrades, setAllTrades] = useState({});
+  const [allJournals, setAllJournals] = useState({});
   const [settings, setSettings] = useState({ googleSheetId: '', quickEntry: false, theme: 'dark' });
   const [editingTrade, setEditingTrade] = useState(null);
   const [syncStatus, setSyncStatus] = useState(null);
@@ -168,68 +169,96 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Load data on mount
-  useEffect(() => {
+  const fetchCloudData = useCallback(async () => {
     if (!session) return;
     
-    const fetchCloudData = async () => {
-      const localTrades = loadTrades();
-      
-      try {
-        const { data, error } = await supabase
-          .from('user_data')
-          .select('trades')
-          .eq('user_id', session.user.id)
-          .single();
-          
-        if (error) {
-          console.error("Supabase fetch error (table might not exist):", error.message);
-          // If table doesn't exist or row doesn't exist, fallback to local
-          setAllTrades(localTrades);
-          return;
-        }
-          
-        if (data && data.trades && Object.keys(data.trades).length > 0) {
-          setAllTrades(data.trades);
-        } else {
-          // New user row but no trades, preserve local
-          const { error: insertErr } = await supabase.from('user_data').insert([{ user_id: session.user.id, trades: localTrades }]);
-          if (insertErr) {
-             console.error("Supabase insert error:", insertErr.message);
-          }
-          setAllTrades(localTrades);
-        }
-      } catch (err) {
-        console.error("Exception fetching from Supabase:", err);
-        setAllTrades(localTrades);
-      }
-    };
+    const localTrades = loadTrades();
+    const localJournals = JSON.parse(localStorage.getItem('trading-journal-entries') || '{}');
     
+    try {
+      const { data, error } = await supabase
+        .from('user_data')
+        .select('trades, journals')
+        .eq('user_id', session.user.id)
+        .single();
+        
+      if (error) {
+        if (error.code === 'PGRST116') {
+          const { error: insertErr } = await supabase.from('user_data').insert([{ user_id: session.user.id, trades: localTrades, journals: localJournals }]);
+          if (insertErr) console.error("Supabase insert error:", insertErr.message);
+        } else {
+          console.error("Supabase fetch error:", error.message);
+        }
+        setAllTrades(localTrades);
+        setAllJournals(localJournals);
+        return;
+      }
+        
+      const cloudTrades = data.trades || {};
+      const cloudJournals = data.journals || {};
+      
+      setAllTrades(cloudTrades);
+      setAllJournals(cloudJournals);
+      saveTrades(cloudTrades);
+      localStorage.setItem('trading-journal-entries', JSON.stringify(cloudJournals));
+      
+    } catch (err) {
+      console.error("Exception fetching from Supabase:", err);
+    }
+  }, [session]);
+
+  // Load data on mount and on visibility change
+  useEffect(() => {
+    if (!session) return;
     fetchCloudData();
     const s = loadSettings();
     setSettings(s);
-  }, [session]);
+    
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        fetchCloudData();
+      }
+    };
+    
+    const handleJournalUpdate = () => {
+      const latestJournals = JSON.parse(localStorage.getItem('trading-journal-entries') || '{}');
+      setAllJournals(latestJournals);
+    };
 
-  // Sync to Cloud whenever allTrades changes
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('journal_updated', handleJournalUpdate);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('journal_updated', handleJournalUpdate);
+    };
+  }, [session, fetchCloudData]);
+
+  // Sync to Cloud whenever trades or journals change
+  const initialMount = React.useRef(true);
   useEffect(() => {
-    if (!session || Object.keys(allTrades).length === 0) return;
+    if (!session) return;
     
-    // Save locally first for fast offline fallback
     saveTrades(allTrades);
+    localStorage.setItem('trading-journal-entries', JSON.stringify(allJournals));
     
-    // Then sync to Supabase
+    if (initialMount.current) {
+      initialMount.current = false;
+      return;
+    }
+    
     const syncToCloud = async () => {
       try {
         await supabase
           .from('user_data')
-          .update({ trades: allTrades, updated_at: new Date() })
+          .update({ trades: allTrades, journals: allJournals, updated_at: new Date() })
           .eq('user_id', session.user.id);
       } catch (err) {
         console.error("Cloud sync failed:", err);
       }
     };
     syncToCloud();
-  }, [allTrades, session]);
+  }, [allTrades, allJournals, session]);
 
   // Apply theme to document element
   useEffect(() => {
@@ -261,11 +290,16 @@ export default function App() {
 
   // Load detailed historical mock data
   const handleLoadDemo = useCallback(() => {
-    const { trades, journals } = generateRichDemoData(currentDate);
-    setAllTrades(trades);
-    saveTrades(trades);
-    localStorage.setItem('trading-journal-entries', JSON.stringify(journals));
-    setActiveTab('dashboard');
+    if (window.confirm("This will overwrite your existing data with demo data. Proceed?")) {
+      const { trades, journals } = generateRichDemoData(currentDate);
+      saveTrades(trades);
+      
+      // Save journals to localStorage
+      localStorage.setItem('trading-journal-entries', JSON.stringify(journals));
+      
+      setAllTrades(trades);
+      setAllJournals(journals);
+    }
   }, [currentDate]);
 
   // Derived state for the active selected day
@@ -305,10 +339,11 @@ export default function App() {
   const handleClearData = useCallback(async () => {
     if (!session) return;
     try {
-      await supabase.from('user_data').update({ trades: {} }).eq('user_id', session.user.id);
+      await supabase.from('user_data').update({ trades: {}, journals: {} }).eq('user_id', session.user.id);
       localStorage.removeItem('trading-journal-trades');
       localStorage.removeItem('trading-journal-entries');
       setAllTrades({});
+      setAllJournals({});
       window.location.reload();
     } catch (err) {
       console.error("Failed to clear cloud data:", err);
