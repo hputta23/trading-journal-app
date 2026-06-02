@@ -178,13 +178,14 @@ export default function App() {
     try {
       const { data, error } = await supabase
         .from('user_data')
-        .select('trades, journals')
+        .select('*')
         .eq('user_id', session.user.id)
         .single();
         
       if (error) {
         if (error.code === 'PGRST116') {
-          const { error: insertErr } = await supabase.from('user_data').insert([{ user_id: session.user.id, trades: localTrades, journals: localJournals }]);
+          // If inserting, we don't know if journals column exists, so just insert trades to be safe.
+          const { error: insertErr } = await supabase.from('user_data').insert([{ user_id: session.user.id, trades: localTrades }]);
           if (insertErr) console.error("Supabase insert error:", insertErr.message);
         } else {
           console.error("Supabase fetch error:", error.message);
@@ -195,12 +196,18 @@ export default function App() {
       }
         
       const cloudTrades = data.trades || {};
-      const cloudJournals = data.journals || {};
       
       setAllTrades(cloudTrades);
-      setAllJournals(cloudJournals);
       saveTrades(cloudTrades);
-      localStorage.setItem('trading-journal-entries', JSON.stringify(cloudJournals));
+      
+      // Only set cloud journals if the column actually exists in their Supabase table
+      if ('journals' in data && data.journals) {
+        const cloudJournals = data.journals;
+        setAllJournals(cloudJournals);
+        localStorage.setItem('trading-journal-entries', JSON.stringify(cloudJournals));
+      } else {
+        setAllJournals(localJournals);
+      }
       
     } catch (err) {
       console.error("Exception fetching from Supabase:", err);
@@ -249,9 +256,17 @@ export default function App() {
     
     const syncToCloud = async () => {
       try {
+        // First fetch to see if journals column exists
+        const { data } = await supabase.from('user_data').select('*').eq('user_id', session.user.id).single();
+        
+        const updatePayload = { trades: allTrades, updated_at: new Date() };
+        if (data && 'journals' in data) {
+          updatePayload.journals = allJournals;
+        }
+        
         await supabase
           .from('user_data')
-          .update({ trades: allTrades, journals: allJournals, updated_at: new Date() })
+          .update(updatePayload)
           .eq('user_id', session.user.id);
       } catch (err) {
         console.error("Cloud sync failed:", err);
