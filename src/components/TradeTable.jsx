@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pencil, Trash2, ExternalLink, Check, X, CheckCircle, Image as ImageIcon } from 'lucide-react';
+import { Pencil, Trash2, Check, X, Image as ImageIcon } from 'lucide-react';
 import { formatCurrency, formatNumber } from '../utils/calculations';
 
 const EmptyTable = () => (

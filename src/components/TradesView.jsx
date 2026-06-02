@@ -1,12 +1,11 @@
 import { useState, useMemo } from 'react';
-import { Search, Plus, Filter, RotateCcw, X, Target, Info } from 'lucide-react';
+import { Search, Plus, Filter, RotateCcw, Target, Info } from 'lucide-react';
 import TradeTable from './TradeTable';
 import EntryForm from './EntryForm';
 import TerminalWindow from './TerminalWindow';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 
 const fontStyle = { fontFamily: "'Plus Jakarta Sans', sans-serif" };
-const monoStyle = { fontFamily: "'JetBrains Mono', monospace" };
 const inputStyle = {
   background: 'var(--bg-input)',
   borderColor: 'var(--border-input)',

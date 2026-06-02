@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronRight, ChevronLeft, Check, Clock, Zap, Target, BookOpen, AlertTriangle, Plus, X, Calculator } from 'lucide-react';
+import { ChevronLeft, Check, Clock, Zap, Target, Plus, X, Calculator } from 'lucide-react';
 import { calcGrossPnl, calcNetPnl, formatCurrency } from '../utils/calculations';
 import { v4 as uuidv4 } from 'uuid';
 
-const STRATEGIES = ['Breakout', 'Reversal', 'Scalp', 'Momentum', 'Other'];
 const ASSET_CLASSES = ['Stock', 'Option', 'Future'];
 const MISTAKES = [
   'None / Plan Followed',
@@ -17,7 +16,6 @@ const MISTAKES = [
 ];
 
 const fontStyle = { fontFamily: "'Outfit', sans-serif" };
-const monoStyle = { fontFamily: "'JetBrains Mono', monospace" };
 
 const inputStyle = {
   background: 'var(--bg-input)',
@@ -114,6 +112,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
 
   useEffect(() => {
     if (editingTrade) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         ticker: editingTrade.ticker || '',
         assetClass: editingTrade.assetClass || 'Stock',
@@ -190,6 +189,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
       const avgExit = totalExitQty > 0 ? (totalExitCost / totalExitQty).toFixed(4).replace(/\.?0+$/, '') : '';
       const finalQty = totalEntryQty > 0 ? totalEntryQty.toString() : '';
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm(prev => {
         if (prev.entryPrice === avgEntry && prev.exitPrice === avgExit && prev.qty === finalQty) return prev;
         return {
@@ -262,7 +262,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
   const grossPreview = calcGrossPnl(form.entryPrice, form.exitPrice, form.qty, form.direction, form.assetClass, form.tickMultiplier);
   const netPreview = calcNetPnl(grossPreview, form.fees);
 
-  const PnlPreview = () => {
+  const renderPnlPreview = () => {
     if (grossPreview === null) return null;
     return (
       <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 pt-4 border-t border-[var(--border-card)]">
@@ -286,7 +286,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
     );
   };
 
-  const SubmitButton = ({ label }) => (
+  const renderSubmitButton = (label) => (
     <button
       type="button"
       onClick={handleSubmit}
@@ -298,7 +298,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
     </button>
   );
 
-  const FormTitle = () => (
+  const renderFormTitle = () => (
     <div className="flex items-center justify-between mb-4 select-none">
       <div className="flex items-center gap-2">
         {quickEntry && <Zap size={13} className="text-[var(--text-accent)] pulse-cyan" />}
@@ -324,7 +324,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
   if (quickEntry) {
     return (
       <div className="p-4 w-full">
-        <FormTitle />
+        {renderFormTitle()}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-4">
           <div>
             <FieldLabel>Ticker</FieldLabel>
@@ -402,9 +402,9 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             <input value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Add any session notes here..." className="w-full px-4 py-4 text-base border font-bold" style={whiteInputStyle} />
           </div>
         </div>
-        <PnlPreview />
+        {renderPnlPreview()}
         <div className="mt-5">
-          <SubmitButton label={editingTrade ? 'Update Record' : 'Submit Record'} />
+          {renderSubmitButton(editingTrade ? 'Update Record' : 'Submit Record')}
         </div>
       </div>
     );
@@ -413,7 +413,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
   /* ═══ WIZARD MODE ═══ */
   return (
     <div className="p-4 w-full select-none">
-      <FormTitle />
+      {renderFormTitle()}
       <StepIndicator currentStep={step} />
 
       {/* Step 1 — WHAT */}
@@ -669,7 +669,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           </div>
 
           <div className="p-5 border bg-[var(--bg-sidebar)] border-[var(--border-card)]">
-            <PnlPreview />
+            {renderPnlPreview()}
           </div>
 
           <div className="flex justify-between items-center pt-3">

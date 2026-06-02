@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Target, TrendingUp, TrendingDown, Activity, Clock, ShieldAlert, BarChart3, AlertTriangle } from 'lucide-react';
+import { Target, TrendingUp, Activity, BarChart3, AlertTriangle } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, BarChart, Bar, Cell } from 'recharts';
 import { formatCurrency, formatPercent } from '../utils/calculations';
 
@@ -43,22 +43,25 @@ export default function AnalyticsView({ allTrades }) {
     let peak = 0;
     let maxDrawdown = 0;
     
-    return closedTrades.map((t, index) => {
+    const pts = [];
+    for (let i = 0; i < closedTrades.length; i++) {
+      const t = closedTrades[i];
       cumulative += t.netPnl;
       if (cumulative > peak) peak = cumulative;
       
       const currentDrawdown = cumulative - peak;
       if (currentDrawdown < maxDrawdown) maxDrawdown = currentDrawdown;
 
-      return {
-        tradeNumber: index + 1,
+      pts.push({
+        tradeNumber: i + 1,
         date: t.date,
         ticker: t.ticker,
         pnl: t.netPnl,
         cumulative: Number(cumulative.toFixed(2)),
         drawdown: Number(currentDrawdown.toFixed(2))
-      };
-    });
+      });
+    }
+    return pts;
   }, [closedTrades]);
 
   const currentEquity = equityCurveData.length > 0 ? equityCurveData[equityCurveData.length - 1].cumulative : 0;
@@ -88,7 +91,7 @@ export default function AnalyticsView({ allTrades }) {
       count,
       isProfit: !name.includes('-')
     }));
-  }, [closedTrades]);
+  }, [closedTrades, hasData]);
 
   const statsSummary = useMemo(() => {
     const winners = closedTrades.filter(t => t.netPnl > 0);

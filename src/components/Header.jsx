@@ -1,7 +1,7 @@
 import { Menu, TrendingUp, Sun, Moon, Activity, Cloud, CloudOff, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-export default function Header({ activeTab, onTabChange, onToggleMobileMenu, theme = 'dark', onToggleTheme, cloudSyncStatus = 'synced', onManualSync }) {
+export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleTheme, cloudSyncStatus = 'synced', onManualSync }) {
   const [now, setNow] = useState(new Date());
 
   // Keep clock ticking

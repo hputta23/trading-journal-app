@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import {
   Calendar, TrendingUp, Info, Activity, DollarSign,
   Percent, Layers, Award, Receipt, ArrowUpRight,
-  ArrowDownRight, ChevronRight, Zap, Trophy, Flame, Lock
+  ArrowDownRight, ChevronRight, Zap, Trophy
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { formatCurrency, formatPercent, formatNumber, calcDailyStats } from '../utils/calculations';
@@ -83,8 +83,13 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
     const daily = {};
     allClosedTrades.forEach(t => { if (!daily[t.date]) daily[t.date] = 0; daily[t.date] += t.netPnl; });
     const sorted = Object.keys(daily).sort((a, b) => new Date(a) - new Date(b));
-    let eq = 0;
-    const pts = sorted.map((date, i) => { eq += daily[date]; return { i: i+1, date, v: +eq.toFixed(2) }; });
+    const pts = [];
+    let currentEq = 0;
+    for (let i = 0; i < sorted.length; i++) {
+      const date = sorted[i];
+      currentEq += daily[date];
+      pts.push({ i: i + 1, date, v: +currentEq.toFixed(2) });
+    }
     if (pts.length) {
       const d0 = new Date(sorted[0]); d0.setDate(d0.getDate()-1);
       return [{ i: 0, date: d0.toISOString().split('T')[0], v: 0 }, ...pts];

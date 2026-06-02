@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Settings, Database, Sliders, Shield, Info, Download, Trash2, Sun, Moon, Upload, FileJson, FileSpreadsheet, LogOut, Clock } from 'lucide-react';
+import { Settings, Database, Sliders, Shield, Info, Download, Sun, Moon, Upload, FileJson, FileSpreadsheet, LogOut, Clock } from 'lucide-react';
 import { supabase } from '../utils/supabaseClient';
 import { loadActivityLogs, clearActivityLogs } from '../utils/logger';
 
@@ -22,6 +22,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
   const csvInputRef = useRef(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLogs(loadActivityLogs());
     const handleLogUpdate = () => setLogs(loadActivityLogs());
     window.addEventListener('activity_log_updated', handleLogUpdate);
@@ -64,7 +65,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
         if (obj.entries) localStorage.setItem('trading-journal-entries', JSON.stringify(obj.entries));
         alert('Data successfully imported! The app will now reload.');
         window.location.reload();
-      } catch (err) {
+      } catch {
         alert('Invalid backup file. Could not parse JSON.');
       }
     };

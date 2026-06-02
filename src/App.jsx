@@ -10,12 +10,9 @@ import CalendarView from './components/CalendarView';
 import EntryForm from './components/EntryForm';
 
 import { loadTrades, saveTrades, loadSettings, saveSettings, getDateKey } from './utils/storage';
-import { calcDailyStats, formatCurrency } from './utils/calculations';
+import { calcDailyStats } from './utils/calculations';
 import { loadActivityLogs, saveActivityLogs, logActivity } from './utils/logger';
-import { LayoutDashboard, FileText, TrendingUp, BarChart3, X } from 'lucide-react';
-
-const fontStyle = { fontFamily: "'JetBrains Mono', monospace" };
-
+import { LayoutDashboard, FileText, TrendingUp, BarChart3 } from 'lucide-react';
 
 import { supabase } from './utils/supabaseClient';
 import AuthView from './components/AuthView';
@@ -27,7 +24,7 @@ export default function App() {
   const [allTrades, setAllTrades] = useState({});
   const [allJournals, setAllJournals] = useState({});
   const [activityLogs, setActivityLogs] = useState([]);
-  const [settings, setSettings] = useState({ googleSheetId: '', quickEntry: false, theme: 'dark' });
+  const [settings, setSettings] = useState(() => loadSettings());
   const [editingTrade, setEditingTrade] = useState(null);
   const [cloudSyncStatus, setCloudSyncStatus] = useState('synced');
   const [syncStatus, setSyncStatus] = useState(null);
@@ -121,9 +118,8 @@ export default function App() {
   // Load data on mount and on visibility change
   useEffect(() => {
     if (!session) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCloudData();
-    const s = loadSettings();
-    setSettings(s);
     
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
@@ -356,7 +352,6 @@ export default function App() {
             onOpenNewTrade={() => { setEditingTrade(null); setShowGlobalTradeModal(true); setMobileMenuOpen(false); }}
             onSync={handleSync}
             syncStatus={syncStatus}
-            onLoadDemo={() => { handleLoadDemo(); setMobileMenuOpen(false); }}
             userEmail={session.user.email}
           />
         </div>

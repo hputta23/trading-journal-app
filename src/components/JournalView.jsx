@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Frown, ExternalLink, BookOpen, Clock, Activity, Award, CheckCircle2, ChevronRight, Info, Target, Brain, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle } from 'lucide-react';
 import { MOODS, MARKET_CONDITIONS, GRADES, loadJournalEntries, saveJournalEntry, emptyJournalEntry } from '../utils/journal';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 
@@ -20,6 +20,39 @@ const inputStyle = {
   ...fontStyle,
 };
 
+/* ── Section Header Component ── */
+const SectionHeader = ({ icon, title, subtitle }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 14, marginBottom: 20, borderBottom: '1px solid var(--border-card)' }}>
+    <div style={{
+      width: 34, height: 34, borderRadius: 10,
+      background: 'rgba(0,200,5,0.08)', border: '1px solid rgba(0,200,5,0.2)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+    }}>
+      {icon}
+    </div>
+    <div style={{ minWidth: 0 }}>
+      <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-dark)', lineHeight: 1.3 }}>{title}</div>
+      {subtitle && <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>{subtitle}</div>}
+    </div>
+  </div>
+);
+
+/* ── Field Label Component ── */
+const FieldLabel = ({ children, color }) => (
+  <label style={{
+    display: 'block',
+    fontSize: 11,
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    letterSpacing: '0.12em',
+    color: color || 'var(--text-secondary)',
+    marginBottom: 10,
+    ...fontStyle,
+  }}>
+    {children}
+  </label>
+);
+
 export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
   const [entry, setEntry] = useState({ ...emptyJournalEntry });
   const [saveStatus, setSaveStatus] = useState(null);
@@ -27,6 +60,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
   useEffect(() => {
     const entries = loadJournalEntries();
     if (entries[currentDate]) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEntry({ ...emptyJournalEntry, ...entries[currentDate] });
     } else {
       setEntry({ ...emptyJournalEntry });
@@ -68,38 +102,6 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
     return 'NOT RATED';
   };
 
-  /* ── Section Header Component ── */
-  const SectionHeader = ({ icon, title, subtitle }) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 14, marginBottom: 20, borderBottom: '1px solid var(--border-card)' }}>
-      <div style={{
-        width: 34, height: 34, borderRadius: 10,
-        background: 'rgba(0,200,5,0.08)', border: '1px solid rgba(0,200,5,0.2)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
-      }}>
-        {icon}
-      </div>
-      <div style={{ minWidth: 0 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-dark)', lineHeight: 1.3 }}>{title}</div>
-        {subtitle && <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>{subtitle}</div>}
-      </div>
-    </div>
-  );
-
-  /* ── Field Label Component ── */
-  const FieldLabel = ({ children, color }) => (
-    <label style={{
-      display: 'block',
-      fontSize: 11,
-      fontWeight: 700,
-      textTransform: 'uppercase',
-      letterSpacing: '0.12em',
-      color: color || 'var(--text-secondary)',
-      marginBottom: 10,
-      ...fontStyle,
-    }}>
-      {children}
-    </label>
-  );
 
   return (
     <div className="h-full w-full fade-in" style={fontStyle}>
@@ -441,12 +443,10 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                       padding: '16px 18px',
                       fontSize: 14, fontWeight: 500,
                       lineHeight: 1.7,
-                      border: '2px solid rgba(250, 204, 21, 0.3)',
-                      background: 'rgba(250, 204, 21, 0.04)',
                       resize: 'vertical',
                       minHeight: 80,
                       ...inputStyle,
-                      borderColor: 'rgba(250, 204, 21, 0.3)',
+                      border: '2px solid rgba(250, 204, 21, 0.3)',
                       background: 'rgba(250, 204, 21, 0.04)',
                     }}
                   />
