@@ -173,8 +173,8 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: 14 }}>
 
         {/* Gross P&L */}
-        <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: `radial-gradient(ellipse at top left, ${isPos ? 'rgba(0,230,118,0.05)' : 'rgba(255,59,92,0.05)'} 0%, transparent 70%)` }} />
+        <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative' }}>
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: 'inherit', background: `radial-gradient(ellipse at top left, ${isPos ? 'rgba(0,230,118,0.05)' : 'rgba(255,59,92,0.05)'} 0%, transparent 70%)` }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: isPos ? 'var(--color-profit)' : 'var(--color-loss)', borderRadius: '14px 14px 0 0' }} />
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
             <div style={{ minWidth: 0 }}>
@@ -198,8 +198,8 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
         </div>
 
         {/* After Tax */}
-        <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative', overflow: 'hidden', border: '1px solid var(--border-kpi-loss)' }}>
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'radial-gradient(ellipse at top right, rgba(255,59,92,0.06) 0%, transparent 70%)' }} />
+        <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative', border: '1px solid var(--border-kpi-loss)' }}>
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: 'inherit', background: 'radial-gradient(ellipse at top right, rgba(255,59,92,0.06) 0%, transparent 70%)' }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'var(--color-loss)', borderRadius: '14px 14px 0 0' }} />
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
             <div style={{ minWidth: 0 }}>

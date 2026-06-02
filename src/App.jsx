@@ -319,7 +319,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden" style={{ background: 'var(--bg-app)' }}>
+    <div className="flex flex-col h-[100dvh] w-screen overflow-hidden" style={{ background: 'var(--bg-app)' }}>
       
       {/* ── Top Header spanning 100% width (EXACTLY MATCHING IMAGE) ── */}
       <Header

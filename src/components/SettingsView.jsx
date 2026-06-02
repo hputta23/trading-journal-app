@@ -391,7 +391,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
             </div>
             
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-              <div style={{ flex: 1, minWidth: '300px', padding: '24px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)' }}>
+              <div style={{ flex: 1, minWidth: 'min(300px, 100%)', padding: '24px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)' }}>
                 <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)', marginBottom: '8px' }}>Signed in as</h3>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
                   {userEmail}
