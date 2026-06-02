@@ -269,7 +269,10 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
   const canSubmit = form.ticker && form.entryPrice && form.qty;
 
   const grossPreview = calcGrossPnl(form.entryPrice, form.exitPrice, form.qty, form.direction, form.assetClass, form.tickMultiplier);
-  const netPreview = calcNetPnl(grossPreview, form.fees);
+  const netPreviewRaw = calcNetPnl(grossPreview, form.fees);
+  const netPreview = (form.netPnlOverride !== '' && form.netPnlOverride !== undefined && form.netPnlOverride !== null)
+    ? Number(form.netPnlOverride)
+    : netPreviewRaw;
 
   const renderPnlPreview = () => {
     if (grossPreview === null) return null;
@@ -669,8 +672,9 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                 ['Fees Accrued', `$${Number(form.fees || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`, 'var(--color-loss)'],
                 ['Entry Time', form.entryTime || '—', 'var(--text-primary)'],
                 ['Exit Time', form.exitTime || '—', 'var(--text-primary)'],
+                form.netPnlOverride && form.netPnlOverride !== '' ? ['Net P&L Override', `$${Number(form.netPnlOverride).toLocaleString('en-US', { minimumFractionDigits: 2 })}`, 'var(--text-accent)'] : null,
                 ['Rule Broken', form.mistake, form.mistake === 'None / Plan Followed' ? 'var(--color-profit)' : 'var(--color-loss)'],
-              ].map(([label, value, color]) => (
+              ].filter(Boolean).map(([label, value, color]) => (
                 <div key={label} className="border-b border-[var(--border-card)] pb-2">
                   <span className="block text-[10px] uppercase font-bold text-[var(--text-secondary)] mb-1">{label}</span>
                   <span className="font-bold text-sm" style={{ color }}>{value}</span>
