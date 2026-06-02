@@ -223,15 +223,13 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
       </div>
 
       {/* ══ ROW 2 — KPI RIBBON ══ */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
-        <style>{`@media(min-width:600px){.kpi-r{grid-template-columns:repeat(3,1fr)!important}}@media(min-width:1024px){.kpi-r{grid-template-columns:repeat(5,1fr)!important}}`}</style>
-        <div className="kpi-r" style={{ display: 'contents' }}>
-          <StatCard icon={<DollarSign size={10}/>} label="Net Return" tip="Total closed net P&L." value={formatCurrency(stats.totalNetPnl)} color={stats.totalNetPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)'} bg={stats.totalNetPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)'} border={stats.totalNetPnl >= 0 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'} />
-          <StatCard icon={<Percent size={10}/>}     label="Win Rate"    tip="% of closed trades that were profitable." value={formatPercent(stats.winRate)} color="var(--color-cyan)" bg="var(--bg-kpi-cyan)" border="var(--border-kpi-cyan)" />
-          <StatCard icon={<TrendingUp size={10}/>}  label="Profit Factor" tip="Gross profits / gross losses. >1.5 is excellent." value={stats.profitFactor === Infinity ? '∞' : stats.profitFactor.toFixed(2)} color={stats.profitFactor >= 1 ? 'var(--color-profit)' : 'var(--color-loss)'} bg={stats.profitFactor >= 1 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)'} border={stats.profitFactor >= 1 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'} />
-          <StatCard icon={<Zap size={10}/>}         label="Best Day"    tip="Your single highest net profit day." value={bestDay ? formatCurrency(bestDay.netPnl) : '—'} sub={bestDay?.date} color="var(--color-profit)" bg="var(--bg-kpi-profit)" border="var(--border-kpi-profit)" />
-          <StatCard icon={<Activity size={10}/>}    label="Worst Day"   tip="Your single largest net loss day." value={worstDay ? formatCurrency(worstDay.netPnl) : '—'} sub={worstDay?.date} color="var(--color-loss)" bg="var(--bg-kpi-loss)" border="var(--border-kpi-loss)" />
-        </div>
+      <div className="kpi-r">
+        <style>{`.kpi-r{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}@media(min-width:600px){.kpi-r{grid-template-columns:repeat(3,1fr)}}@media(min-width:1024px){.kpi-r{grid-template-columns:repeat(5,1fr)}}`}</style>
+        <StatCard icon={<DollarSign size={10}/>} label="Net Return" tip="Total closed net P&L." value={formatCurrency(stats.totalNetPnl)} color={stats.totalNetPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)'} bg={stats.totalNetPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)'} border={stats.totalNetPnl >= 0 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'} />
+        <StatCard icon={<Percent size={10}/>}     label="Win Rate"    tip="% of closed trades that were profitable." value={formatPercent(stats.winRate)} color="var(--color-cyan)" bg="var(--bg-kpi-cyan)" border="var(--border-kpi-cyan)" />
+        <StatCard icon={<TrendingUp size={10}/>}  label="Profit Factor" tip="Gross profits / gross losses. >1.5 is excellent." value={stats.profitFactor === Infinity ? '∞' : stats.profitFactor.toFixed(2)} color={stats.profitFactor >= 1 ? 'var(--color-profit)' : 'var(--color-loss)'} bg={stats.profitFactor >= 1 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)'} border={stats.profitFactor >= 1 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'} />
+        <StatCard icon={<Zap size={10}/>}         label="Best Day"    tip="Your single highest net profit day." value={bestDay ? formatCurrency(bestDay.netPnl) : '—'} sub={bestDay?.date} color="var(--color-profit)" bg="var(--bg-kpi-profit)" border="var(--border-kpi-profit)" />
+        <StatCard icon={<Activity size={10}/>}    label="Worst Day"   tip="Your single largest net loss day." value={worstDay ? formatCurrency(worstDay.netPnl) : '—'} sub={worstDay?.date} color="var(--color-loss)" bg="var(--bg-kpi-loss)" border="var(--border-kpi-loss)" />
       </div>
 
       {/* ══ ROW 3 — GAMIFICATION BAND ══ */}

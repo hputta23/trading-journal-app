@@ -164,7 +164,7 @@ export default function CalendarView({ allTrades }) {
                       {dayData.day}
                     </span>
                     {dayData.isTraded && (
-                      <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase bg-black/40 px-2 py-0.5 rounded">
+                      <span className="hidden md:inline-block text-[10px] font-bold text-[var(--text-secondary)] uppercase bg-black/40 px-2 py-0.5 rounded">
                         {dayData.trades.length} Trades
                       </span>
                     )}

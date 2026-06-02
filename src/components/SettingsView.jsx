@@ -160,11 +160,7 @@ export default function SettingsView({ settings, onSave, onLoadDemo, userEmail }
         gap: '24px'
       }}>
         {/* Header */}
-        <div className="glass-panel" style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '24px',
-          borderRadius: '16px',
-        }}>
+        <div className="glass-panel flex flex-col md:flex-row items-start md:items-center justify-between p-6 rounded-2xl gap-4">
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{
               width: '48px', height: '48px', borderRadius: '12px',
@@ -200,7 +196,7 @@ export default function SettingsView({ settings, onSave, onLoadDemo, userEmail }
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* ── Integration & Data ── */}
           <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px' }}>

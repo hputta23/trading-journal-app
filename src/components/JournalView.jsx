@@ -153,13 +153,8 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
         <div style={{
           maxWidth: 1200,
           margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: '1fr',
-          gap: 20,
         }}>
-          <style>{`@media(min-width:1024px){.journal-grid{grid-template-columns:1fr 1fr!important}}`}</style>
-
-          <div className="journal-grid" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
             {/* ════ LEFT COLUMN ════ */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

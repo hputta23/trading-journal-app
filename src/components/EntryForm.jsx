@@ -325,7 +325,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
     return (
       <div className="p-4 w-full">
         <FormTitle />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-4">
           <div>
             <FieldLabel>Ticker</FieldLabel>
             <input value={form.ticker} onChange={e => update('ticker', e.target.value.toUpperCase())} placeholder="AAPL" className="w-full px-4 py-4 text-base border uppercase font-bold" style={whiteInputStyle} />
@@ -639,8 +639,8 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
       {/* Step 3 — CONFIRM */}
       {step === 2 && (
         <div className="space-y-4 fade-in font-bold">
-          <div className="border p-5 bg-[var(--bg-sidebar)] border-[var(--border-card)]">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono-data">
+          <div className="border p-5 bg-[var(--bg-sidebar)] border-[var(--border-card)] rounded-xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono-data">
               {[
                 ['Ticker symbol', form.ticker.toUpperCase(), 'var(--text-accent)'],
                 ['Asset Type', form.assetClass, 'var(--text-primary)'],

@@ -489,7 +489,7 @@ export default function App() {
               </span>
               <button
                 onClick={() => { setShowGlobalTradeModal(false); setEditingTrade(null); }}
-                className="px-2 py-0.5 hover:text-[#ff3b5c] cursor-pointer text-[#64748b] text-sm font-bold border border-white/[0.04] bg-white/[0.01]"
+                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 hover:text-[#ff3b5c] cursor-pointer text-[#64748b] text-sm font-bold border border-white/[0.04] bg-white/[0.01]"
               >
                 ✕
               </button>

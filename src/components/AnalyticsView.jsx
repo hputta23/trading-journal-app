@@ -134,7 +134,7 @@ export default function AnalyticsView({ allTrades }) {
         ) : (
           <>
             {/* ── KPI ROW ── */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
               <div className="glass-panel p-5 rounded-xl border border-[var(--border-card)]">
                 <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Net Equity</p>
                 <p className={`text-xl font-black font-mono-data ${currentEquity >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>

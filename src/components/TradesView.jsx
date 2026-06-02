@@ -210,7 +210,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
           </div>
 
           {/* ── Sub-Filtered Dynamic Metrics ── */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-xl">
             {[
               [
                 'FILTERED NET P&L', 
