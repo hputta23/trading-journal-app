@@ -10,7 +10,7 @@ const Tip = ({ text }) => (
   </span>
 );
 
-export default function SettingsView({ settings, onSave, onLoadDemo, userEmail }) {
+export default function SettingsView({ settings, onSave, onLoadDemo, onClearData, userEmail }) {
   const [googleSheetId, setGoogleSheetId] = useState(settings.googleSheetId || '');
   const [quickEntry, setQuickEntry] = useState(settings.quickEntry || false);
   const [theme, setTheme] = useState(settings.theme || 'dark');
@@ -31,9 +31,13 @@ export default function SettingsView({ settings, onSave, onLoadDemo, userEmail }
 
   const handleClearData = () => {
     if (window.confirm("Are you sure you want to clear ALL trading data? This cannot be undone.")) {
-      localStorage.removeItem('trading-journal-trades');
-      localStorage.removeItem('trading-journal-entries');
-      window.location.reload();
+      if (onClearData) {
+        onClearData();
+      } else {
+        localStorage.removeItem('trading-journal-trades');
+        localStorage.removeItem('trading-journal-entries');
+        window.location.reload();
+      }
     }
   };
 
