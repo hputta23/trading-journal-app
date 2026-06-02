@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Header from './components/Header';
 import SidebarStats from './components/SidebarStats';
 import SettingsView from './components/SettingsView';
@@ -235,7 +235,7 @@ export default function App() {
   }, [session, fetchCloudData]);
 
   // Sync to Cloud whenever trades or journals change
-  const initialMount = React.useRef(true);
+  const initialMount = useRef(true);
   useEffect(() => {
     if (!session) return;
     
