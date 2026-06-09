@@ -32,6 +32,7 @@ const StatCard = ({ icon, label, value, sub, color, bg, border, tip }) => (
 
 export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }) {
   const [hoveredData, setHoveredData] = useState(null);
+  const [heatmapTooltip, setHeatmapTooltip] = useState({ visible: false, x: 0, y: 0, data: null });
 
   /* ── Core data ── */
   const allClosedTrades = useMemo(() => {
@@ -441,24 +442,74 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
             </div>
             <div style={{ overflowX: 'auto', paddingBottom: 8, scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
               <div style={{ display: 'flex', gap: 6, minWidth: 340 }}>
-                <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 13px)', gap: '3.5px', fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace", paddingTop: 1, paddingRight: 4, flexShrink: 0, lineHeight: '13px' }}>
+                <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 14px)', gap: '4px', fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace", paddingTop: 1, paddingRight: 6, flexShrink: 0, lineHeight: '14px' }}>
                   {['S','M','T','W','T','F','S'].map((d, i) => <span key={i}>{d}</span>)}
                 </div>
-                <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 13px)', gridAutoColumns: '13px', gridAutoFlow: 'column', gap: '3.5px', flex: 1, paddingBottom: '10px' }}>
+                <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 14px)', gridAutoColumns: '14px', gridAutoFlow: 'column', gap: '4px', flex: 1, paddingBottom: '10px' }}>
                   {heatmapDays.map(day => (
                     <button
                       key={day.date}
                       onClick={() => { onSelectDate(day.date); onNavigateTab('journal'); }}
-                      title={day.tradesCount ? `${day.date} — ${formatCurrency(day.netPnl)} (${day.tradesCount} trades)` : `${day.date} — No activity`}
                       className="heatmap-cell focus:outline-none"
-                      style={{ width: 13, height: 13, background: cellColor(day), boxShadow: day.isToday ? '0 0 0 1.5px var(--border-active)' : 'none', borderRadius: 0, border: 'none', cursor: 'pointer', transition: 'transform 0.1s, opacity 0.1s' }}
-                      onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.5)'; e.currentTarget.style.zIndex = 10; }}
-                      onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.zIndex = 'auto'; }}
+                      style={{ 
+                        width: 14, height: 14, 
+                        background: cellColor(day), 
+                        boxShadow: day.isToday ? '0 0 0 1.5px var(--border-active)' : 'inset 0 0 0 1px color-mix(in srgb, var(--text-primary) 5%, transparent)', 
+                        borderRadius: 2, 
+                        border: 'none', 
+                        cursor: 'pointer', 
+                        transition: 'transform 0.1s, opacity 0.1s' 
+                      }}
+                      onMouseEnter={e => { 
+                        e.currentTarget.style.transform = 'scale(1.4)'; 
+                        e.currentTarget.style.zIndex = 10;
+                        setHeatmapTooltip({ visible: true, x: e.clientX, y: e.clientY, data: day });
+                      }}
+                      onMouseMove={e => {
+                        setHeatmapTooltip(prev => ({ ...prev, x: e.clientX, y: e.clientY }));
+                      }}
+                      onMouseLeave={e => { 
+                        e.currentTarget.style.transform = 'scale(1)'; 
+                        e.currentTarget.style.zIndex = 'auto';
+                        setHeatmapTooltip(prev => ({ ...prev, visible: false }));
+                      }}
                     />
                   ))}
                 </div>
               </div>
             </div>
+            
+            {heatmapTooltip.visible && heatmapTooltip.data && (
+              <div style={{
+                position: 'fixed',
+                top: heatmapTooltip.y - 60,
+                left: heatmapTooltip.x + 15,
+                pointerEvents: 'none',
+                zIndex: 9999,
+                background: 'var(--bg-panel)',
+                border: '1px solid var(--border-active)',
+                padding: '8px 12px',
+                borderRadius: 0,
+                boxShadow: '0 4px 20px rgba(0,0,0,0.8)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                minWidth: 120
+              }}>
+                <div style={{ fontSize: 9, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace" }}>{heatmapTooltip.data.date}</div>
+                {heatmapTooltip.data.tradesCount > 0 ? (
+                  <>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: heatmapTooltip.data.netPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontFamily: "'JetBrains Mono', monospace" }}>
+                      {formatCurrency(heatmapTooltip.data.netPnl)}
+                    </div>
+                    <div style={{ fontSize: 9, color: 'var(--text-dark)' }}>{heatmapTooltip.data.tradesCount} {heatmapTooltip.data.tradesCount === 1 ? 'trade' : 'trades'}</div>
+                  </>
+                ) : (
+                  <div style={{ fontSize: 11, color: 'var(--text-dark)' }}>No activity</div>
+                )}
+              </div>
+            )}
+
             <p className="stat-sub" style={{ textAlign: 'center', marginTop: 10, fontStyle: 'italic' }}>
               ↑ Click any cell to open that day's journal
             </p>
