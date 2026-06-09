@@ -38,7 +38,7 @@ export default function AuthView() {
       <div className="w-full max-w-sm rounded-xl p-6 sm:p-8 glass-panel" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)' }}>
         
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold mb-2 tracking-tight" style={{ color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <h1 className="text-2xl font-bold mb-2 tracking-tight" style={{ color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>
             Perseverance
           </h1>
           <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>

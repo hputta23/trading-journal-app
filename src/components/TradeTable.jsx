@@ -117,7 +117,7 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
             <thead>
               <tr className="bg-[var(--bg-sidebar)] border-b" style={{ borderColor: 'var(--border-card)' }}>
                 {['#', 'TIME', 'TICKER', 'DIR', 'ASSET', 'ENTRY', 'EXIT', 'QTY', 'GROSS', 'FEES', 'NET', 'STRATEGY', 'IMG', 'STATUS', ''].map((h) => (
-                  <th key={h} className="px-5 py-4 text-left font-bold uppercase whitespace-nowrap" style={{ color: 'var(--text-secondary)', fontSize: '10px', letterSpacing: '0.08em', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  <th key={h} className="px-5 py-4 text-left font-bold uppercase whitespace-nowrap" style={{ color: 'var(--text-secondary)', fontSize: '10px', letterSpacing: '0.08em', fontFamily: "'Inter', sans-serif" }}>
                     {h}
                   </th>
                 ))}

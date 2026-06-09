@@ -3,7 +3,7 @@ import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Tar
 import { MOODS, MARKET_CONDITIONS, GRADES, loadJournalEntries, saveJournalEntry, emptyJournalEntry } from '../utils/journal';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 
-const fontStyle = { fontFamily: "'Plus Jakarta Sans', sans-serif" };
+const fontStyle = { fontFamily: "'Inter', sans-serif" };
 const monoStyle = { fontFamily: "'JetBrains Mono', monospace" };
 
 const panelStyle = {

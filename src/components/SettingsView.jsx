@@ -172,7 +172,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
               <Settings size={24} style={{ color: 'var(--text-accent)' }} />
             </div>
             <div>
-              <h1 style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-dark)', letterSpacing: '-0.02em', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              <h1 style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-dark)', letterSpacing: '-0.02em', fontFamily: "'Inter', sans-serif" }}>
                 System Settings
               </h1>
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>
@@ -204,7 +204,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
           <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Database size={20} style={{ color: 'var(--color-cyan)' }} />
-              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Integration & API</h2>
+              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Integration & API</h2>
             </div>
 
             <div style={{ marginBottom: '24px' }}>
@@ -236,7 +236,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
           <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Sliders size={20} style={{ color: '#facc15' }} />
-              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Trading Preferences</h2>
+              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Trading Preferences</h2>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '24px', borderBottom: '1px solid var(--border-card)', marginBottom: '24px' }}>
@@ -307,7 +307,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
           <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px', gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Download size={20} style={{ color: 'var(--text-accent)' }} />
-              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Data Import & Export</h2>
+              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Data Import & Export</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -387,7 +387,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
           <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px', border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Shield size={20} style={{ color: 'var(--text-accent)' }} />
-              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>User Profile</h2>
+              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>User Profile</h2>
             </div>
             
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
@@ -417,7 +417,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <Clock size={20} style={{ color: 'var(--text-accent)' }} />
-                <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Activity Log</h2>
+                <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Activity Log</h2>
               </div>
               {logs.length > 0 && (
                 <button

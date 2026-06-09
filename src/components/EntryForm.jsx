@@ -15,7 +15,7 @@ const MISTAKES = [
   'Over-traded'
 ];
 
-const fontStyle = { fontFamily: "'Outfit', sans-serif" };
+const fontStyle = { fontFamily: "'Inter', sans-serif" };
 
 const inputStyle = {
   background: 'var(--bg-input)',

@@ -5,7 +5,7 @@ import EntryForm from './EntryForm';
 import TerminalWindow from './TerminalWindow';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 
-const fontStyle = { fontFamily: "'Plus Jakarta Sans', sans-serif" };
+const fontStyle = { fontFamily: "'Inter', sans-serif" };
 const inputStyle = {
   background: 'var(--bg-input)',
   borderColor: 'var(--border-input)',

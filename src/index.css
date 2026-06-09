@@ -1,100 +1,98 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════
-   CYBER COCKPIT MAKE OVER — ROBINHOOD x PALANTIR COHESIVE THEME
+   BLUEPRINT FINANCE DASHBOARD THEME
    ═══════════════════════════════════════════════════════ */
 
 :root {
-  --bg-app: #000000; /* Pure pitch-black Robinhood void */
-  --bg-sidebar: #08080a; /* Sleek secondary deep black */
-  --bg-card: rgba(12, 12, 15, 0.85); /* Frosted dark card */
-  --border-card: rgba(255, 255, 255, 0.08); /* Faint reflective border */
-  --border-active: #00c805; /* Robinhood signature green */
-  --text-primary: #e5e5ea; /* Vibrant iOS-style white text */
-  --text-secondary: #8e8e93; /* Readable iOS secondary slate */
-  --text-dark: #ffffff; /* Crisp white headers */
-  --text-accent: #00c805; /* Neon green active accents */
+  --bg-app: #0f1418; /* Blueprint Surface */
+  --bg-sidebar: #0a0f12; /* Blueprint Surface Container Lowest */
+  --bg-card: #1b2024; /* Blueprint Surface Container */
+  --border-card: #303539; /* Blueprint Surface Container Highest */
+  --border-active: #7bd0ff; /* Blueprint Primary Fixed Dim */
+  --text-primary: #dee3e8; /* Blueprint On Surface */
+  --text-secondary: #87929a; /* Blueprint Outline */
+  --text-dark: #ffffff; /* White */
+  --text-accent: #7bd0ff; /* Blueprint Primary Fixed Dim */
   
-  --bg-badge-profit: rgba(0, 200, 5, 0.15);
-  --color-profit: #00e676; /* Vivid neon profit green on dark */
-  --border-profit: rgba(0, 200, 5, 0.35);
+  --bg-badge-profit: rgba(52, 211, 153, 0.15); /* Muted Emerald */
+  --color-profit: #34d399; 
+  --border-profit: rgba(52, 211, 153, 0.35);
   
-  --bg-badge-loss: rgba(255, 59, 92, 0.15);
-  --color-loss: #ff3b30; /* Vibrant neon loss red on dark */
-  --border-loss: rgba(255, 59, 92, 0.35);
+  --bg-badge-loss: rgba(255, 180, 171, 0.15); /* Blueprint Error */
+  --color-loss: #ffb4ab; 
+  --border-loss: rgba(255, 180, 171, 0.35);
   
-  --bg-badge-cyan: rgba(0, 199, 190, 0.15);
-  --color-cyan: #64d2ff;
-  --border-cyan: rgba(0, 199, 190, 0.35);
+  --bg-badge-cyan: rgba(142, 213, 255, 0.15); /* Blueprint Primary */
+  --color-cyan: #8ed5ff;
+  --border-cyan: rgba(142, 213, 255, 0.35);
 
-  --bg-kpi-profit: rgba(0, 200, 5, 0.06);
-  --border-kpi-profit: rgba(0, 200, 5, 0.25);
+  --bg-kpi-profit: rgba(52, 211, 153, 0.06);
+  --border-kpi-profit: rgba(52, 211, 153, 0.25);
   
-  --bg-kpi-loss: rgba(255, 59, 92, 0.06);
-  --border-kpi-loss: rgba(255, 59, 92, 0.25);
+  --bg-kpi-loss: rgba(255, 180, 171, 0.06);
+  --border-kpi-loss: rgba(255, 180, 171, 0.25);
   
-  --bg-kpi-cyan: rgba(100, 210, 255, 0.06);
-  --border-kpi-cyan: rgba(100, 210, 255, 0.25);
+  --bg-kpi-cyan: rgba(142, 213, 255, 0.06);
+  --border-kpi-cyan: rgba(142, 213, 255, 0.25);
 
-  --bg-kpi-slate: rgba(142, 142, 147, 0.06);
-  --border-kpi-slate: rgba(142, 142, 147, 0.2);
+  --bg-kpi-slate: rgba(135, 146, 154, 0.06);
+  --border-kpi-slate: rgba(135, 146, 154, 0.2);
   
-  --bg-input: #121214;
-  --border-input: #242428;
-  --text-input: #e5e5ea;
-  --heatmap-empty: #1a1a1f; /* visible dark grey cell */
-  --color-cyan: #64d2ff; /* theme-aware cyan */
+  --bg-input: #171c20; /* Blueprint Surface Container Low */
+  --border-input: #3e484f; /* Blueprint Outline Variant */
+  --text-input: #dee3e8;
+  --heatmap-empty: #252b2e; /* Blueprint Surface Container High */
   
-  --scrollbar-track: #000000;
-  --scrollbar-thumb: #2c2c2e;
-  --accent-glow: rgba(0, 200, 5, 0.15);
+  --scrollbar-track: #0a0f12;
+  --scrollbar-thumb: #3e484f;
+  --accent-glow: rgba(123, 208, 255, 0.15);
 }
 
 [data-theme='light'] {
-  --bg-app: #ffffff; /* Crisp pure white Robinhood light theme */
-  --bg-sidebar: #f2f2f7; /* Very soft light grey background sidebar */
-  --bg-card: rgba(255, 255, 255, 0.95); /* Airy pure white glass card */
-  --border-card: rgba(0, 0, 0, 0.08); /* Subtle border */
-  --border-active: #00c805; /* Robinhood vibrant green active indicator */
-  --text-primary: #1c1c1e; /* Sleek high-contrast dark text */
-  --text-secondary: #555559; /* Medium contrast Apple grey */
-  --text-dark: #000000; /* Pure black titles */
-  --text-accent: #008a04; /* Highly visible forest green active text */
+  --bg-app: #f8fafc; /* Blueprint Light Surface Container Low */
+  --bg-sidebar: #ffffff; /* Blueprint Light Surface Container Lowest */
+  --bg-card: #ffffff; /* Blueprint Light Surface */
+  --border-card: #e2e8f0; /* Blueprint Light Surface Container High */
+  --border-active: #0284c7; /* Blueprint Light Primary Fixed Dim */
+  --text-primary: #0f172a; /* Blueprint Light On Surface */
+  --text-secondary: #64748b; /* Blueprint Light Secondary */
+  --text-dark: #000000; 
+  --text-accent: #0284c7; /* Blueprint Light Primary Fixed Dim */
   
-  --bg-badge-profit: rgba(0, 135, 17, 0.08);
-  --color-profit: #008711; /* Dark high-contrast green for absolute readability on white */
-  --border-profit: rgba(0, 135, 17, 0.25);
+  --bg-badge-profit: rgba(16, 185, 129, 0.08);
+  --color-profit: #10b981; 
+  --border-profit: rgba(16, 185, 129, 0.25);
   
-  --bg-badge-loss: rgba(179, 0, 30, 0.08);
-  --color-loss: #b3001e; /* Dark high-contrast red for absolute readability on white */
-  --border-loss: rgba(179, 0, 30, 0.25);
+  --bg-badge-loss: rgba(220, 38, 38, 0.08);
+  --color-loss: #dc2626; /* Blueprint Light Error */
+  --border-loss: rgba(220, 38, 38, 0.25);
   
   --bg-badge-cyan: rgba(2, 132, 199, 0.08);
-  --color-cyan: #0284c7; /* Dark readable cyan on white */
+  --color-cyan: #0284c7; 
   --border-cyan: rgba(2, 132, 199, 0.25);
 
-  --bg-kpi-profit: rgba(0, 135, 17, 0.04);
-  --border-kpi-profit: rgba(0, 135, 17, 0.15);
+  --bg-kpi-profit: rgba(16, 185, 129, 0.04);
+  --border-kpi-profit: rgba(16, 185, 129, 0.15);
   
-  --bg-kpi-loss: rgba(179, 0, 30, 0.04);
-  --border-kpi-loss: rgba(179, 0, 30, 0.15);
+  --bg-kpi-loss: rgba(220, 38, 38, 0.04);
+  --border-kpi-loss: rgba(220, 38, 38, 0.15);
   
   --bg-kpi-cyan: rgba(2, 132, 199, 0.04);
   --border-kpi-cyan: rgba(2, 132, 199, 0.15);
 
-  --bg-kpi-slate: rgba(85, 85, 89, 0.04);
-  --border-kpi-slate: rgba(85, 85, 89, 0.12);
+  --bg-kpi-slate: rgba(100, 116, 139, 0.04);
+  --border-kpi-slate: rgba(100, 116, 139, 0.12);
   
   --bg-input: #ffffff;
-  --border-input: #d1d1d6;
-  --text-input: #1c1c1e;
-  --heatmap-empty: #e5e5ea; /* visible light grey cell */
-  --color-cyan: #0284c7; /* readable cyan on white */
+  --border-input: #cbd5e1; /* Blueprint Light Outline Variant */
+  --text-input: #0f172a;
+  --heatmap-empty: #e2e8f0; /* Blueprint Light Surface Container High */
   
-  --scrollbar-track: #ffffff;
-  --scrollbar-thumb: #d1d1d6;
-  --accent-glow: rgba(0, 200, 5, 0.08);
+  --scrollbar-track: #f8fafc;
+  --scrollbar-thumb: #cbd5e1;
+  --accent-glow: rgba(2, 132, 199, 0.08);
 }
 
 /* ── Reset & Core Tokens ── */
@@ -317,7 +315,7 @@ input[type="number"] {
 
 /* ── Typography and Heading Scale helpers ── */
 .heading-xl {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 24px;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -325,14 +323,14 @@ input[type="number"] {
 }
 
 .heading-lg {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 600;
   color: var(--text-dark);
 }
 
 .heading-md {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   color: var(--text-dark);
@@ -392,7 +390,7 @@ input[type="number"] {
   text-transform: uppercase;
   letter-spacing: 0.18em;
   color: var(--text-secondary);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   display: flex;
   align-items: center;
   flex-wrap: nowrap !important;

@@ -102,9 +102,9 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
     const days = [];
     const end = new Date();
     const start = new Date(end);
-    start.setDate(end.getDate() - 153 + (6 - end.getDay()));
-    for (let i = 0; i < 154; i++) {
-      const d = new Date(start); d.setDate(start.getDate() - (153 - i));
+    start.setDate(end.getDate() - 363 + (6 - end.getDay()));
+    for (let i = 0; i < 364; i++) {
+      const d = new Date(start); d.setDate(start.getDate() - (363 - i));
       const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
       days.push({ date: ds, isToday: ds === new Date().toISOString().split('T')[0], ...dailyPnLMap[ds] });
     }
@@ -122,13 +122,13 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
 
   const cellColor = (day) => {
     if (!day?.tradesCount) return 'var(--heatmap-empty)';
-    if (!day.netPnl) return 'var(--border-active)';
+    if (!day.netPnl) return 'color-mix(in srgb, var(--border-active) 50%, transparent)';
     if (day.netPnl > 0) {
       const r = day.netPnl / (heatScale.maxP || 1);
-      return r <= 0.35 ? 'rgba(0,200,5,0.28)' : r <= 0.7 ? 'rgba(0,200,5,0.58)' : 'var(--color-profit)';
+      return r <= 0.35 ? 'color-mix(in srgb, var(--color-profit) 30%, transparent)' : r <= 0.7 ? 'color-mix(in srgb, var(--color-profit) 60%, transparent)' : 'var(--color-profit)';
     }
     const r = Math.abs(day.netPnl) / (heatScale.maxL || 1);
-    return r <= 0.35 ? 'rgba(255,59,92,0.28)' : r <= 0.7 ? 'rgba(255,59,92,0.58)' : 'var(--color-loss)';
+    return r <= 0.35 ? 'color-mix(in srgb, var(--color-loss) 30%, transparent)' : r <= 0.7 ? 'color-mix(in srgb, var(--color-loss) 60%, transparent)' : 'var(--color-loss)';
   };
 
   /* ── Recent trades ── */
@@ -264,7 +264,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 <div style={{ fontSize: 36, lineHeight: 1, filter: `drop-shadow(0 0 8px ${rank.color}88)` }}>{rank.icon}</div>
                 <div>
                   <div className="stat-label" style={{ marginBottom: 4 }}>Trader Rank</div>
-                  <div style={{ fontSize: 22, fontWeight: 900, fontFamily: "'Outfit', sans-serif", color: rank.color, letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 1 }}>
+                  <div style={{ fontSize: 22, fontWeight: 900, fontFamily: "'Inter', sans-serif", color: rank.color, letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 1 }}>
                     {rank.rank}
                   </div>
                   <div className="stat-sub" style={{ marginTop: 3 }}>Tier {rank.tier} of 5</div>
@@ -355,7 +355,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                   }}
                 >
                   <span style={{ fontSize: 18, lineHeight: 1 }}>{a.unlocked ? a.icon : '🔒'}</span>
-                  <span style={{ fontSize: 8, fontWeight: 700, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.05em', color: a.unlocked ? 'var(--color-profit)' : 'var(--text-secondary)', fontFamily: "'Plus Jakarta Sans', sans-serif", lineHeight: 1.2 }}>
+                  <span style={{ fontSize: 8, fontWeight: 700, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.05em', color: a.unlocked ? 'var(--color-profit)' : 'var(--text-secondary)', fontFamily: "'Inter', sans-serif", lineHeight: 1.2 }}>
                     {a.name}
                   </span>
                 </div>
@@ -416,18 +416,18 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
               <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                 <Calendar size={13} style={{ color: 'var(--text-accent)' }} />
                 <span className="stat-label" style={{ fontSize: 11, color: 'var(--text-dark)' }}>
-                  Session Heatmap <Tip text="154-day calendar. Green = profit, Red = loss. Click any cell to open that day's journal." />
+                  Session Heatmap <Tip text="365-day calendar. Green = profit, Red = loss. Click any cell to open that day's journal." />
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace" }}>
                 <span style={{ color: 'var(--color-loss)' }}>Loss</span>
-                {['var(--color-loss)','rgba(255,59,92,0.45)','var(--heatmap-empty)','rgba(0,200,5,0.45)','var(--color-profit)'].map((bg, i) => (
+                {['var(--color-loss)','color-mix(in srgb, var(--color-loss) 45%, transparent)','var(--heatmap-empty)','color-mix(in srgb, var(--color-profit) 45%, transparent)','var(--color-profit)'].map((bg, i) => (
                   <div key={i} style={{ width: 10, height: 10, borderRadius: 2, background: bg }} />
                 ))}
                 <span style={{ color: 'var(--color-profit)' }}>Profit</span>
               </div>
             </div>
-            <div style={{ overflowX: 'auto', paddingBottom: 4 }}>
+            <div style={{ overflowX: 'auto', paddingBottom: 8, scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
               <div style={{ display: 'flex', gap: 6, minWidth: 340 }}>
                 <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 13px)', gap: '3.5px', fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace", paddingTop: 1, paddingRight: 4, flexShrink: 0, lineHeight: '13px' }}>
                   {['S','M','T','W','T','F','S'].map((d, i) => <span key={i}>{d}</span>)}

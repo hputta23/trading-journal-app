@@ -37,7 +37,7 @@ export default function SidebarStats({
       <div className="space-y-1 py-1 border-b border-[var(--border-card)] pb-3 mb-2">
         <div className="flex items-center gap-3 flex-nowrap whitespace-nowrap mb-1">
           <Radio size={16} className="text-[var(--text-accent)] pulse-cyan flex-shrink-0" />
-          <div className="text-xs font-bold tracking-[0.2em] uppercase whitespace-nowrap" style={{ color: 'var(--text-dark)', fontFamily: "'Outfit', sans-serif" }}>
+          <div className="text-xs font-bold tracking-[0.2em] uppercase whitespace-nowrap" style={{ color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>
             PERSEVERANCE
           </div>
         </div>
@@ -79,7 +79,7 @@ export default function SidebarStats({
               <span className={isActive ? 'text-[var(--text-accent)]' : 'text-[#64748b]'}>
                 {tab.icon}
               </span>
-              <span className="whitespace-nowrap font-medium" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{tab.label}</span>
+              <span className="whitespace-nowrap font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>{tab.label}</span>
             </button>
           );
         })}

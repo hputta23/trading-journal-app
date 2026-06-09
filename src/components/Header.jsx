@@ -33,7 +33,7 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
         <div className="flex flex-col leading-none">
           <span
             className="text-[13px] font-extrabold tracking-[0.12em] uppercase"
-            style={{ color: 'var(--text-dark)', fontFamily: "'Outfit', sans-serif" }}
+            style={{ color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}
           >
             TradeOS
           </span>
