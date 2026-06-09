@@ -4,7 +4,7 @@ import {
   Percent, Layers, Award, Receipt, ArrowUpRight,
   ArrowDownRight, ChevronRight, Zap, Trophy
 } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { formatCurrency, formatPercent, formatNumber, calcDailyStats } from '../utils/calculations';
 import { calcTraderRank, calcXP, calcStreak, getAchievements } from '../utils/gamification';
 
@@ -32,6 +32,7 @@ const StatCard = ({ icon, label, value, sub, color, bg, border, tip }) => (
 
 export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }) {
   const [hoveredData, setHoveredData] = useState(null);
+  const [heatmapRange, setHeatmapRange] = useState('1M');
 
   /* ── Core data ── */
   const allClosedTrades = useMemo(() => {
@@ -102,20 +103,31 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
     const days = [];
     const today = new Date();
     const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-    // Start from 363 days ago, aligned to a Sunday
+    
+    let daysToSubtract = 30; // 1M default
+    if (heatmapRange === '1W') daysToSubtract = 7;
+    else if (heatmapRange === '1Y') daysToSubtract = 365;
+    else if (heatmapRange === 'YTD') {
+      const startOfYear = new Date(today.getFullYear(), 0, 1);
+      daysToSubtract = Math.ceil((today - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
+    }
+    
     const start = new Date(today);
-    start.setDate(today.getDate() - 363);
-    // Align start to previous Sunday
-    start.setDate(start.getDate() - start.getDay());
-    const totalDays = Math.ceil((today - start) / (1000 * 60 * 60 * 24)) + 1;
-    for (let i = 0; i < totalDays; i++) {
+    start.setDate(today.getDate() - daysToSubtract + 1);
+
+    for (let i = 0; i < daysToSubtract; i++) {
       const d = new Date(start);
       d.setDate(start.getDate() + i);
       const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      days.push({ date: ds, isToday: ds === todayStr, ...dailyPnLMap[ds] });
+      days.push({ 
+        date: ds, 
+        isToday: ds === todayStr, 
+        netPnl: dailyPnLMap[ds]?.netPnl || 0,
+        tradesCount: dailyPnLMap[ds]?.tradesCount || 0
+      });
     }
     return days;
-  }, [dailyPnLMap]);
+  }, [dailyPnLMap, heatmapRange]);
 
   const heatScale = useMemo(() => {
     let maxP = 1, maxL = 1;
@@ -424,43 +436,86 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
 
           {/* Heatmap */}
           <div className="glass-panel" style={{ padding: '18px 22px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid var(--border-card)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, paddingBottom: 10, borderBottom: '1px solid var(--border-card)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                <Calendar size={13} style={{ color: 'var(--text-accent)' }} />
+                <Activity size={13} style={{ color: 'var(--text-accent)' }} />
                 <span className="stat-label" style={{ fontSize: 11, color: 'var(--text-dark)' }}>
-                  Session Heatmap <Tip text="365-day calendar. Green = profit, Red = loss. Click any cell to open that day's journal." />
+                  Session Performance <Tip text="Daily P&L ribbon. Click a bar to open that day's journal." />
                 </span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace" }}>
-                <span style={{ color: 'var(--color-loss)' }}>Loss</span>
-                {['var(--color-loss)','color-mix(in srgb, var(--color-loss) 50%, var(--heatmap-empty))','var(--heatmap-empty)','color-mix(in srgb, var(--color-profit) 50%, var(--heatmap-empty))','var(--color-profit)'].map((bg, i) => (
-                  <div key={i} style={{ width: 10, height: 10, borderRadius: 0, background: bg }} />
+              <div style={{ display: 'flex', gap: 4 }}>
+                {['1W', '1M', 'YTD', '1Y'].map(range => (
+                  <button
+                    key={range}
+                    onClick={() => setHeatmapRange(range)}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: 9,
+                      fontWeight: 800,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      background: heatmapRange === range ? 'var(--color-profit)' : 'transparent',
+                      color: heatmapRange === range ? 'var(--bg-app)' : 'var(--text-secondary)',
+                      border: `1px solid ${heatmapRange === range ? 'var(--color-profit)' : 'var(--border-card)'}`,
+                      borderRadius: 0,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {range}
+                  </button>
                 ))}
-                <span style={{ color: 'var(--color-profit)' }}>Profit</span>
               </div>
             </div>
-            <div style={{ overflowX: 'auto', paddingBottom: 8, scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
-              <div style={{ display: 'flex', gap: 6, minWidth: 340 }}>
-                <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 13px)', gap: '3.5px', fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace", paddingTop: 1, paddingRight: 4, flexShrink: 0, lineHeight: '13px' }}>
-                  {['S','M','T','W','T','F','S'].map((d, i) => <span key={i}>{d}</span>)}
-                </div>
-                <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 13px)', gridAutoColumns: '13px', gridAutoFlow: 'column', gap: '3.5px', flex: 1, paddingBottom: '10px' }}>
-                  {heatmapDays.map(day => (
-                    <button
-                      key={day.date}
-                      onClick={() => { onSelectDate(day.date); onNavigateTab('journal'); }}
-                      title={day.tradesCount ? `${day.date} — ${formatCurrency(day.netPnl)} (${day.tradesCount} trades)` : `${day.date} — No activity`}
-                      className="heatmap-cell focus:outline-none"
-                      style={{ width: 13, height: 13, background: cellColor(day), boxShadow: day.isToday ? '0 0 0 1.5px var(--border-active)' : 'none', borderRadius: 0, border: 'none', cursor: 'pointer', transition: 'transform 0.1s, opacity 0.1s' }}
-                      onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.5)'; e.currentTarget.style.zIndex = 10; }}
-                      onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.zIndex = 'auto'; }}
-                    />
-                  ))}
-                </div>
-              </div>
+            
+            <div style={{ height: 160, width: '100%' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={heatmapDays} margin={{ top: 0, right: 0, left: 0, bottom: 0 }} barGap={2} barCategoryGap="10%">
+                  <Tooltip 
+                    cursor={{ fill: 'var(--border-card)', opacity: 0.4 }}
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border-active)', padding: '10px 14px', borderRadius: 0, boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+                            <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4, fontFamily: "'JetBrains Mono', monospace" }}>{data.date}</div>
+                            <div style={{ fontSize: 14, fontWeight: 800, color: data.netPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontFamily: "'JetBrains Mono', monospace" }}>
+                              {formatCurrency(data.netPnl)}
+                            </div>
+                            <div style={{ fontSize: 10, color: 'var(--text-dark)', marginTop: 4 }}>
+                              {data.tradesCount} {data.tradesCount === 1 ? 'trade' : 'trades'}
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <ReferenceLine y={0} stroke="var(--border-active)" strokeWidth={1} />
+                  <Bar 
+                    dataKey="netPnl" 
+                    onClick={(data) => {
+                      if (data && data.date) {
+                        onSelectDate(data.date);
+                        onNavigateTab('journal');
+                      }
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {heatmapDays.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={entry.netPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)'} 
+                        style={{
+                          filter: `drop-shadow(0 0 6px ${entry.netPnl >= 0 ? 'color-mix(in srgb, var(--color-profit) 40%, transparent)' : 'color-mix(in srgb, var(--color-loss) 40%, transparent)'})`
+                        }}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
-            <p className="stat-sub" style={{ textAlign: 'center', marginTop: 10, fontStyle: 'italic' }}>
-              ↑ Click any cell to open that day's journal
+            <p className="stat-sub" style={{ textAlign: 'center', marginTop: 16, fontStyle: 'italic', fontSize: 9 }}>
+              ↑ Click any bar to open that day's journal
             </p>
           </div>
 
