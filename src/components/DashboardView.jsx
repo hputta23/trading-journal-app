@@ -128,13 +128,19 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
 
   const cellColor = (day) => {
     if (!day?.tradesCount) return 'var(--heatmap-empty)';
-    if (!day.netPnl) return 'color-mix(in srgb, var(--border-active) 50%, transparent)';
+    if (!day.netPnl) return 'color-mix(in srgb, var(--border-active) 50%, var(--heatmap-empty))';
     if (day.netPnl > 0) {
       const r = day.netPnl / (heatScale.maxP || 1);
-      return r <= 0.35 ? 'color-mix(in srgb, var(--color-profit) 30%, transparent)' : r <= 0.7 ? 'color-mix(in srgb, var(--color-profit) 60%, transparent)' : 'var(--color-profit)';
+      return r <= 0.25 ? 'color-mix(in srgb, var(--color-profit) 25%, var(--heatmap-empty))' : 
+             r <= 0.50 ? 'color-mix(in srgb, var(--color-profit) 50%, var(--heatmap-empty))' : 
+             r <= 0.75 ? 'color-mix(in srgb, var(--color-profit) 75%, var(--heatmap-empty))' : 
+             'var(--color-profit)';
     }
     const r = Math.abs(day.netPnl) / (heatScale.maxL || 1);
-    return r <= 0.35 ? 'color-mix(in srgb, var(--color-loss) 30%, transparent)' : r <= 0.7 ? 'color-mix(in srgb, var(--color-loss) 60%, transparent)' : 'var(--color-loss)';
+    return r <= 0.25 ? 'color-mix(in srgb, var(--color-loss) 25%, var(--heatmap-empty))' : 
+           r <= 0.50 ? 'color-mix(in srgb, var(--color-loss) 50%, var(--heatmap-empty))' : 
+           r <= 0.75 ? 'color-mix(in srgb, var(--color-loss) 75%, var(--heatmap-empty))' : 
+           'var(--color-loss)';
   };
 
   /* ── Recent trades ── */
@@ -427,7 +433,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace" }}>
                 <span style={{ color: 'var(--color-loss)' }}>Loss</span>
-                {['var(--color-loss)','color-mix(in srgb, var(--color-loss) 45%, transparent)','var(--heatmap-empty)','color-mix(in srgb, var(--color-profit) 45%, transparent)','var(--color-profit)'].map((bg, i) => (
+                {['var(--color-loss)','color-mix(in srgb, var(--color-loss) 50%, var(--heatmap-empty))','var(--heatmap-empty)','color-mix(in srgb, var(--color-profit) 50%, var(--heatmap-empty))','var(--color-profit)'].map((bg, i) => (
                   <div key={i} style={{ width: 10, height: 10, borderRadius: 0, background: bg }} />
                 ))}
                 <span style={{ color: 'var(--color-profit)' }}>Profit</span>
@@ -438,7 +444,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 13px)', gap: '3.5px', fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace", paddingTop: 1, paddingRight: 4, flexShrink: 0, lineHeight: '13px' }}>
                   {['S','M','T','W','T','F','S'].map((d, i) => <span key={i}>{d}</span>)}
                 </div>
-                <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 13px)', gridAutoFlow: 'column', gap: '3.5px', flex: 1 }}>
+                <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 13px)', gridAutoColumns: '13px', gridAutoFlow: 'column', gap: '3.5px', flex: 1, paddingBottom: '10px' }}>
                   {heatmapDays.map(day => (
                     <button
                       key={day.date}

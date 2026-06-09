@@ -435,6 +435,7 @@ export default function App() {
               currentDate={currentDate}
               todayTrades={todayTrades}
               onEditTrade={handleEditTrade}
+              onSelectDate={setCurrentDate}
             />
           )}
 
@@ -447,6 +448,7 @@ export default function App() {
               editingTrade={editingTrade}
               onCancelEdit={() => setEditingTrade(null)}
               quickEntry={settings.quickEntry}
+              currentDate={currentDate}
             />
           )}
 
@@ -542,6 +544,7 @@ export default function App() {
                 editingTrade={editingTrade}
                 onCancelEdit={() => { setShowGlobalTradeModal(false); setEditingTrade(null); }}
                 quickEntry={settings.quickEntry}
+                currentDate={currentDate}
               />
             </div>
           </div>

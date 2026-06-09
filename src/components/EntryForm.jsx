@@ -87,6 +87,7 @@ const FieldLabel = ({ children, optional }) => (
 );
 
 const emptyForm = {
+  date: '',
   ticker: '',
   assetClass: 'Stock',
   direction: 'Long',
@@ -107,7 +108,7 @@ const emptyForm = {
   exitLegs: [{ price: '', qty: '' }]
 };
 
-export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickEntry }) {
+export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickEntry, currentDate }) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({ ...emptyForm });
 
@@ -115,6 +116,8 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
     if (editingTrade) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
+        ...emptyForm,
+        date: editingTrade.date || currentDate,
         ticker: editingTrade.ticker || '',
         assetClass: editingTrade.assetClass || 'Stock',
         direction: editingTrade.direction || 'Long',
@@ -133,9 +136,11 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
         entryLegs: [{ price: editingTrade.entryPrice || '', qty: editingTrade.qty || '' }],
         exitLegs: [{ price: editingTrade.exitPrice || '', qty: editingTrade.qty || '' }],
       });
+    } else {
+      setForm(prev => ({ ...prev, date: currentDate }));
       setStep(0);
     }
-  }, [editingTrade]);
+  }, [editingTrade, currentDate]);
 
   const getNowTime = () => {
     const now = new Date();
@@ -215,11 +220,11 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
     
     const isOpen = !form.exitPrice || form.exitPrice === '';
     const now = new Date();
-    const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const dateKey = form.date || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
     const trade = {
       id: editingTrade ? editingTrade.id : uuidv4(),
-      date: editingTrade ? editingTrade.date : dateKey,
+      date: dateKey,
       time: form.entryTime || getNowTime(),
       exitTime: form.exitTime || '',
       ticker: form.ticker.toUpperCase(),
@@ -384,6 +389,10 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               <input type="number" step="any" value={form.tickMultiplier} onChange={e => update('tickMultiplier', e.target.value)} placeholder="50" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
             </div>
           )}
+          <div>
+            <FieldLabel>Trade Date</FieldLabel>
+            <input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
+          </div>
           <div>
             <FieldLabel>Entry Time</FieldLabel>
             <div className="flex">
@@ -592,7 +601,11 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <FieldLabel>Trade Date</FieldLabel>
+              <input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={inputStyle} />
+            </div>
             <div>
               <FieldLabel>Entry Time</FieldLabel>
               <div className="flex gap-2">

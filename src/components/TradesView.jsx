@@ -16,7 +16,7 @@ const inputStyle = {
 const STRATEGIES = ['Breakout', 'Reversal', 'Scalp', 'Momentum', 'Other'];
 const ASSET_CLASSES = ['Stock', 'Option', 'Future'];
 
-export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDeleteTrade, editingTrade, onCancelEdit, quickEntry }) {
+export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDeleteTrade, editingTrade, onCancelEdit, quickEntry, currentDate }) {
   const [tickerSearch, setTickerSearch] = useState('');
   const [assetClassFilter, setAssetClassFilter] = useState('ALL');
   const [strategyFilter, setStrategyFilter] = useState('ALL');
@@ -285,6 +285,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
                 editingTrade={editingTrade}
                 onCancelEdit={() => { setShowLogModal(false); onCancelEdit(); }}
                 quickEntry={quickEntry}
+                currentDate={currentDate}
               />
             </div>
           </div>

@@ -53,7 +53,7 @@ const FieldLabel = ({ children, color }) => (
   </label>
 );
 
-export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
+export default function JournalView({ currentDate, todayTrades, onEditTrade, onSelectDate }) {
   const [entry, setEntry] = useState({ ...emptyJournalEntry });
   const [saveStatus, setSaveStatus] = useState(null);
 
@@ -121,7 +121,20 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-dark)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               Daily Journal
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-secondary)', ...monoStyle }}>{currentDate}</div>
+            <input 
+              type="date"
+              value={currentDate}
+              onChange={(e) => onSelectDate && onSelectDate(e.target.value)}
+              style={{ 
+                fontSize: 12, 
+                color: 'var(--text-secondary)', 
+                background: 'transparent',
+                border: 'none',
+                outline: 'none',
+                cursor: 'pointer',
+                ...monoStyle 
+              }}
+            />
           </div>
         </div>
         <button
@@ -166,7 +179,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                 <SectionHeader
                   icon={<TrendingUp size={16} style={{ color: 'var(--text-accent)' }} />}
                   title="Session Performance"
-                  subtitle="Today's trading results at a glance"
+                  subtitle="Session trading results at a glance"
                 />
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
                   {[
@@ -328,7 +341,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                 <textarea
                   value={entry.preMarketPlan || ''}
                   onChange={e => updateField('preMarketPlan', e.target.value)}
-                  placeholder="• Focus on VWAP bounces on NVDA&#10;• Maximum 3 stop outs today&#10;• No FOMO trades before 10:00 AM&#10;• Watch SPY for market direction"
+                  placeholder="• Focus on VWAP bounces on NVDA&#10;• Maximum 3 stop outs for the session&#10;• No FOMO trades before 10:00 AM&#10;• Watch SPY for market direction"
                   rows={6}
                   style={{
                     width: '100%',
@@ -403,7 +416,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                 <SectionHeader
                   icon={<Brain size={16} style={{ color: 'var(--text-accent)' }} />}
                   title="Post-Market Analysis"
-                  subtitle="Reflect on today's session"
+                  subtitle="Reflect on the session"
                 />
 
                 <div style={{ marginBottom: 20 }}>
@@ -411,7 +424,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                   <textarea
                     value={entry.postMarketReview || ''}
                     onChange={e => updateField('postMarketReview', e.target.value)}
-                    placeholder="• Cut losers early today but held NVDA too long&#10;• Followed stop loss rules perfectly on 3/4 trades&#10;• Market was choppy — should have reduced size"
+                    placeholder="• Cut losers early but held NVDA too long&#10;• Followed stop loss rules perfectly on 3/4 trades&#10;• Market was choppy — should have reduced size"
                     rows={5}
                     style={{
                       width: '100%',
