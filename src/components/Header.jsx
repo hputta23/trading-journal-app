@@ -1,4 +1,4 @@
-import { Menu, TrendingUp, Sun, Moon, Activity, Cloud, CloudOff, RefreshCw } from 'lucide-react';
+import { Menu, TrendingUp, Sun, Moon, Monitor, Activity, Cloud, CloudOff, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleTheme, cloudSyncStatus = 'synced', onManualSync }) {
@@ -86,15 +86,15 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
         {/* Theme Toggle */}
         <button
           onClick={onToggleTheme}
-          title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-          className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 cursor-pointer"
+          title={theme === 'dark' ? 'Switch to Light' : theme === 'light' ? 'Switch to Monochrome' : 'Switch to Dark'}
+          className="flex items-center justify-center w-9 h-9 transition-all duration-200 cursor-pointer"
           style={{
             background: 'var(--bg-card)',
             border: '1px solid var(--border-card)',
             color: 'var(--text-secondary)',
           }}
         >
-          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          {theme === 'dark' ? <Sun size={16} /> : theme === 'light' ? <Monitor size={16} /> : <Moon size={16} />}
         </button>
 
         {/* Mobile Menu Toggle */}

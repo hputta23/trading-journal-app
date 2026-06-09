@@ -19,7 +19,7 @@ const Tip = ({ text }) => (
 );
 
 const StatCard = ({ icon, label, value, sub, color, bg, border, tip }) => (
-  <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 12, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
+  <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 0, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
     <div className="stat-label" style={{ color: 'var(--text-secondary)', fontSize: 9 }}>
       {icon} <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span> {tip && <Tip text={tip} />}
     </div>
@@ -175,7 +175,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
         {/* Gross P&L */}
         <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative' }}>
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: 'inherit', background: `radial-gradient(ellipse at top left, ${isPos ? 'rgba(0,230,118,0.05)' : 'rgba(255,59,92,0.05)'} 0%, transparent 70%)` }} />
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: isPos ? 'var(--color-profit)' : 'var(--color-loss)', borderRadius: '14px 14px 0 0' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: isPos ? 'var(--color-profit)' : 'var(--color-loss)', borderRadius: 0 }} />
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
             <div style={{ minWidth: 0 }}>
               <div className="stat-label" style={{ marginBottom: 6 }}>
@@ -185,7 +185,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 {isPos ? '+' : '−'}{absStr(activeVal)}
               </div>
             </div>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: isPos ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)', border: `1px solid ${isPos ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: 40, height: 40, borderRadius: 0, background: isPos ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)', border: `1px solid ${isPos ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               {isPos ? <ArrowUpRight size={18} style={{ color: 'var(--color-profit)' }} /> : <ArrowDownRight size={18} style={{ color: 'var(--color-loss)' }} />}
             </div>
           </div>
@@ -200,7 +200,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
         {/* After Tax */}
         <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative', border: '1px solid var(--border-kpi-loss)' }}>
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: 'inherit', background: 'radial-gradient(ellipse at top right, rgba(255,59,92,0.06) 0%, transparent 70%)' }} />
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'var(--color-loss)', borderRadius: '14px 14px 0 0' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'var(--color-loss)', borderRadius: 0 }} />
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
             <div style={{ minWidth: 0 }}>
               <div className="stat-label" style={{ marginBottom: 6 }}>
@@ -210,7 +210,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 {afterTaxPnl >= 0 ? '+' : '−'}{absStr(afterTaxPnl)}
               </div>
             </div>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255,59,92,0.08)', border: '1px solid var(--border-kpi-loss)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: 40, height: 40, borderRadius: 0, background: 'rgba(255,59,92,0.08)', border: '1px solid var(--border-kpi-loss)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Receipt size={18} style={{ color: 'var(--color-loss)' }} />
             </div>
           </div>
@@ -255,7 +255,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
           >
             {/* Background radial glow */}
             <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: `radial-gradient(ellipse at 20% 50%, ${rank.glow} 0%, transparent 65%)` }} />
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: rank.color, borderRadius: '14px 14px 0 0' }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: rank.color, borderRadius: 0 }} />
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
 
@@ -346,7 +346,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                     alignItems: 'center',
                     gap: 4,
                     padding: '8px 4px',
-                    borderRadius: 8,
+                    borderRadius: 0,
                     background: a.unlocked ? 'rgba(0,200,5,0.08)' : 'var(--bg-input)',
                     border: `1px solid ${a.unlocked ? 'rgba(0,200,5,0.3)' : 'var(--border-card)'}`,
                     cursor: 'default',
@@ -375,7 +375,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
               Portfolio Equity Curve <Tip text="Cumulative closed P&L plotted over time. Hover to inspect dates." />
             </span>
           </div>
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 6, background: 'var(--bg-kpi-cyan)', color: 'var(--color-cyan)', border: '1px solid var(--border-kpi-cyan)' }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 0, background: 'var(--bg-kpi-cyan)', color: 'var(--color-cyan)', border: '1px solid var(--border-kpi-cyan)' }}>
             {equityCurveData.length > 1 ? `${equityCurveData.length - 1} days` : 'No data'}
           </span>
         </div>
@@ -422,7 +422,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace" }}>
                 <span style={{ color: 'var(--color-loss)' }}>Loss</span>
                 {['var(--color-loss)','color-mix(in srgb, var(--color-loss) 45%, transparent)','var(--heatmap-empty)','color-mix(in srgb, var(--color-profit) 45%, transparent)','var(--color-profit)'].map((bg, i) => (
-                  <div key={i} style={{ width: 10, height: 10, borderRadius: 2, background: bg }} />
+                  <div key={i} style={{ width: 10, height: 10, borderRadius: 0, background: bg }} />
                 ))}
                 <span style={{ color: 'var(--color-profit)' }}>Profit</span>
               </div>
@@ -439,7 +439,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                       onClick={() => { onSelectDate(day.date); onNavigateTab('journal'); }}
                       title={day.tradesCount ? `${day.date} — ${formatCurrency(day.netPnl)} (${day.tradesCount} trades)` : `${day.date} — No activity`}
                       className="heatmap-cell focus:outline-none"
-                      style={{ width: 13, height: 13, background: cellColor(day), boxShadow: day.isToday ? '0 0 0 1.5px var(--border-active)' : 'none', borderRadius: 2, border: 'none', cursor: 'pointer', transition: 'transform 0.1s, opacity 0.1s' }}
+                      style={{ width: 13, height: 13, background: cellColor(day), boxShadow: day.isToday ? '0 0 0 1.5px var(--border-active)' : 'none', borderRadius: 0, border: 'none', cursor: 'pointer', transition: 'transform 0.1s, opacity 0.1s' }}
                       onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.5)'; e.currentTarget.style.zIndex = 10; }}
                       onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.zIndex = 'auto'; }}
                     />
@@ -464,7 +464,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
               {strategySummary.length === 0 ? (
                 <p className="stat-sub" style={{ textAlign: 'center', padding: '10px 0' }}>No data yet</p>
               ) : strategySummary.map((s, i) => (
-                <div key={s.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', borderRadius: 7, background: 'var(--bg-input)', border: '1px solid var(--border-card)', marginBottom: 6 }}>
+                <div key={s.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', borderRadius: 0, background: 'var(--bg-input)', border: '1px solid var(--border-card)', marginBottom: 6 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span style={{ fontSize: 9, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-secondary)' }}>#{i+1}</span>
                     <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-dark)' }}>{s.name}</span>
@@ -484,7 +484,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 <span className="stat-label" style={{ fontSize: 10, color: 'var(--text-dark)' }}>Recent Trades</span>
               </div>
               {recentTrades.map(t => (
-                <div key={t.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 7px', borderRadius: 6, background: 'var(--bg-input)', marginBottom: 5 }}>
+                <div key={t.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 7px', borderRadius: 0, background: 'var(--bg-input)', marginBottom: 5 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, minWidth: 0 }}>
                     <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-accent)', flexShrink: 0 }}>{t.ticker}</span>
                     <span style={{ fontSize: 10, fontWeight: 800, color: t.direction === 'Long' ? 'var(--color-profit)' : 'var(--color-loss)', flexShrink: 0 }}>

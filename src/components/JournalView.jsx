@@ -9,14 +9,14 @@ const monoStyle = { fontFamily: "'JetBrains Mono', monospace" };
 const panelStyle = {
   borderColor: 'var(--border-card)',
   background: 'var(--bg-card)',
-  borderRadius: '16px',
+  borderRadius: 0,
 };
 
 const inputStyle = {
   background: 'var(--bg-input)',
   borderColor: 'var(--border-input)',
   color: 'var(--text-input)',
-  borderRadius: '12px',
+  borderRadius: 0,
   ...fontStyle,
 };
 
@@ -24,7 +24,7 @@ const inputStyle = {
 const SectionHeader = ({ icon, title, subtitle }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 14, marginBottom: 20, borderBottom: '1px solid var(--border-card)' }}>
     <div style={{
-      width: 34, height: 34, borderRadius: 10,
+      width: 34, height: 34, borderRadius: 0,
       background: 'rgba(0,200,5,0.08)', border: '1px solid rgba(0,200,5,0.2)',
       display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
     }}>
@@ -134,7 +134,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
             cursor: 'pointer',
             background: saveStatus === 'success' ? 'var(--color-profit)' : 'var(--border-active)',
             color: 'var(--bg-app)',
-            border: 'none', borderRadius: 10,
+            border: 'none', borderRadius: 0,
             transition: 'all 0.2s ease',
             flexShrink: 0,
             ...fontStyle,
@@ -248,7 +248,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                             color: isActive ? activeColor : 'var(--text-secondary)',
                             fontSize: 16, fontWeight: 800,
                             cursor: 'pointer',
-                            borderRadius: 8,
+                            borderRadius: 0,
                             transition: 'all 0.15s ease',
                             ...monoStyle,
                           }}
@@ -467,7 +467,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                   overflowY: 'auto',
                   border: '1px solid var(--border-card)',
                   background: 'var(--bg-input)',
-                  borderRadius: 12,
+                  borderRadius: 0,
                   padding: 4,
                 }}>
                   {todayTrades.length === 0 ? (
@@ -566,7 +566,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                                   color: 'var(--text-secondary)',
                                   background: 'var(--bg-sidebar)',
                                   cursor: 'pointer',
-                                  borderRadius: 6,
+                                  borderRadius: 0,
                                   transition: 'all 0.15s ease',
                                   ...fontStyle,
                                 }}

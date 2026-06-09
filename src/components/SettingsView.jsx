@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Settings, Database, Sliders, Shield, Info, Download, Sun, Moon, Upload, FileJson, FileSpreadsheet, LogOut, Clock } from 'lucide-react';
+import { Settings, Database, Sliders, Shield, Info, Download, Sun, Moon, Monitor, Upload, FileJson, FileSpreadsheet, LogOut, Clock } from 'lucide-react';
 import { supabase } from '../utils/supabaseClient';
 import { loadActivityLogs, clearActivityLogs } from '../utils/logger';
 
@@ -165,7 +165,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
         <div className="glass-panel flex flex-col md:flex-row items-start md:items-center justify-between p-6 rounded-2xl gap-4">
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{
-              width: '48px', height: '48px', borderRadius: '12px',
+              width: '48px', height: '48px', borderRadius: 0,
               background: 'rgba(0, 200, 5, 0.1)', border: '1px solid rgba(0, 200, 5, 0.25)',
               display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
@@ -188,7 +188,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
               textTransform: 'uppercase', letterSpacing: '0.1em',
               background: saveStatus === 'success' ? 'var(--color-profit)' : 'var(--border-active)',
               color: 'var(--bg-app)',
-              border: 'none', borderRadius: '10px',
+              border: 'none', borderRadius: 0,
               cursor: 'pointer', transition: 'all 0.2s',
               display: 'flex', alignItems: 'center', gap: '8px',
               boxShadow: saveStatus === 'success' ? '0 0 16px rgba(0, 230, 118, 0.4)' : '0 4px 14px rgba(0, 200, 5, 0.2)'
@@ -201,7 +201,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* ── Integration & Data ── */}
-          <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px' }}>
+          <div className="glass-panel" style={{ padding: '32px', borderRadius: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Database size={20} style={{ color: 'var(--color-cyan)' }} />
               <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Integration & API</h2>
@@ -220,10 +220,10 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                 style={{
                   width: '100%', padding: '16px', fontSize: '14px', fontFamily: "'JetBrains Mono', monospace",
                   background: 'var(--bg-input)', border: '1px solid var(--border-input)',
-                  color: 'var(--text-input)', borderRadius: '10px'
+                  color: 'var(--text-input)', borderRadius: 0
                 }}
               />
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', marginTop: '12px', padding: '12px 16px', background: 'rgba(0, 200, 5, 0.05)', borderRadius: '8px', border: '1px solid rgba(0, 200, 5, 0.15)' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', marginTop: '12px', padding: '12px 16px', background: 'rgba(0, 200, 5, 0.05)', borderRadius: 0, border: '1px solid rgba(0, 200, 5, 0.15)' }}>
                 <Shield size={14} style={{ color: 'var(--color-profit)', marginTop: '2px', flexShrink: 0 }} />
                 <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
                   Leave blank to operate purely in high-speed offline local storage mode. All data will remain strictly on this device.
@@ -233,7 +233,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
           </div>
 
           {/* ── Preferences ── */}
-          <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px' }}>
+          <div className="glass-panel" style={{ padding: '32px', borderRadius: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Sliders size={20} style={{ color: '#facc15' }} />
               <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Trading Preferences</h2>
@@ -270,13 +270,13 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-dark)', marginBottom: '4px' }}>
                   Interface Theme
                 </label>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Pitch Black Dark vs Feather Light Mint</p>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Dark · Light · Monochrome</p>
               </div>
-              <div style={{ display: 'flex', background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: '10px', padding: '4px' }}>
+              <div style={{ display: 'flex', background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 0, padding: '4px' }}>
                 <button
                   onClick={() => setTheme('dark')}
                   style={{
-                    padding: '8px 16px', border: 'none', borderRadius: '6px',
+                    padding: '8px 16px', border: 'none', borderRadius: 0,
                     background: theme === 'dark' ? 'var(--bg-sidebar)' : 'transparent',
                     color: theme === 'dark' ? 'var(--text-accent)' : 'var(--text-secondary)',
                     fontWeight: '700', fontSize: '11px', letterSpacing: '0.05em', cursor: 'pointer',
@@ -289,7 +289,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                 <button
                   onClick={() => setTheme('light')}
                   style={{
-                    padding: '8px 16px', border: 'none', borderRadius: '6px',
+                    padding: '8px 16px', border: 'none', borderRadius: 0,
                     background: theme === 'light' ? 'var(--bg-sidebar)' : 'transparent',
                     color: theme === 'light' ? 'var(--text-accent)' : 'var(--text-secondary)',
                     fontWeight: '700', fontSize: '11px', letterSpacing: '0.05em', cursor: 'pointer',
@@ -299,12 +299,25 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                 >
                   <Sun size={14} /> LIGHT
                 </button>
+                <button
+                  onClick={() => setTheme('monochrome')}
+                  style={{
+                    padding: '8px 16px', border: 'none', borderRadius: 0,
+                    background: theme === 'monochrome' ? 'var(--bg-sidebar)' : 'transparent',
+                    color: theme === 'monochrome' ? 'var(--text-accent)' : 'var(--text-secondary)',
+                    fontWeight: '700', fontSize: '11px', letterSpacing: '0.05em', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '6px',
+                    boxShadow: theme === 'monochrome' ? '0 2px 8px rgba(0,0,0,0.3)' : 'none'
+                  }}
+                >
+                  <Monitor size={14} /> MONO
+                </button>
               </div>
             </div>
           </div>
           
           {/* ── Data Management (Backups & Imports) ── */}
-          <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px', gridColumn: '1 / -1' }}>
+          <div className="glass-panel" style={{ padding: '32px', borderRadius: 0, gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Download size={20} style={{ color: 'var(--text-accent)' }} />
               <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Data Import & Export</h2>
@@ -312,7 +325,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
-              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)' }}>
+              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <FileJson size={16} className="text-[var(--text-dark)]" />
                   <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)' }}>Backup Data</h3>
@@ -325,7 +338,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                   style={{
                     padding: '10px 16px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
-                    borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
+                    borderRadius: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
@@ -334,7 +347,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                 </button>
               </div>
 
-              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)' }}>
+              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <Upload size={16} className="text-[var(--text-dark)]" />
                   <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)' }}>Restore Backup</h3>
@@ -348,7 +361,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                   style={{
                     padding: '10px 16px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
-                    borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
+                    borderRadius: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
@@ -357,7 +370,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                 </button>
               </div>
 
-              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)' }}>
+              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <FileSpreadsheet size={16} className="text-[var(--text-dark)]" />
                   <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)' }}>Import Broker CSV</h3>
@@ -371,7 +384,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                   style={{
                     padding: '10px 16px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'var(--border-active)', border: 'none', color: 'var(--bg-app)',
-                    borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
+                    borderRadius: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; }}
                   onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
@@ -384,14 +397,14 @@ export default function SettingsView({ settings, onSave, userEmail }) {
           </div>
 
           {/* ── User Profile ── */}
-          <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px', border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
+          <div className="glass-panel" style={{ padding: '32px', borderRadius: 0, border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Shield size={20} style={{ color: 'var(--text-accent)' }} />
               <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>User Profile</h2>
             </div>
             
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-              <div style={{ flex: 1, minWidth: 'min(300px, 100%)', padding: '24px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)' }}>
+              <div style={{ flex: 1, minWidth: 'min(300px, 100%)', padding: '24px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)' }}>
                 <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)', marginBottom: '8px' }}>Signed in as</h3>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
                   {userEmail}
@@ -401,7 +414,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                   style={{
                     padding: '10px 20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
-                    borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
+                    borderRadius: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
@@ -413,7 +426,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
           </div>
 
           {/* ── Activity Log ── */}
-          <div className="glass-panel" style={{ padding: '32px', borderRadius: '16px', border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
+          <div className="glass-panel" style={{ padding: '32px', borderRadius: 0, border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <Clock size={20} style={{ color: 'var(--text-accent)' }} />
@@ -425,7 +438,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                   style={{
                     padding: '6px 12px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'rgba(255, 59, 92, 0.1)', border: '1px solid rgba(255, 59, 92, 0.3)', color: 'var(--color-loss)',
-                    borderRadius: '6px', cursor: 'pointer'
+                    borderRadius: 0, cursor: 'pointer'
                   }}
                 >
                   Clear Log
@@ -450,9 +463,9 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                   else if (log.type === 'JOURNAL_UPDATED') badgeColor = 'var(--text-accent)';
                   
                   return (
-                    <div key={log.id} style={{ padding: '16px', background: 'var(--bg-input)', borderRadius: '12px', border: '1px solid var(--border-card)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div key={log.id} style={{ padding: '16px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)', display: 'flex', alignItems: 'center', gap: '16px' }}>
                       <div style={{ 
-                        fontSize: '10px', fontWeight: '700', letterSpacing: '0.05em', padding: '4px 8px', borderRadius: '4px',
+                        fontSize: '10px', fontWeight: '700', letterSpacing: '0.05em', padding: '4px 8px', borderRadius: 0,
                         background: `color-mix(in srgb, ${badgeColor} 15%, transparent)`, color: badgeColor, minWidth: '110px', textAlign: 'center'
                       }}>
                         {log.type.replace('_', ' ')}

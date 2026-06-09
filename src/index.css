@@ -1,122 +1,180 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════
-   BLUEPRINT FINANCE DASHBOARD THEME
+   PALANTIR × BLUEPRINT FINANCE — TERMINAL DASHBOARD
+   Squared Geometry · Fluid Typography · MD3 Tokens
    ═══════════════════════════════════════════════════════ */
 
+/* ── Dark Theme (Default) ── */
 :root {
-  --bg-app: #0f1418; /* Blueprint Surface */
-  --bg-sidebar: #0a0f12; /* Blueprint Surface Container Lowest */
-  --bg-card: #1b2024; /* Blueprint Surface Container */
-  --border-card: #303539; /* Blueprint Surface Container Highest */
-  --border-active: #7bd0ff; /* Blueprint Primary Fixed Dim */
-  --text-primary: #dee3e8; /* Blueprint On Surface */
-  --text-secondary: #87929a; /* Blueprint Outline */
-  --text-dark: #ffffff; /* White */
-  --text-accent: #7bd0ff; /* Blueprint Primary Fixed Dim */
-  
-  --bg-badge-profit: rgba(52, 211, 153, 0.15); /* Muted Emerald */
-  --color-profit: #34d399; 
+  --bg-app: #0f1418;
+  --bg-sidebar: #0a0f12;
+  --bg-card: #1b2024;
+  --border-card: #303539;
+  --border-active: #7bd0ff;
+  --text-primary: #dee3e8;
+  --text-secondary: #87929a;
+  --text-dark: #ffffff;
+  --text-accent: #7bd0ff;
+
+  --bg-badge-profit: rgba(52, 211, 153, 0.15);
+  --color-profit: #34d399;
   --border-profit: rgba(52, 211, 153, 0.35);
-  
-  --bg-badge-loss: rgba(255, 180, 171, 0.15); /* Blueprint Error */
-  --color-loss: #ffb4ab; 
+
+  --bg-badge-loss: rgba(255, 180, 171, 0.15);
+  --color-loss: #ffb4ab;
   --border-loss: rgba(255, 180, 171, 0.35);
-  
-  --bg-badge-cyan: rgba(142, 213, 255, 0.15); /* Blueprint Primary */
+
+  --bg-badge-cyan: rgba(142, 213, 255, 0.15);
   --color-cyan: #8ed5ff;
   --border-cyan: rgba(142, 213, 255, 0.35);
 
   --bg-kpi-profit: rgba(52, 211, 153, 0.06);
   --border-kpi-profit: rgba(52, 211, 153, 0.25);
-  
+
   --bg-kpi-loss: rgba(255, 180, 171, 0.06);
   --border-kpi-loss: rgba(255, 180, 171, 0.25);
-  
+
   --bg-kpi-cyan: rgba(142, 213, 255, 0.06);
   --border-kpi-cyan: rgba(142, 213, 255, 0.25);
 
   --bg-kpi-slate: rgba(135, 146, 154, 0.06);
   --border-kpi-slate: rgba(135, 146, 154, 0.2);
-  
-  --bg-input: #171c20; /* Blueprint Surface Container Low */
-  --border-input: #3e484f; /* Blueprint Outline Variant */
+
+  --bg-input: #171c20;
+  --border-input: #3e484f;
   --text-input: #dee3e8;
-  --heatmap-empty: #252b2e; /* Blueprint Surface Container High */
-  
+  --heatmap-empty: #252b2e;
+
   --scrollbar-track: #0a0f12;
   --scrollbar-thumb: #3e484f;
   --accent-glow: rgba(123, 208, 255, 0.15);
 }
 
+/* ── Light Theme ── */
 [data-theme='light'] {
-  --bg-app: #f8fafc; /* Blueprint Light Surface Container Low */
-  --bg-sidebar: #ffffff; /* Blueprint Light Surface Container Lowest */
-  --bg-card: #ffffff; /* Blueprint Light Surface */
-  --border-card: #e2e8f0; /* Blueprint Light Surface Container High */
-  --border-active: #0284c7; /* Blueprint Light Primary Fixed Dim */
-  --text-primary: #0f172a; /* Blueprint Light On Surface */
-  --text-secondary: #64748b; /* Blueprint Light Secondary */
-  --text-dark: #000000; 
-  --text-accent: #0284c7; /* Blueprint Light Primary Fixed Dim */
-  
+  --bg-app: #f8fafc;
+  --bg-sidebar: #ffffff;
+  --bg-card: #ffffff;
+  --border-card: #e2e8f0;
+  --border-active: #0284c7;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-dark: #000000;
+  --text-accent: #0284c7;
+
   --bg-badge-profit: rgba(16, 185, 129, 0.08);
-  --color-profit: #10b981; 
+  --color-profit: #10b981;
   --border-profit: rgba(16, 185, 129, 0.25);
-  
+
   --bg-badge-loss: rgba(220, 38, 38, 0.08);
-  --color-loss: #dc2626; /* Blueprint Light Error */
+  --color-loss: #dc2626;
   --border-loss: rgba(220, 38, 38, 0.25);
-  
+
   --bg-badge-cyan: rgba(2, 132, 199, 0.08);
-  --color-cyan: #0284c7; 
+  --color-cyan: #0284c7;
   --border-cyan: rgba(2, 132, 199, 0.25);
 
   --bg-kpi-profit: rgba(16, 185, 129, 0.04);
   --border-kpi-profit: rgba(16, 185, 129, 0.15);
-  
+
   --bg-kpi-loss: rgba(220, 38, 38, 0.04);
   --border-kpi-loss: rgba(220, 38, 38, 0.15);
-  
+
   --bg-kpi-cyan: rgba(2, 132, 199, 0.04);
   --border-kpi-cyan: rgba(2, 132, 199, 0.15);
 
   --bg-kpi-slate: rgba(100, 116, 139, 0.04);
   --border-kpi-slate: rgba(100, 116, 139, 0.12);
-  
+
   --bg-input: #ffffff;
-  --border-input: #cbd5e1; /* Blueprint Light Outline Variant */
+  --border-input: #cbd5e1;
   --text-input: #0f172a;
-  --heatmap-empty: #e2e8f0; /* Blueprint Light Surface Container High */
-  
+  --heatmap-empty: #e2e8f0;
+
   --scrollbar-track: #f8fafc;
   --scrollbar-thumb: #cbd5e1;
   --accent-glow: rgba(2, 132, 199, 0.08);
 }
 
-/* ── Reset & Core Tokens ── */
+/* ── Monochrome Theme (High-Contrast Black & White Terminal) ── */
+[data-theme='monochrome'] {
+  --bg-app: #000000;
+  --bg-sidebar: #111111;
+  --bg-card: #1a1a1a;
+  --border-card: #333333;
+  --border-active: #ffffff;
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3a3;
+  --text-dark: #ffffff;
+  --text-accent: #ffffff;
+
+  --bg-badge-profit: rgba(255, 255, 255, 0.1);
+  --color-profit: #e5e5e5;
+  --border-profit: rgba(255, 255, 255, 0.3);
+
+  --bg-badge-loss: rgba(255, 255, 255, 0.06);
+  --color-loss: #ffffff;
+  --border-loss: rgba(255, 255, 255, 0.2);
+
+  --bg-badge-cyan: rgba(255, 255, 255, 0.08);
+  --color-cyan: #d4d4d4;
+  --border-cyan: rgba(255, 255, 255, 0.25);
+
+  --bg-kpi-profit: rgba(255, 255, 255, 0.04);
+  --border-kpi-profit: rgba(255, 255, 255, 0.15);
+
+  --bg-kpi-loss: rgba(255, 255, 255, 0.03);
+  --border-kpi-loss: rgba(255, 255, 255, 0.1);
+
+  --bg-kpi-cyan: rgba(255, 255, 255, 0.04);
+  --border-kpi-cyan: rgba(255, 255, 255, 0.12);
+
+  --bg-kpi-slate: rgba(255, 255, 255, 0.03);
+  --border-kpi-slate: rgba(255, 255, 255, 0.08);
+
+  --bg-input: #111111;
+  --border-input: #404040;
+  --text-input: #ffffff;
+  --heatmap-empty: #222222;
+
+  --scrollbar-track: #111111;
+  --scrollbar-thumb: #404040;
+  --accent-glow: rgba(255, 255, 255, 0.08);
+}
+
+/* ═══════════════════════════════════════════════════════
+   GLOBAL SMOOTH THEME TRANSITION (400ms MD3 Standard)
+   ═══════════════════════════════════════════════════════ */
 *, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, color 0.15s ease;
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 400ms;
 }
 
+/* ═══════════════════════════════════════════════════════
+   RESET & CORE BODY
+   ═══════════════════════════════════════════════════════ */
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif; /* Clean, modern tech aesthetic */
-  font-weight: 400; 
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: clamp(11px, 3vw, 13px);
+  font-weight: 400;
+  line-height: 1.5;
   background: var(--bg-app);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
-  line-height: 1.5;
 }
 
 #root {
@@ -126,26 +184,36 @@ body {
   overflow: hidden;
 }
 
-/* ── Scrollbars ── */
+/* ═══════════════════════════════════════════════════════
+   MATERIAL SYMBOLS ICON FONT
+   ═══════════════════════════════════════════════════════ */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CUSTOM SCROLLBARS — Thin 4px Terminal Style
+   ═══════════════════════════════════════════════════════ */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
   background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
-  border-radius: 3px !important;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--border-active);
 }
 
-/* ── Forms & Focus Handling (Beautiful Palantir Rounded Inputs) ── */
+/* ═══════════════════════════════════════════════════════
+   FORMS & FOCUS — Squared Terminal Inputs
+   ═══════════════════════════════════════════════════════ */
 input, select, textarea {
   font-family: inherit;
-  border-radius: 8px;
+  border-radius: 0px;
   padding-left: 1rem !important;
   padding-right: 1rem !important;
   appearance: none;
@@ -186,13 +254,15 @@ input[type="number"] {
   color: var(--text-dark);
 }
 
-/* ── Frosted Palantir Glassmorphism Cards ── */
+/* ═══════════════════════════════════════════════════════
+   GLASS PANELS — Squared Palantir Cards (0px Radius)
+   ═══════════════════════════════════════════════════════ */
 .glass-panel {
   background: var(--bg-card);
   backdrop-filter: blur(16px);
   border: 1px solid var(--border-card);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  border-radius: 14px !important; /* Smooth modern rounded edges */
+  border-radius: 0px !important;
 }
 
 [data-theme='light'] .glass-panel {
@@ -204,30 +274,42 @@ input[type="number"] {
   backdrop-filter: blur(16px);
   border: 1px solid var(--border-active);
   box-shadow: 0 0 30px var(--accent-glow), 0 12px 32px rgba(0,0,0,0.4);
-  border-radius: 14px !important;
+  border-radius: 0px !important;
 }
 
 .heatmap-cell {
-  border-radius: 2.5px !important; /* Exact GitHub rounded square cell override */
+  border-radius: 0px !important;
 }
 
-/* ── Glowing Overrides ── */
+/* ═══════════════════════════════════════════════════════
+   GLOW UTILITIES — Palantir Data Highlights
+   ═══════════════════════════════════════════════════════ */
+.glow-cyan {
+  box-shadow: 0 0 12px rgba(123, 208, 255, 0.15);
+}
+
+.glow-red {
+  box-shadow: 0 0 12px rgba(255, 180, 171, 0.2);
+}
+
 .neon-glow-cyan {
-  box-shadow: 0 0 18px rgba(0, 212, 255, 0.15);
-  border-color: rgba(0, 212, 255, 0.4) !important;
+  box-shadow: 0 0 18px rgba(123, 208, 255, 0.15);
+  border-color: rgba(123, 208, 255, 0.4) !important;
 }
 
 .neon-glow-green {
-  box-shadow: 0 0 18px rgba(0, 200, 5, 0.15);
-  border-color: rgba(0, 200, 5, 0.4) !important;
+  box-shadow: 0 0 18px rgba(52, 211, 153, 0.15);
+  border-color: rgba(52, 211, 153, 0.4) !important;
 }
 
 .neon-glow-red {
-  box-shadow: 0 0 18px rgba(255, 59, 92, 0.15);
-  border-color: rgba(255, 59, 92, 0.4) !important;
+  box-shadow: 0 0 18px rgba(255, 180, 171, 0.15);
+  border-color: rgba(255, 180, 171, 0.4) !important;
 }
 
-/* ── Extremely Visible Pill Badges for Numbers ── */
+/* ═══════════════════════════════════════════════════════
+   BADGES — Squared Pill Badges for Numbers
+   ═══════════════════════════════════════════════════════ */
 .badge-profit {
   display: inline-flex;
   align-items: center;
@@ -240,7 +322,7 @@ input[type="number"] {
   font-family: 'JetBrains Mono', monospace;
   padding: 4px 10px;
   letter-spacing: 0.02em;
-  border-radius: 6px !important;
+  border-radius: 0px !important;
 }
 
 .badge-loss {
@@ -255,7 +337,7 @@ input[type="number"] {
   font-family: 'JetBrains Mono', monospace;
   padding: 4px 10px;
   letter-spacing: 0.02em;
-  border-radius: 6px !important;
+  border-radius: 0px !important;
 }
 
 .badge-open {
@@ -270,7 +352,7 @@ input[type="number"] {
   font-family: 'JetBrains Mono', monospace;
   padding: 4px 10px;
   letter-spacing: 0.02em;
-  border-radius: 6px !important;
+  border-radius: 0px !important;
 }
 
 .badge-cyan {
@@ -285,66 +367,78 @@ input[type="number"] {
   font-family: 'JetBrains Mono', monospace;
   padding: 4px 10px;
   letter-spacing: 0.02em;
-  border-radius: 6px !important;
+  border-radius: 0px !important;
 }
 
-/* ── KPI Glowing Shaded Capsule Backdrops ── */
+/* ═══════════════════════════════════════════════════════
+   KPI CONTAINERS — Squared Capsule Backdrops
+   ═══════════════════════════════════════════════════════ */
 .kpi-container-profit {
   background: var(--bg-kpi-profit) !important;
   border: 1.5px solid var(--border-kpi-profit) !important;
-  border-radius: 12px !important;
+  border-radius: 0px !important;
 }
 
 .kpi-container-loss {
   background: var(--bg-kpi-loss) !important;
   border: 1.5px solid var(--border-kpi-loss) !important;
-  border-radius: 12px !important;
+  border-radius: 0px !important;
 }
 
 .kpi-container-cyan {
   background: var(--bg-kpi-cyan) !important;
   border: 1.5px solid var(--border-kpi-cyan) !important;
-  border-radius: 12px !important;
+  border-radius: 0px !important;
 }
 
 .kpi-container-slate {
   background: var(--bg-kpi-slate) !important;
   border: 1.5px solid var(--border-kpi-slate) !important;
-  border-radius: 12px !important;
+  border-radius: 0px !important;
 }
 
-/* ── Typography and Heading Scale helpers ── */
+/* ═══════════════════════════════════════════════════════
+   FLUID TYPOGRAPHY — clamp()-Based Scale System
+   ═══════════════════════════════════════════════════════ */
 .heading-xl {
   font-family: 'Inter', sans-serif;
-  font-size: 24px;
+  font-size: clamp(18px, 5vw, 24px);
   font-weight: 600;
   letter-spacing: -0.02em;
+  line-height: 1.2;
   color: var(--text-dark);
 }
 
 .heading-lg {
   font-family: 'Inter', sans-serif;
-  font-size: 18px;
+  font-size: clamp(14px, 4vw, 18px);
   font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
   color: var(--text-dark);
 }
 
 .heading-md {
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: clamp(12px, 3.2vw, 14px);
   font-weight: 600;
+  line-height: 1.5;
   color: var(--text-dark);
 }
 
 .label-caption {
-  font-size: 11px;
-  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(9px, 2.5vw, 11px);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
+  line-height: 1.4;
   color: var(--text-secondary);
 }
 
-/* ── Animation Specifications ── */
+/* ═══════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════ */
 @keyframes pulse-yellow {
   0%, 100% { opacity: 1; filter: drop-shadow(0 0 3px #facc15); }
   50% { opacity: 0.55; filter: drop-shadow(0 0 0px #facc15); }
@@ -354,8 +448,8 @@ input[type="number"] {
 }
 
 @keyframes pulse-green {
-  0%, 100% { opacity: 1; filter: drop-shadow(0 0 3px #00ff88); }
-  50% { opacity: 0.55; filter: drop-shadow(0 0 0px #00ff88); }
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 3px #34d399); }
+  50% { opacity: 0.55; filter: drop-shadow(0 0 0px #34d399); }
 }
 .pulse-green {
   animation: pulse-green 2s ease-in-out infinite;
@@ -377,20 +471,35 @@ input[type="number"] {
   animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Monospace fonts for numbers and tickers */
+/* Toast slide-up animation */
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* ═══════════════════════════════════════════════════════
+   DATA TYPOGRAPHY — Monospace System for Numbers
+   ═══════════════════════════════════════════════════════ */
 .font-mono-data {
   font-family: 'JetBrains Mono', monospace !important;
+  font-size: clamp(10px, 2.8vw, 12px);
+  font-weight: 500;
+  line-height: 1.4;
   white-space: nowrap !important;
 }
 
-/* ── Site-wide consistent label / value typography ── */
+/* ── Site-wide label / value typography ── */
 .stat-label {
-  font-size: 9px;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(9px, 2.5vw, 11px);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.05em;
+  line-height: 1.4;
   color: var(--text-secondary);
-  font-family: 'Inter', sans-serif;
   display: flex;
   align-items: center;
   flex-wrap: nowrap !important;
@@ -400,6 +509,7 @@ input[type="number"] {
 
 .stat-value {
   font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 2.8vw, 12px);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.1;
@@ -408,8 +518,8 @@ input[type="number"] {
 }
 
 .stat-sub {
-  font-size: 10px;
   font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 2.5vw, 11px);
   font-weight: 500;
   color: var(--text-secondary);
   margin-top: 2px;
@@ -448,7 +558,9 @@ td, th {
   flex-shrink: 0;
 }
 
-/* ── Gamification Animations ── */
+/* ═══════════════════════════════════════════════════════
+   GAMIFICATION ANIMATIONS
+   ═══════════════════════════════════════════════════════ */
 @keyframes rankPulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
@@ -461,7 +573,7 @@ td, th {
 .xp-bar-fill {
   background-size: 200% auto;
   animation: xpShimmer 2.5s linear infinite;
-  border-radius: 9999px;
+  border-radius: 0px;
 }
 
 @keyframes achievePop {
@@ -486,9 +598,11 @@ td, th {
   color: #ff6b35;
 }
 
-/* ── Responsive grids and structures ── */
-.sidebar-left { /* Left-aligned vertical navigation deck */
-  background: var(--bg-sidebar); 
+/* ═══════════════════════════════════════════════════════
+   LAYOUT — Sidebar & Mobile Navigation
+   ═══════════════════════════════════════════════════════ */
+.sidebar-left {
+  background: var(--bg-sidebar);
   border-right: 1px solid var(--border-card);
   overflow-y: auto;
 }
@@ -503,7 +617,7 @@ td, th {
   display: none;
 }
 
-/* Mobile responsive navigation overrides (Right-Aligned Drawer Slide) */
+/* Mobile responsive navigation overrides */
 @media (max-width: 768px) {
   .sidebar-left {
     display: none;
@@ -514,7 +628,7 @@ td, th {
     position: fixed;
     top: 56px;
     right: 0;
-    left: 40px; /* Slides in from right, leaving left blur overlay */
+    left: 40px;
     width: auto !important;
     bottom: 0;
     z-index: 50;
@@ -549,14 +663,14 @@ td, th {
     align-items: center;
     gap: 3px;
     padding: 12px 4px;
-    font-size: 11px;
+    font-size: clamp(9px, 2.5vw, 11px);
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     color: var(--text-secondary);
     background: transparent;
     border: none;
     cursor: pointer;
-    transition: color 0.15s;
   }
 
   .mobile-tab-bar button.active {
@@ -568,7 +682,16 @@ td, th {
   }
 }
 
-/* ── Info Tooltips for Headings ── */
+/* ═══════════════════════════════════════════════════════
+   SAFE AREA — iPhone Home Indicator
+   ═══════════════════════════════════════════════════════ */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ═══════════════════════════════════════════════════════
+   TOOLTIPS
+   ═══════════════════════════════════════════════════════ */
 .info-trigger {
   position: relative;
   display: inline-flex;
@@ -576,7 +699,6 @@ td, th {
   justify-content: center;
   cursor: help;
   color: var(--text-secondary);
-  transition: color 0.15s ease;
 }
 
 .info-trigger:hover {
@@ -593,7 +715,7 @@ td, th {
   border: 1px solid var(--border-card);
   color: var(--text-primary);
   padding: 8px 12px;
-  font-size: 10px;
+  font-size: clamp(9px, 2.5vw, 11px);
   line-height: 1.4;
   font-weight: 500;
   text-transform: none;
@@ -601,7 +723,7 @@ td, th {
   width: 220px;
   text-align: center;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-  border-radius: 8px !important;
+  border-radius: 0px !important;
   z-index: 1000;
   opacity: 0;
   pointer-events: none;

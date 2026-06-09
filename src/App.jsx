@@ -296,7 +296,8 @@ export default function App() {
   }, []);
 
   const handleToggleTheme = useCallback(() => {
-    const nextTheme = settings.theme === 'dark' ? 'light' : 'dark';
+    const cycle = { dark: 'light', light: 'monochrome', monochrome: 'dark' };
+    const nextTheme = cycle[settings.theme] || 'dark';
     const updated = { ...settings, theme: nextTheme };
     setSettings(updated);
     saveSettings(updated);
@@ -510,7 +511,7 @@ export default function App() {
               </span>
               <button
                 onClick={() => { setShowGlobalTradeModal(false); setEditingTrade(null); }}
-                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 hover:text-[#ff3b5c] cursor-pointer text-[#64748b] text-sm font-bold border border-white/[0.04] bg-white/[0.01]"
+                className="w-8 h-8 flex items-center justify-center hover:bg-white/5 hover:text-[#ff3b5c] cursor-pointer text-[#64748b] text-sm font-bold border border-white/[0.04] bg-white/[0.01]"
               >
                 ✕
               </button>
