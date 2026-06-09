@@ -25,7 +25,7 @@ const SectionHeader = ({ icon, title, subtitle }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 14, marginBottom: 20, borderBottom: '1px solid var(--border-card)' }}>
     <div style={{
       width: 34, height: 34, borderRadius: 0,
-      background: 'rgba(0,200,5,0.08)', border: '1px solid rgba(0,200,5,0.2)',
+      background: 'var(--bg-badge-profit)', border: '1px solid var(--border-profit)',
       display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
     }}>
       {icon}
@@ -88,9 +88,9 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
   const todayStats = calcDailyStats(todayTrades);
 
   const getDisciplineColor = (score) => {
-    if (score >= 4) return '#00ffaa';
-    if (score === 3) return '#facc15';
-    return '#ff477e';
+    if (score >= 4) return 'var(--color-profit)';
+    if (score === 3) return 'var(--color-cyan)';
+    return 'var(--color-loss)';
   };
 
   const getDisciplineLabel = (score) => {
@@ -201,9 +201,9 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                     {GRADES.map((g) => {
                       const isSelected = entry.grade === g;
-                      let activeBg = '#00d4ff';
-                      if (g.startsWith('C')) activeBg = '#facc15';
-                      if (g.startsWith('D') || g === 'F') activeBg = '#ff3b5c';
+                      let activeBg = 'var(--color-cyan)';
+                      if (g.startsWith('C')) activeBg = 'var(--color-profit)';
+                      if (g.startsWith('D') || g === 'F') activeBg = 'var(--color-loss)';
 
                       return (
                         <button
@@ -211,7 +211,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                           onClick={() => updateField('grade', g)}
                           style={{
                             width: 48, height: 48,
-                            borderRadius: '50%',
+                            borderRadius: 0,
                             border: `2px solid ${isSelected ? activeBg : 'var(--border-card)'}`,
                             background: isSelected ? activeBg : 'var(--bg-input)',
                             color: isSelected ? 'var(--bg-app)' : 'var(--text-secondary)',
@@ -446,8 +446,8 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                       resize: 'vertical',
                       minHeight: 80,
                       ...inputStyle,
-                      border: '2px solid rgba(250, 204, 21, 0.3)',
-                      background: 'rgba(250, 204, 21, 0.04)',
+                      border: '2px solid var(--border-profit)',
+                      background: 'var(--accent-glow)',
                     }}
                   />
                 </div>
@@ -503,7 +503,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade }) {
                             key={t.id}
                             style={{
                               borderBottom: '1px solid var(--border-card)',
-                              background: t.isOpen ? 'rgba(250, 204, 21, 0.03)' : t.netPnl >= 0 ? 'rgba(0, 255, 136, 0.03)' : 'rgba(255, 59, 92, 0.03)',
+                              background: t.isOpen ? 'var(--accent-glow)' : t.netPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)',
                               transition: 'background 0.15s ease',
                             }}
                           >

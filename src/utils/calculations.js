@@ -9,7 +9,7 @@ export const getAssetMultiplier = (assetClass, tickMultiplier) => {
 };
 
 export const calcGrossPnl = (entry, exit, qty, direction, assetClass, tickMultiplier) => {
-  if (!exit || exit === '' || exit === 0) return null;
+  if (exit === null || exit === undefined || exit === '') return null;
   const e = Number(entry);
   const x = Number(exit);
   const q = Number(qty);
@@ -79,12 +79,14 @@ export const calcMaxDrawdown = (closedTrades) => {
 
 export const formatCurrency = (val) => {
   if (val === null || val === undefined) return '—';
+  if (val === 0) return '$0.00';
   const isNeg = val < 0;
   const numStr = Math.abs(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   return isNeg ? `-$${numStr}` : `+$${numStr}`;
 };
 
 export const formatPercent = (val) => {
+  if (val === null || val === undefined) return '—';
   return `${val.toFixed(1)}%`;
 };
 

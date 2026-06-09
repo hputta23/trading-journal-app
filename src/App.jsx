@@ -12,7 +12,7 @@ import EntryForm from './components/EntryForm';
 import { loadTrades, saveTrades, loadSettings, saveSettings, getDateKey } from './utils/storage';
 import { calcDailyStats } from './utils/calculations';
 import { loadActivityLogs, saveActivityLogs, logActivity } from './utils/logger';
-import { LayoutDashboard, FileText, TrendingUp, BarChart3, RefreshCw } from 'lucide-react';
+import { LayoutDashboard, FileText, TrendingUp, BarChart3, Calendar, Settings, RefreshCw } from 'lucide-react';
 
 import { supabase } from './utils/supabaseClient';
 import AuthView from './components/AuthView';
@@ -276,13 +276,18 @@ export default function App() {
 
   const handleDeleteTrade = useCallback((id) => {
     const updated = { ...allTrades };
-    if (updated[currentDate]) {
-      updated[currentDate] = updated[currentDate].filter(t => t.id !== id);
-      if (updated[currentDate].length === 0) delete updated[currentDate];
+    // Search all dates for the trade, not just currentDate
+    for (const dateKey of Object.keys(updated)) {
+      const idx = updated[dateKey].findIndex(t => t.id === id);
+      if (idx !== -1) {
+        updated[dateKey].splice(idx, 1);
+        if (updated[dateKey].length === 0) delete updated[dateKey];
+        break;
+      }
     }
     persistTrades(updated);
-    logActivity('TRADE_DELETED', `Deleted trade from ${currentDate}`);
-  }, [allTrades, currentDate, persistTrades]);
+    logActivity('TRADE_DELETED', `Deleted trade ${id}`);
+  }, [allTrades, persistTrades]);
 
   const handleEditTrade = useCallback((trade) => {
     setEditingTrade(trade);
@@ -469,7 +474,7 @@ export default function App() {
       </div>
 
       {/* ── Mobile Tab Bar ── */}
-      <div className="mobile-tab-bar">
+      <div className="mobile-tab-bar safe-area-bottom">
         <button
           className={activeTab === 'dashboard' ? 'active' : ''}
           onClick={() => handleTabChange('dashboard')}
@@ -496,7 +501,21 @@ export default function App() {
           onClick={() => handleTabChange('analytics')}
         >
           <BarChart3 size={15} />
-          Analysis
+          Stats
+        </button>
+        <button
+          className={activeTab === 'calendar' ? 'active' : ''}
+          onClick={() => handleTabChange('calendar')}
+        >
+          <Calendar size={15} />
+          Cal
+        </button>
+        <button
+          className={activeTab === 'settings' ? 'active' : ''}
+          onClick={() => handleTabChange('settings')}
+        >
+          <Settings size={15} />
+          Set
         </button>
       </div>
 
@@ -511,7 +530,7 @@ export default function App() {
               </span>
               <button
                 onClick={() => { setShowGlobalTradeModal(false); setEditingTrade(null); }}
-                className="w-8 h-8 flex items-center justify-center hover:bg-white/5 hover:text-[#ff3b5c] cursor-pointer text-[#64748b] text-sm font-bold border border-white/[0.04] bg-white/[0.01]"
+                className="w-8 h-8 flex items-center justify-center hover:bg-white/5 hover:text-[var(--color-loss)] cursor-pointer text-[var(--text-secondary)] text-sm font-bold border border-white/[0.04] bg-white/[0.01]"
               >
                 ✕
               </button>

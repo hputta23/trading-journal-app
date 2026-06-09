@@ -42,7 +42,7 @@ const StepIndicator = ({ currentStep }) => {
         <div key={s} className="flex items-center gap-0.5">
           <div className="flex items-center gap-2">
             <div
-              className="flex items-center justify-center w-8 h-8 text-sm font-bold shrink-0 rounded-lg"
+              className="flex items-center justify-center w-8 h-8 text-sm font-bold shrink-0"
               style={{
                 background: i <= currentStep ? 'var(--border-active)' : 'var(--bg-sidebar)',
                 color: i <= currentStep ? 'var(--bg-app)' : 'var(--text-secondary)',
@@ -70,7 +70,7 @@ const NowButton = ({ onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="px-5 text-sm border cursor-pointer hover:bg-[var(--border-active)] hover:text-[var(--bg-app)] transition-all shrink-0 flex items-center justify-center gap-2 bg-[var(--bg-sidebar)] text-[var(--text-accent)] border-[var(--border-card)] font-bold rounded-lg"
+    className="px-5 text-sm border cursor-pointer hover:bg-[var(--border-active)] hover:text-[var(--bg-app)] transition-all shrink-0 flex items-center justify-center gap-2 bg-[var(--bg-sidebar)] text-[var(--text-accent)] border-[var(--border-card)] font-bold"
     style={{ ...fontStyle }}
     title="Stamp current time"
   >
@@ -387,18 +387,18 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           <div>
             <FieldLabel>Entry Time</FieldLabel>
             <div className="flex">
-              <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="09:30:00" className="w-full px-4 py-4 text-base border-y border-l rounded-l-lg font-bold font-mono-data" style={whiteInputStyle} />
+              <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="09:30:00" className="w-full px-4 py-4 text-base border-y border-l font-bold font-mono-data" style={whiteInputStyle} />
               <NowButton onClick={() => update('entryTime', getNowTime())} />
             </div>
           </div>
           <div>
             <FieldLabel optional>Exit Time</FieldLabel>
             <div className="flex">
-              <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="15:45:00" className="w-full px-4 py-4 text-base border-y border-l rounded-l-lg font-bold font-mono-data" style={whiteInputStyle} />
+              <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="15:45:00" className="w-full px-4 py-4 text-base border-y border-l font-bold font-mono-data" style={whiteInputStyle} />
               <NowButton onClick={() => update('exitTime', getNowTime())} />
             </div>
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1 sm:col-span-2">
             <FieldLabel>Rule / Mistake</FieldLabel>
             <select
               value={form.mistake}
@@ -409,11 +409,11 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               {MISTAKES.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
           </div>
-          <div className="col-span-2 lg:col-span-2">
+          <div className="col-span-1 sm:col-span-2 lg:col-span-2">
             <FieldLabel optional>Image URL</FieldLabel>
             <input value={form.imageUrl} onChange={e => update('imageUrl', e.target.value)} placeholder="https://imgur.com/..." className="w-full px-4 py-4 text-base border font-bold" style={whiteInputStyle} />
           </div>
-          <div className="col-span-2 lg:col-span-4">
+          <div className="col-span-1 sm:col-span-2 lg:col-span-4">
             <FieldLabel optional>Notes</FieldLabel>
             <input value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Add any session notes here..." className="w-full px-4 py-4 text-base border font-bold" style={whiteInputStyle} />
           </div>
@@ -529,7 +529,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               </div>
             </div>
           ) : (
-            <div className="space-y-4 p-5 border border-[var(--border-active)] rounded-xl bg-[var(--bg-sidebar)] shadow-md">
+            <div className="space-y-4 p-5 border border-[var(--border-active)] bg-[var(--bg-sidebar)] shadow-md">
               <div className="flex flex-col gap-8">
                 
                 {/* Entry Legs */}
@@ -543,20 +543,20 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                   <div className="space-y-3 flex-1">
                     {form.entryLegs.map((leg, i) => (
                       <div key={`entry-${i}`} className="flex items-center gap-3">
-                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('entryLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
-                        <input type="number" value={leg.qty} onChange={e => handleLegChange('entryLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
-                        <button type="button" onClick={() => removeLeg('entryLegs', i)} className="px-4 flex items-center justify-center text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] rounded-lg transition-colors bg-[var(--bg-app)]">
+                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('entryLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+                        <input type="number" value={leg.qty} onChange={e => handleLegChange('entryLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+                        <button type="button" onClick={() => removeLeg('entryLegs', i)} className="px-4 flex items-center justify-center text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] transition-colors bg-[var(--bg-app)]">
                           <X size={16} />
                         </button>
                       </div>
                     ))}
                   </div>
                   <div className="mt-4 grid grid-cols-2 gap-4">
-                    <div className="p-3 bg-[var(--bg-app)] rounded-lg border border-[var(--border-card)] flex justify-between items-center">
+                    <div className="p-3 bg-[var(--bg-app)] border border-[var(--border-card)] flex justify-between items-center">
                       <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Avg Entry</span>
                       <span className="text-sm font-bold font-mono-data text-[var(--text-accent)]">{form.entryPrice ? `$${form.entryPrice}` : '—'}</span>
                     </div>
-                    <div className="p-3 bg-[var(--bg-app)] rounded-lg border border-[var(--border-card)] flex justify-between items-center">
+                    <div className="p-3 bg-[var(--bg-app)] border border-[var(--border-card)] flex justify-between items-center">
                       <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Total Qty</span>
                       <span className="text-sm font-bold font-mono-data text-[var(--text-primary)]">{form.qty || 0}</span>
                     </div>
@@ -574,15 +574,15 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                   <div className="space-y-3 flex-1">
                     {form.exitLegs.map((leg, i) => (
                       <div key={`exit-${i}`} className="flex items-center gap-3">
-                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('exitLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
-                        <input type="number" value={leg.qty} onChange={e => handleLegChange('exitLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data rounded-lg" style={whiteInputStyle} />
-                        <button type="button" onClick={() => removeLeg('exitLegs', i)} className="px-4 flex items-center justify-center text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] rounded-lg transition-colors bg-[var(--bg-app)]">
+                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('exitLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+                        <input type="number" value={leg.qty} onChange={e => handleLegChange('exitLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+                        <button type="button" onClick={() => removeLeg('exitLegs', i)} className="px-4 flex items-center justify-center text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] transition-colors bg-[var(--bg-app)]">
                           <X size={16} />
                         </button>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-4 p-3 bg-[var(--bg-app)] rounded-lg border border-[var(--border-card)] flex justify-between items-center">
+                  <div className="mt-4 p-3 bg-[var(--bg-app)] border border-[var(--border-card)] flex justify-between items-center">
                     <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Avg Exit</span>
                     <span className="text-sm font-bold font-mono-data text-[var(--text-accent)]">{form.exitPrice ? `$${form.exitPrice}` : '—'}</span>
                   </div>
@@ -659,7 +659,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
       {/* Step 3 — CONFIRM */}
       {step === 2 && (
         <div className="space-y-4 fade-in font-bold">
-          <div className="border p-5 bg-[var(--bg-sidebar)] border-[var(--border-card)] rounded-xl">
+          <div className="border p-5 bg-[var(--bg-sidebar)] border-[var(--border-card)]">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono-data">
               {[
                 ['Ticker symbol', form.ticker.toUpperCase(), 'var(--text-accent)'],

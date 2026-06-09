@@ -162,11 +162,11 @@ export default function SettingsView({ settings, onSave, userEmail }) {
         gap: '24px'
       }}>
         {/* Header */}
-        <div className="glass-panel flex flex-col md:flex-row items-start md:items-center justify-between p-6 rounded-2xl gap-4">
+        <div className="glass-panel flex flex-col md:flex-row items-start md:items-center justify-between p-6 gap-4">
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{
               width: '48px', height: '48px', borderRadius: 0,
-              background: 'rgba(0, 200, 5, 0.1)', border: '1px solid rgba(0, 200, 5, 0.25)',
+              background: 'var(--accent-glow)', border: '1px solid var(--border-active)',
               display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
               <Settings size={24} style={{ color: 'var(--text-accent)' }} />
@@ -191,7 +191,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
               border: 'none', borderRadius: 0,
               cursor: 'pointer', transition: 'all 0.2s',
               display: 'flex', alignItems: 'center', gap: '8px',
-              boxShadow: saveStatus === 'success' ? '0 0 16px rgba(0, 230, 118, 0.4)' : '0 4px 14px rgba(0, 200, 5, 0.2)'
+              boxShadow: saveStatus === 'success' ? '0 0 16px rgba(252, 227, 0, 0.4)' : '0 4px 14px rgba(252, 227, 0, 0.2)'
             }}
           >
             {saveStatus === 'success' ? 'SETTINGS SAVED ✓' : 'APPLY SETTINGS'}
@@ -223,7 +223,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                   color: 'var(--text-input)', borderRadius: 0
                 }}
               />
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', marginTop: '12px', padding: '12px 16px', background: 'rgba(0, 200, 5, 0.05)', borderRadius: 0, border: '1px solid rgba(0, 200, 5, 0.15)' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', marginTop: '12px', padding: '12px 16px', background: 'var(--accent-glow)', borderRadius: 0, border: '1px solid var(--border-active)' }}>
                 <Shield size={14} style={{ color: 'var(--color-profit)', marginTop: '2px', flexShrink: 0 }} />
                 <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
                   Leave blank to operate purely in high-speed offline local storage mode. All data will remain strictly on this device.
@@ -235,7 +235,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
           {/* ── Preferences ── */}
           <div className="glass-panel" style={{ padding: '32px', borderRadius: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-              <Sliders size={20} style={{ color: '#facc15' }} />
+              <Sliders size={20} style={{ color: 'var(--text-accent)' }} />
               <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Trading Preferences</h2>
             </div>
 
@@ -437,7 +437,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                   onClick={() => { if (window.confirm('Clear all activity logs?')) clearActivityLogs(); }}
                   style={{
                     padding: '6px 12px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
-                    background: 'rgba(255, 59, 92, 0.1)', border: '1px solid rgba(255, 59, 92, 0.3)', color: 'var(--color-loss)',
+                    background: 'var(--bg-kpi-loss)', border: '1px solid var(--border-loss)', color: 'var(--color-loss)',
                     borderRadius: 0, cursor: 'pointer'
                   }}
                 >
@@ -459,7 +459,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                   let badgeColor = 'var(--text-secondary)';
                   if (log.type === 'TRADE_ADDED') badgeColor = 'var(--color-profit)';
                   else if (log.type === 'TRADE_DELETED') badgeColor = 'var(--color-loss)';
-                  else if (log.type === 'TRADE_EDITED') badgeColor = '#EAB308';
+                  else if (log.type === 'TRADE_EDITED') badgeColor = 'var(--text-accent)';
                   else if (log.type === 'JOURNAL_UPDATED') badgeColor = 'var(--text-accent)';
                   
                   return (
@@ -468,7 +468,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                         fontSize: '10px', fontWeight: '700', letterSpacing: '0.05em', padding: '4px 8px', borderRadius: 0,
                         background: `color-mix(in srgb, ${badgeColor} 15%, transparent)`, color: badgeColor, minWidth: '110px', textAlign: 'center'
                       }}>
-                        {log.type.replace('_', ' ')}
+                        {log.type.replace(/_/g, ' ')}
                       </div>
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
                         <span style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{log.description}</span>

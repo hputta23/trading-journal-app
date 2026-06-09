@@ -38,21 +38,16 @@ export const calcStreak = (allTrades) => {
     }
   });
 
-  const today = new Date();
+  // Get all trading days sorted descending (most recent first)
+  const tradingDays = Object.keys(dailyMap).sort((a, b) => new Date(b) - new Date(a));
+  
   let streak = 0;
-  for (let i = 0; i <= 365; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    if (dailyMap[ds] !== undefined) {
-      if (dailyMap[ds] > 0) {
-        streak++;
-      } else {
-        break; // loss day breaks streak
-      }
+  for (const day of tradingDays) {
+    if (dailyMap[day] > 0) {
+      streak++;
+    } else {
+      break; // loss/breakeven day breaks streak
     }
-    // Skip days with no activity (weekends etc.) only if streak hasn't started yet
-    if (streak === 0 && i > 3) break;
   }
   return streak;
 };

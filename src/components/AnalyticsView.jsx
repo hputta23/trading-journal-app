@@ -8,7 +8,7 @@ const CustomTooltip = ({ active, payload, label }) => {
     const val = payload[0].value;
     return (
       <div className="px-4 py-3 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-lg shadow-xl backdrop-blur-md">
-        <p className="text-[11px] font-bold text-[#8e8e93] uppercase tracking-widest mb-1.5">{label}</p>
+        <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">{label}</p>
         <p className="text-lg font-bold font-mono-data" style={{ color: val >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>
           {formatCurrency(val)}
         </p>
@@ -129,7 +129,7 @@ export default function AnalyticsView({ allTrades }) {
       <div className="p-6 md:p-8 max-w-[1600px] mx-auto space-y-8">
         
         {!hasData ? (
-          <div className="py-20 text-center flex flex-col items-center justify-center glass-panel rounded-2xl">
+          <div className="py-20 text-center flex flex-col items-center justify-center glass-panel">
             <BarChart3 size={48} className="text-[var(--text-secondary)] opacity-50 mb-4" />
             <p className="text-lg font-bold text-[var(--text-secondary)]">Insufficient Data</p>
             <p className="text-sm text-[var(--text-secondary)] mt-2">Log trades to generate equity curves and distributions.</p>
@@ -138,37 +138,37 @@ export default function AnalyticsView({ allTrades }) {
           <>
             {/* ── KPI ROW ── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-              <div className="glass-panel p-5 rounded-xl border border-[var(--border-card)]">
+              <div className="glass-panel p-5 border border-[var(--border-card)]">
                 <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Net Equity</p>
                 <p className={`text-xl font-black font-mono-data ${currentEquity >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
                   {formatCurrency(currentEquity)}
                 </p>
               </div>
-              <div className="glass-panel p-5 rounded-xl border border-[var(--border-card)]">
+              <div className="glass-panel p-5 border border-[var(--border-card)]">
                 <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Max Drawdown</p>
                 <p className="text-xl font-black font-mono-data text-[var(--color-loss)]">
                   {formatCurrency(maxHistoricalDrawdown)}
                 </p>
               </div>
-              <div className="glass-panel p-5 rounded-xl border border-[var(--border-card)]">
+              <div className="glass-panel p-5 border border-[var(--border-card)]">
                 <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Win Rate</p>
                 <p className="text-xl font-black font-mono-data text-[var(--text-dark)]">
                   {formatPercent(statsSummary.winRate)}
                 </p>
               </div>
-              <div className="glass-panel p-5 rounded-xl border border-[var(--border-card)]">
+              <div className="glass-panel p-5 border border-[var(--border-card)]">
                 <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Profit Factor</p>
                 <p className="text-xl font-black font-mono-data text-[var(--text-dark)]">
-                  {statsSummary.profitFactor.toFixed(2)}
+                  {statsSummary.profitFactor === Infinity ? '∞' : statsSummary.profitFactor.toFixed(2)}
                 </p>
               </div>
-              <div className="glass-panel p-5 rounded-xl border border-[var(--border-card)]">
+              <div className="glass-panel p-5 border border-[var(--border-card)]">
                 <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Trade Expectancy</p>
                 <p className={`text-xl font-black font-mono-data ${statsSummary.expectancy >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
                   {formatCurrency(statsSummary.expectancy)}
                 </p>
               </div>
-              <div className="glass-panel p-5 rounded-xl border border-[var(--border-card)]">
+              <div className="glass-panel p-5 border border-[var(--border-card)]">
                 <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Total Trades</p>
                 <p className="text-xl font-black font-mono-data text-[var(--text-dark)]">
                   {statsSummary.totalTrades}
@@ -177,7 +177,7 @@ export default function AnalyticsView({ allTrades }) {
             </div>
 
             {/* ── EQUITY CURVE CHART ── */}
-            <div className="glass-panel rounded-2xl p-6 border border-[var(--border-card)]">
+            <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)] flex items-center gap-2">
                   <TrendingUp size={16} className="text-[var(--color-cyan)]" />
@@ -244,7 +244,7 @@ export default function AnalyticsView({ allTrades }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               
               {/* Size Distribution */}
-              <div className="glass-panel rounded-2xl p-6 border border-[var(--border-card)]">
+              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
                 <div className="flex items-center gap-2 mb-6">
                   <BarChart3 size={16} className="text-[var(--text-accent)]" />
                   <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">P&L Distribution</h2>
@@ -295,7 +295,7 @@ export default function AnalyticsView({ allTrades }) {
               </div>
 
               {/* Advanced Metrics Table */}
-              <div className="glass-panel rounded-2xl p-6 border border-[var(--border-card)]">
+              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
                 <div className="flex items-center gap-2 mb-6">
                   <Target size={16} className="text-[var(--text-accent)]" />
                   <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Performance Matrix</h2>

@@ -55,7 +55,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
     const map = {};
     Object.entries(allTrades).forEach(([date, trades]) => {
       const closed = trades.filter(t => !t.isOpen && t.netPnl !== null);
-      if (closed.length) map[date] = { netPnl: closed.reduce((s, t) => s + t.netPnl, 0), tradesCount: trades.length };
+      if (closed.length) map[date] = { netPnl: closed.reduce((s, t) => s + t.netPnl, 0), tradesCount: closed.length };
     });
     return map;
   }, [allTrades]);
@@ -121,7 +121,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
     let maxP = 1, maxL = 1;
     Object.values(dailyPnLMap).forEach(d => {
       if (d.netPnl > maxP) maxP = d.netPnl;
-      if (d.netPnl < -maxL) maxL = Math.abs(d.netPnl);
+      if (d.netPnl < 0 && Math.abs(d.netPnl) > maxL) maxL = Math.abs(d.netPnl);
     });
     return { maxP, maxL };
   }, [dailyPnLMap]);
@@ -180,7 +180,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
 
         {/* Gross P&L */}
         <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative' }}>
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: 'inherit', background: `radial-gradient(ellipse at top left, ${isPos ? 'rgba(0,230,118,0.05)' : 'rgba(255,59,92,0.05)'} 0%, transparent 70%)` }} />
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: 'inherit', background: `radial-gradient(ellipse at top left, ${isPos ? 'color-mix(in srgb, var(--color-profit) 5%, transparent)' : 'color-mix(in srgb, var(--color-loss) 5%, transparent)'} 0%, transparent 70%)` }} />
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: isPos ? 'var(--color-profit)' : 'var(--color-loss)', borderRadius: 0 }} />
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
             <div style={{ minWidth: 0 }}>
@@ -204,9 +204,9 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
         </div>
 
         {/* After Tax */}
-        <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative', border: '1px solid var(--border-kpi-loss)' }}>
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: 'inherit', background: 'radial-gradient(ellipse at top right, rgba(255,59,92,0.06) 0%, transparent 70%)' }} />
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'var(--color-loss)', borderRadius: 0 }} />
+        <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative', border: `1px solid ${afterTaxPnl >= 0 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'}` }}>
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: 'inherit', background: `radial-gradient(ellipse at top right, ${afterTaxPnl >= 0 ? 'color-mix(in srgb, var(--color-profit) 6%, transparent)' : 'color-mix(in srgb, var(--color-loss) 6%, transparent)'} 0%, transparent 70%)` }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: afterTaxPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', borderRadius: 0 }} />
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
             <div style={{ minWidth: 0 }}>
               <div className="stat-label" style={{ marginBottom: 6 }}>
@@ -216,11 +216,11 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 {afterTaxPnl >= 0 ? '+' : '−'}{absStr(afterTaxPnl)}
               </div>
             </div>
-            <div style={{ width: 40, height: 40, borderRadius: 0, background: 'rgba(255,59,92,0.08)', border: '1px solid var(--border-kpi-loss)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Receipt size={18} style={{ color: 'var(--color-loss)' }} />
+            <div style={{ width: 40, height: 40, borderRadius: 0, background: afterTaxPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)', border: `1px solid ${afterTaxPnl >= 0 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Receipt size={18} style={{ color: afterTaxPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }} />
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, paddingTop: 10, borderTop: '1px solid rgba(255,59,92,0.2)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, paddingTop: 10, borderTop: `1px solid ${afterTaxPnl >= 0 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'}`, flexWrap: 'wrap' }}>
             {[['Tax Owed', taxOwed > 0 ? `−${absStr(taxOwed)}` : '—', 'var(--color-loss)'],
               ['You Keep', '70%', 'var(--color-profit)'],
               ['Tax Rate', '30%', 'var(--color-loss)']].map(([l, v, c]) => (
@@ -288,7 +288,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                     {xp.toLocaleString()} / {rank.xpTarget === 999999 ? '∞' : rank.xpTarget.toLocaleString()} XP
                   </span>
                 </div>
-                <div style={{ height: 10, borderRadius: 9999, background: 'var(--border-card)', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ height: 10, borderRadius: 9999, background: 'var(--border-card)', overflow: 'hidden', border: '1px solid var(--border-card)' }}>
                   <div
                     className="xp-bar-fill"
                     style={{
@@ -333,7 +333,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
           <div className="glass-panel" style={{ padding: '20px 22px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, paddingBottom: 10, borderBottom: '1px solid var(--border-card)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                <Trophy size={13} style={{ color: '#facc15' }} />
+                <Trophy size={13} style={{ color: 'var(--text-accent)' }} />
                 <span className="stat-label" style={{ fontSize: 11 }}>Achievements</span>
               </div>
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: 'var(--color-profit)' }}>
@@ -353,11 +353,11 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                     gap: 4,
                     padding: '8px 4px',
                     borderRadius: 0,
-                    background: a.unlocked ? 'rgba(0,200,5,0.08)' : 'var(--bg-input)',
-                    border: `1px solid ${a.unlocked ? 'rgba(0,200,5,0.3)' : 'var(--border-card)'}`,
+                    background: a.unlocked ? 'var(--bg-badge-profit)' : 'var(--bg-input)',
+                    border: `1px solid ${a.unlocked ? 'var(--border-profit)' : 'var(--border-card)'}`,
                     cursor: 'default',
                     animationDelay: `${i * 0.06}s`,
-                    boxShadow: a.unlocked ? '0 0 12px rgba(0,200,5,0.12)' : 'none',
+                    boxShadow: a.unlocked ? '0 0 12px var(--accent-glow)' : 'none',
                   }}
                 >
                   <span style={{ fontSize: 18, lineHeight: 1 }}>{a.unlocked ? a.icon : '🔒'}</span>

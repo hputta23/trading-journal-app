@@ -56,7 +56,7 @@ export default function SidebarStats({
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className="px-4 py-3.5 text-[13px] font-semibold tracking-wide transition-all duration-200 cursor-pointer flex items-center gap-3 rounded-lg flex-nowrap whitespace-nowrap"
+              className="px-4 py-3.5 text-[13px] font-semibold tracking-wide transition-all duration-200 cursor-pointer flex items-center gap-3 flex-nowrap whitespace-nowrap"
               style={{
                 border: isActive ? '1px solid var(--border-active)' : '1px solid transparent',
                 color: isActive ? 'var(--text-dark)' : 'var(--text-secondary)',
@@ -65,7 +65,7 @@ export default function SidebarStats({
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                  e.currentTarget.style.background = 'var(--accent-glow)';
                   e.currentTarget.style.color = 'var(--text-primary)';
                 }
               }}
@@ -76,7 +76,7 @@ export default function SidebarStats({
                 }
               }}
             >
-              <span className={isActive ? 'text-[var(--text-accent)]' : 'text-[#64748b]'}>
+              <span className={isActive ? 'text-[var(--text-accent)]' : 'text-[var(--text-secondary)]'}>
                 {tab.icon}
               </span>
               <span className="whitespace-nowrap font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>{tab.label}</span>
@@ -90,7 +90,7 @@ export default function SidebarStats({
 
       {/* ── High-Contrast Session Metrics (Numbers wrapped inside glowing container cards) ── */}
       <div className="flex-1 space-y-4 overflow-y-auto pr-1">
-        <div className="text-[10px] font-bold text-[#64748b] tracking-widest uppercase mb-2 whitespace-nowrap font-sans">
+        <div className="text-[10px] font-bold text-[var(--text-secondary)] tracking-widest uppercase mb-2 whitespace-nowrap font-sans">
           LIVE METRICS
         </div>
 
@@ -184,13 +184,6 @@ export default function SidebarStats({
           style={{ borderColor: 'var(--border-active)' }}
         >
           LOG TRADE SESSION
-        </button>
-
-        <button
-          onClick={onLoadDemo}
-          className="w-full py-2 text-[9px] font-semibold uppercase tracking-widest border cursor-pointer bg-transparent text-[var(--text-secondary)] border-[var(--border-card)] hover:text-[var(--text-dark)] hover:border-[var(--border-active)] transition-all"
-        >
-          GENERATE FULL DENSE DEMO
         </button>
       </div>
 

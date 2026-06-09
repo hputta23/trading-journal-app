@@ -146,15 +146,29 @@
 }
 
 /* ═══════════════════════════════════════════════════════
-   GLOBAL SMOOTH THEME TRANSITION (400ms MD3 Standard)
+   GLOBAL RESET + THEME TRANSITION
    ═══════════════════════════════════════════════════════ */
 *, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* Smooth 400ms transitions only on structural/theme elements */
+body, .glass-panel, .glass-panel-glow,
+.sidebar-left, .main-content, .mobile-tab-bar,
+.kpi-container-profit, .kpi-container-loss, .kpi-container-cyan, .kpi-container-slate,
+.badge-profit, .badge-loss, .badge-open, .badge-cyan {
   transition-property: background-color, border-color, color, fill, stroke, box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 400ms;
+}
+
+/* Fast 150ms transitions for interactive elements */
+button, a, input, select, textarea, .info-trigger {
+  transition-property: background-color, border-color, color, box-shadow, opacity;
+  transition-timing-function: ease;
+  transition-duration: 150ms;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -349,9 +363,9 @@ input[type="number"] {
   align-items: center;
   justify-content: center;
   white-space: nowrap !important;
-  background: rgba(234, 179, 8, 0.15) !important;
-  color: #facc15 !important;
-  border: 1.5px solid rgba(234, 179, 8, 0.35) !important;
+  background: var(--bg-badge-profit) !important;
+  color: var(--color-profit) !important;
+  border: 1.5px solid var(--border-profit) !important;
   font-weight: 700;
   font-family: 'JetBrains Mono', monospace;
   padding: 4px 10px;

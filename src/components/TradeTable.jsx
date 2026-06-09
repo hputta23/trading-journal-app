@@ -21,10 +21,10 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
   };
 
   const getRowBg = (trade, idx) => {
-    if (trade.isOpen) return 'rgba(250, 204, 21, 0.02)';
-    if (trade.netPnl > 0) return 'rgba(0, 255, 136, 0.02)';
-    if (trade.netPnl < 0) return 'rgba(255, 59, 92, 0.02)';
-    return idx % 2 === 0 ? 'rgba(255, 255, 255, 0.01)' : 'transparent';
+    if (trade.isOpen) return 'var(--bg-kpi-profit)';
+    if (trade.netPnl > 0) return 'var(--bg-kpi-profit)';
+    if (trade.netPnl < 0) return 'var(--bg-kpi-loss)';
+    return idx % 2 === 0 ? 'var(--bg-card)' : 'transparent';
   };
 
   if (!trades || trades.length === 0) return <EmptyTable />;
@@ -34,7 +34,7 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
       {/* ── MOBILE CARD VIEW (< md) ── */}
       <div className="md:hidden space-y-4">
         {trades.map((trade) => (
-          <div key={trade.id} className="glass-panel rounded-xl p-4 border border-[var(--border-card)] space-y-4 relative">
+          <div key={trade.id} className="glass-panel p-4 border border-[var(--border-card)] space-y-4 relative">
             
             {/* Header: Ticker & Direction */}
             <div className="flex justify-between items-start">
@@ -85,7 +85,7 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
             {/* Footer Actions */}
             <div className="flex justify-between items-center pt-2 border-t border-[var(--border-card)]">
               <div>
-                {trade.isOpen && <span className="text-[10px] uppercase font-bold text-[#facc15] tracking-widest">OPEN</span>}
+                {trade.isOpen && <span className="text-[10px] uppercase font-bold text-[var(--color-profit)] tracking-widest">OPEN</span>}
               </div>
               <div className="flex items-center gap-3">
                 {confirmingDelete === trade.id ? (
@@ -111,7 +111,7 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
       </div>
 
       {/* ── DESKTOP TABLE VIEW (>= md) ── */}
-      <div className="hidden md:block border overflow-hidden glass-panel rounded-xl" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-card)' }}>
+      <div className="hidden md:block border overflow-hidden glass-panel" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-card)' }}>
         <div className="overflow-x-auto">
           <table className="w-full" style={{ minWidth: '1050px' }}>
             <thead>
@@ -125,7 +125,7 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
             </thead>
             <tbody>
               {trades.map((trade, idx) => (
-                <tr key={trade.id} className="transition-all duration-150 border-b hover:!bg-white/[0.03]" style={{ background: getRowBg(trade, idx), borderColor: 'rgba(255, 255, 255, 0.02)' }}>
+                <tr key={trade.id} className="transition-all duration-150 border-b hover:!bg-[var(--accent-glow)]" style={{ background: getRowBg(trade, idx), borderColor: 'rgba(255, 255, 255, 0.02)' }}>
                   <td className="px-5 py-4 text-xs font-semibold text-[var(--text-secondary)] font-mono-data">{idx + 1}</td>
                   <td className="px-5 py-4 text-xs whitespace-nowrap font-mono-data font-semibold text-[var(--text-primary)]">{trade.time}</td>
                   <td className="px-5 py-4 whitespace-nowrap">
@@ -171,9 +171,9 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
 
                   <td className="px-5 py-4 whitespace-nowrap">
                     {trade.isOpen ? (
-                      <span className="pulse-yellow inline-block px-3 py-1 font-semibold uppercase text-[10px]" style={{ background: 'rgba(250, 204, 21, 0.12)', color: '#facc15' }}>OPEN</span>
+                      <span className="badge-open pulse-yellow">OPEN</span>
                     ) : (
-                      <span className="inline-block px-3 py-1 font-semibold uppercase text-[10px]" style={{ background: 'rgba(0, 212, 255, 0.06)', color: 'var(--text-secondary)' }}>CLOSED</span>
+                      <span className="badge-cyan">CLOSED</span>
                     )}
                   </td>
 

@@ -25,10 +25,10 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
       {/* Brand left */}
       <div className="flex items-center gap-3">
         <div
-          className="flex items-center justify-center w-8 h-8 rounded-lg"
+          className="flex items-center justify-center w-8 h-8"
           style={{ background: 'var(--border-active)' }}
         >
-          <TrendingUp size={16} style={{ color: '#000' }} />
+          <TrendingUp size={16} style={{ color: 'var(--bg-app)' }} />
         </div>
         <div className="flex flex-col leading-none">
           <span
@@ -51,12 +51,12 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
         {/* Cloud Sync Status / Refresh Button */}
         <button 
           onClick={onManualSync}
-          className="flex items-center justify-center w-9 h-9 rounded-lg cursor-pointer transition-all duration-200"
+          className="flex items-center justify-center w-9 h-9 cursor-pointer transition-all duration-200"
           style={{ 
             background: 'var(--bg-card)', 
             border: '1px solid var(--border-card)', 
             color: cloudSyncStatus === 'error' ? 'var(--color-loss)' : cloudSyncStatus === 'syncing' ? 'var(--text-accent)' : 'var(--text-secondary)',
-            boxShadow: cloudSyncStatus === 'syncing' ? '0 0 10px rgba(0, 200, 5, 0.2)' : 'none'
+            boxShadow: cloudSyncStatus === 'syncing' ? '0 0 10px var(--accent-glow)' : 'none'
           }}
           title={cloudSyncStatus === 'error' ? 'Cloud Sync Failed (Click to retry)' : cloudSyncStatus === 'syncing' ? 'Syncing to Cloud...' : 'Cloud Synced (Click to refresh)'}
         >
@@ -65,7 +65,7 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
         
         {/* Live Clock — hidden on very small screens */}
         <div
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg"
+          className="hidden sm:flex items-center gap-2 px-3 py-1.5"
           style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)' }}
         >
           <Activity size={11} style={{ color: 'var(--text-accent)' }} />
@@ -99,7 +99,7 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg cursor-pointer transition-all duration-200"
+          className="md:hidden flex items-center justify-center w-9 h-9 cursor-pointer transition-all duration-200"
           style={{
             background: 'var(--bg-card)',
             border: '1px solid var(--border-card)',

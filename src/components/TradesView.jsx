@@ -82,7 +82,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
         title={
           <span className="flex items-center gap-1.5">
             Master Transaction History & Filters
-            <span className="info-trigger inline-flex text-slate-500 font-normal">
+            <span className="info-trigger inline-flex text-[var(--text-secondary)] font-normal">
               <Info size={11} />
               <span className="info-tooltip font-sans">
                 View your entire chronological trading log database. Filters let you isolate specific tickers, strategies, or directions.
@@ -103,7 +103,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
       >
         <div className="p-6 space-y-8" style={{ background: 'var(--bg-app)' }}>
           {/* ── Filters Command Bar ── */}
-          <div className="border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-xl">
+          <div className="border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel">
             <div className="flex items-center justify-between border-b pb-4 mb-6 border-[var(--border-card)]">
               <div className="flex items-center gap-3">
                 <div className="p-1.5 rounded-md bg-[var(--border-active)]/10 text-[var(--border-active)]">
@@ -111,7 +111,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
                 </div>
                 <span className="text-sm font-bold text-[var(--text-dark)] uppercase tracking-widest flex items-center gap-2">
                   Dynamic Search Filters
-                  <span className="info-trigger inline-flex text-slate-500 cursor-help">
+                  <span className="info-trigger inline-flex text-[var(--text-secondary)] cursor-help">
                     <Info size={12} />
                     <span className="info-tooltip font-sans text-xs normal-case tracking-normal">
                       Narrow down your database records by ticker name, position direction, asset class, strategy type, or win/loss status.
@@ -122,7 +122,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
               {hasActiveFilters && (
                 <button
                   onClick={handleResetFilters}
-                  className="flex items-center gap-1.5 text-[11px] font-bold hover:opacity-85 transition-opacity cursor-pointer uppercase tracking-wider bg-transparent border border-red-500/20 px-3 py-1.5 rounded-md"
+                  className="flex items-center gap-1.5 text-[11px] font-bold hover:opacity-85 transition-opacity cursor-pointer uppercase tracking-wider bg-transparent border border-[var(--color-loss)]/20 px-3 py-1.5 rounded-md"
                   style={{ color: 'var(--color-loss)' }}
                 >
                   <RotateCcw size={13} />
@@ -133,9 +133,9 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
               {/* Ticker Search */}
               <div className="relative">
-                <label className="block text-[11px] uppercase font-bold text-[#64748b] tracking-wider mb-2">Search Ticker</label>
+                <label className="block text-[11px] uppercase font-bold text-[var(--text-secondary)] tracking-wider mb-2">Search Ticker</label>
                 <div className="relative">
-                  <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#475569]" />
+                  <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
                   <input
                     type="text"
                     value={tickerSearch}
@@ -149,7 +149,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
 
               {/* Direction */}
               <div>
-                <label className="block text-[11px] uppercase font-bold text-[#64748b] tracking-wider mb-2">Direction</label>
+                <label className="block text-[11px] uppercase font-bold text-[var(--text-secondary)] tracking-wider mb-2">Direction</label>
                 <select
                   value={directionFilter}
                   onChange={e => setDirectionFilter(e.target.value)}
@@ -164,7 +164,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
 
               {/* Asset Class */}
               <div>
-                <label className="block text-[11px] uppercase font-bold text-[#64748b] tracking-wider mb-2">Asset Class</label>
+                <label className="block text-[11px] uppercase font-bold text-[var(--text-secondary)] tracking-wider mb-2">Asset Class</label>
                 <select
                   value={assetClassFilter}
                   onChange={e => setAssetClassFilter(e.target.value)}
@@ -178,7 +178,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
 
               {/* Strategy */}
               <div>
-                <label className="block text-[11px] uppercase font-bold text-[#64748b] tracking-wider mb-2">Strategy</label>
+                <label className="block text-[11px] uppercase font-bold text-[var(--text-secondary)] tracking-wider mb-2">Strategy</label>
                 <select
                   value={strategyFilter}
                   onChange={e => setStrategyFilter(e.target.value)}
@@ -192,7 +192,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
 
               {/* Outcome Status */}
               <div>
-                <label className="block text-[11px] uppercase font-bold text-[#64748b] tracking-wider mb-2">Status</label>
+                <label className="block text-[11px] uppercase font-bold text-[var(--text-secondary)] tracking-wider mb-2">Status</label>
                 <select
                   value={statusFilter}
                   onChange={e => setStatusFilter(e.target.value)}
@@ -209,7 +209,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
           </div>
 
           {/* ── Sub-Filtered Dynamic Metrics ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel">
             {[
               [
                 'FILTERED NET P&L', 
@@ -245,7 +245,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
               ],
             ].map(([lbl, element]) => (
               <div key={lbl} className="px-5 border-r border-transparent lg:border-[var(--border-card)] last:border-transparent flex flex-col justify-center gap-3" style={{ minWidth: 0 }}>
-                <span className="block text-[11px] text-[#64748b] tracking-widest font-bold uppercase" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lbl}</span>
+                <span className="block text-[11px] text-[var(--text-secondary)] tracking-widest font-bold uppercase" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lbl}</span>
                 <div className="flex" style={{ minWidth: 0 }}>{element}</div>
               </div>
             ))}
@@ -273,7 +273,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
               </span>
               <button
                 onClick={() => { setShowLogModal(false); onCancelEdit(); }}
-                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 hover:text-[#ff3b5c] cursor-pointer text-[#64748b] text-sm font-bold border border-white/[0.04] bg-white/[0.01]"
+                className="w-8 h-8 flex items-center justify-center hover:bg-white/5 hover:text-[var(--color-loss)] cursor-pointer text-[var(--text-secondary)] text-sm font-bold border border-white/[0.04] bg-white/[0.01]"
               >
                 ✕
               </button>
