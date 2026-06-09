@@ -100,13 +100,19 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
   /* ── Heatmap ── */
   const heatmapDays = useMemo(() => {
     const days = [];
-    const end = new Date();
-    const start = new Date(end);
-    start.setDate(end.getDate() - 363 + (6 - end.getDay()));
-    for (let i = 0; i < 364; i++) {
-      const d = new Date(start); d.setDate(start.getDate() - (363 - i));
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    // Start from 363 days ago, aligned to a Sunday
+    const start = new Date(today);
+    start.setDate(today.getDate() - 363);
+    // Align start to previous Sunday
+    start.setDate(start.getDate() - start.getDay());
+    const totalDays = Math.ceil((today - start) / (1000 * 60 * 60 * 24)) + 1;
+    for (let i = 0; i < totalDays; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
       const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      days.push({ date: ds, isToday: ds === new Date().toISOString().split('T')[0], ...dailyPnLMap[ds] });
+      days.push({ date: ds, isToday: ds === todayStr, ...dailyPnLMap[ds] });
     }
     return days;
   }, [dailyPnLMap]);

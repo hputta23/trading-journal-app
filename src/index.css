@@ -3,146 +3,146 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════
-   PALANTIR × BLUEPRINT FINANCE — TERMINAL DASHBOARD
-   Squared Geometry · Fluid Typography · MD3 Tokens
+   CYBERPUNK 2077 — NIGHT CITY TERMINAL
+   Squared Geometry · Fluid Typography · Neon Yellow/Gold
    ═══════════════════════════════════════════════════════ */
 
-/* ── Dark Theme (Default) ── */
+/* ── Dark Theme (Default — Night City) ── */
 :root {
-  --bg-app: #0f1418;
-  --bg-sidebar: #0a0f12;
-  --bg-card: #1b2024;
-  --border-card: #303539;
-  --border-active: #7bd0ff;
-  --text-primary: #dee3e8;
-  --text-secondary: #87929a;
-  --text-dark: #ffffff;
-  --text-accent: #7bd0ff;
+  --bg-app: #000000; /* Pure black void */
+  --bg-sidebar: #0a0a0a; /* Near-black sidebar */
+  --bg-card: #111111; /* Dark card surface */
+  --border-card: #1f1f1f; /* Subtle dark border */
+  --border-active: #FCE300; /* Cyberpunk neon yellow */
+  --text-primary: #e8e6e3; /* Warm off-white */
+  --text-secondary: #6b6b6b; /* Muted grey */
+  --text-dark: #ffffff; /* Pure white headers */
+  --text-accent: #FCE300; /* Neon yellow accent */
 
-  --bg-badge-profit: rgba(52, 211, 153, 0.15);
-  --color-profit: #34d399;
-  --border-profit: rgba(52, 211, 153, 0.35);
+  --bg-badge-profit: rgba(252, 227, 0, 0.12); /* Yellow-gold profit */
+  --color-profit: #FCE300;
+  --border-profit: rgba(252, 227, 0, 0.35);
 
-  --bg-badge-loss: rgba(255, 180, 171, 0.15);
-  --color-loss: #ffb4ab;
-  --border-loss: rgba(255, 180, 171, 0.35);
+  --bg-badge-loss: rgba(255, 0, 60, 0.12); /* Hot pink/red loss */
+  --color-loss: #FF003C;
+  --border-loss: rgba(255, 0, 60, 0.35);
 
-  --bg-badge-cyan: rgba(142, 213, 255, 0.15);
-  --color-cyan: #8ed5ff;
-  --border-cyan: rgba(142, 213, 255, 0.35);
+  --bg-badge-cyan: rgba(0, 240, 255, 0.10); /* Electric cyan info */
+  --color-cyan: #00F0FF;
+  --border-cyan: rgba(0, 240, 255, 0.30);
 
-  --bg-kpi-profit: rgba(52, 211, 153, 0.06);
-  --border-kpi-profit: rgba(52, 211, 153, 0.25);
+  --bg-kpi-profit: rgba(252, 227, 0, 0.05);
+  --border-kpi-profit: rgba(252, 227, 0, 0.20);
 
-  --bg-kpi-loss: rgba(255, 180, 171, 0.06);
-  --border-kpi-loss: rgba(255, 180, 171, 0.25);
+  --bg-kpi-loss: rgba(255, 0, 60, 0.05);
+  --border-kpi-loss: rgba(255, 0, 60, 0.20);
 
-  --bg-kpi-cyan: rgba(142, 213, 255, 0.06);
-  --border-kpi-cyan: rgba(142, 213, 255, 0.25);
+  --bg-kpi-cyan: rgba(0, 240, 255, 0.05);
+  --border-kpi-cyan: rgba(0, 240, 255, 0.20);
 
-  --bg-kpi-slate: rgba(135, 146, 154, 0.06);
-  --border-kpi-slate: rgba(135, 146, 154, 0.2);
+  --bg-kpi-slate: rgba(107, 107, 107, 0.06);
+  --border-kpi-slate: rgba(107, 107, 107, 0.18);
 
-  --bg-input: #171c20;
-  --border-input: #3e484f;
-  --text-input: #dee3e8;
-  --heatmap-empty: #252b2e;
+  --bg-input: #0a0a0a;
+  --border-input: #2a2a2a;
+  --text-input: #e8e6e3;
+  --heatmap-empty: #1a1a1a;
 
-  --scrollbar-track: #0a0f12;
-  --scrollbar-thumb: #3e484f;
-  --accent-glow: rgba(123, 208, 255, 0.15);
+  --scrollbar-track: #000000;
+  --scrollbar-thumb: #2a2a2a;
+  --accent-glow: rgba(252, 227, 0, 0.12);
 }
 
-/* ── Light Theme ── */
+/* ── Light Theme (Chrome Day) ── */
 [data-theme='light'] {
-  --bg-app: #f8fafc;
-  --bg-sidebar: #ffffff;
-  --bg-card: #ffffff;
-  --border-card: #e2e8f0;
-  --border-active: #0284c7;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --text-dark: #000000;
-  --text-accent: #0284c7;
+  --bg-app: #f5f0e8; /* Warm parchment */
+  --bg-sidebar: #ece7dd; /* Warm cream sidebar */
+  --bg-card: #ffffff; /* White cards */
+  --border-card: #d4cfc5; /* Warm border */
+  --border-active: #b8960c; /* Dark gold */
+  --text-primary: #1a1a1a; /* Near black */
+  --text-secondary: #6b6560; /* Warm grey */
+  --text-dark: #000000; /* Black headers */
+  --text-accent: #b8960c; /* Dark gold accent */
 
-  --bg-badge-profit: rgba(16, 185, 129, 0.08);
-  --color-profit: #10b981;
-  --border-profit: rgba(16, 185, 129, 0.25);
+  --bg-badge-profit: rgba(184, 150, 12, 0.08);
+  --color-profit: #8a7200;
+  --border-profit: rgba(184, 150, 12, 0.25);
 
-  --bg-badge-loss: rgba(220, 38, 38, 0.08);
-  --color-loss: #dc2626;
-  --border-loss: rgba(220, 38, 38, 0.25);
+  --bg-badge-loss: rgba(200, 0, 45, 0.08);
+  --color-loss: #c8002d;
+  --border-loss: rgba(200, 0, 45, 0.25);
 
-  --bg-badge-cyan: rgba(2, 132, 199, 0.08);
-  --color-cyan: #0284c7;
-  --border-cyan: rgba(2, 132, 199, 0.25);
+  --bg-badge-cyan: rgba(0, 120, 140, 0.08);
+  --color-cyan: #00788c;
+  --border-cyan: rgba(0, 120, 140, 0.25);
 
-  --bg-kpi-profit: rgba(16, 185, 129, 0.04);
-  --border-kpi-profit: rgba(16, 185, 129, 0.15);
+  --bg-kpi-profit: rgba(184, 150, 12, 0.04);
+  --border-kpi-profit: rgba(184, 150, 12, 0.15);
 
-  --bg-kpi-loss: rgba(220, 38, 38, 0.04);
-  --border-kpi-loss: rgba(220, 38, 38, 0.15);
+  --bg-kpi-loss: rgba(200, 0, 45, 0.04);
+  --border-kpi-loss: rgba(200, 0, 45, 0.15);
 
-  --bg-kpi-cyan: rgba(2, 132, 199, 0.04);
-  --border-kpi-cyan: rgba(2, 132, 199, 0.15);
+  --bg-kpi-cyan: rgba(0, 120, 140, 0.04);
+  --border-kpi-cyan: rgba(0, 120, 140, 0.15);
 
-  --bg-kpi-slate: rgba(100, 116, 139, 0.04);
-  --border-kpi-slate: rgba(100, 116, 139, 0.12);
+  --bg-kpi-slate: rgba(107, 101, 96, 0.04);
+  --border-kpi-slate: rgba(107, 101, 96, 0.12);
 
   --bg-input: #ffffff;
-  --border-input: #cbd5e1;
-  --text-input: #0f172a;
-  --heatmap-empty: #e2e8f0;
+  --border-input: #d4cfc5;
+  --text-input: #1a1a1a;
+  --heatmap-empty: #e8e3d9;
 
-  --scrollbar-track: #f8fafc;
-  --scrollbar-thumb: #cbd5e1;
-  --accent-glow: rgba(2, 132, 199, 0.08);
+  --scrollbar-track: #f5f0e8;
+  --scrollbar-thumb: #d4cfc5;
+  --accent-glow: rgba(184, 150, 12, 0.08);
 }
 
-/* ── Monochrome Theme (High-Contrast Black & White Terminal) ── */
+/* ── Monochrome Theme (Blackwall Terminal) ── */
 [data-theme='monochrome'] {
   --bg-app: #000000;
-  --bg-sidebar: #111111;
-  --bg-card: #1a1a1a;
-  --border-card: #333333;
-  --border-active: #ffffff;
-  --text-primary: #ffffff;
-  --text-secondary: #a3a3a3;
-  --text-dark: #ffffff;
-  --text-accent: #ffffff;
+  --bg-sidebar: #080808;
+  --bg-card: #0f0f0f;
+  --border-card: #252525;
+  --border-active: #FFD700; /* Gold */
+  --text-primary: #FFD700; /* Gold text */
+  --text-secondary: #8B7500; /* Muted gold */
+  --text-dark: #FFD700;
+  --text-accent: #FFD700;
 
-  --bg-badge-profit: rgba(255, 255, 255, 0.1);
-  --color-profit: #e5e5e5;
-  --border-profit: rgba(255, 255, 255, 0.3);
+  --bg-badge-profit: rgba(255, 215, 0, 0.08);
+  --color-profit: #FFD700;
+  --border-profit: rgba(255, 215, 0, 0.25);
 
-  --bg-badge-loss: rgba(255, 255, 255, 0.06);
-  --color-loss: #ffffff;
-  --border-loss: rgba(255, 255, 255, 0.2);
+  --bg-badge-loss: rgba(255, 215, 0, 0.04);
+  --color-loss: #8B7500;
+  --border-loss: rgba(255, 215, 0, 0.15);
 
-  --bg-badge-cyan: rgba(255, 255, 255, 0.08);
-  --color-cyan: #d4d4d4;
-  --border-cyan: rgba(255, 255, 255, 0.25);
+  --bg-badge-cyan: rgba(255, 215, 0, 0.06);
+  --color-cyan: #DAA520;
+  --border-cyan: rgba(255, 215, 0, 0.20);
 
-  --bg-kpi-profit: rgba(255, 255, 255, 0.04);
-  --border-kpi-profit: rgba(255, 255, 255, 0.15);
+  --bg-kpi-profit: rgba(255, 215, 0, 0.04);
+  --border-kpi-profit: rgba(255, 215, 0, 0.15);
 
-  --bg-kpi-loss: rgba(255, 255, 255, 0.03);
-  --border-kpi-loss: rgba(255, 255, 255, 0.1);
+  --bg-kpi-loss: rgba(255, 215, 0, 0.03);
+  --border-kpi-loss: rgba(255, 215, 0, 0.10);
 
-  --bg-kpi-cyan: rgba(255, 255, 255, 0.04);
-  --border-kpi-cyan: rgba(255, 255, 255, 0.12);
+  --bg-kpi-cyan: rgba(255, 215, 0, 0.04);
+  --border-kpi-cyan: rgba(255, 215, 0, 0.12);
 
-  --bg-kpi-slate: rgba(255, 255, 255, 0.03);
-  --border-kpi-slate: rgba(255, 255, 255, 0.08);
+  --bg-kpi-slate: rgba(255, 215, 0, 0.03);
+  --border-kpi-slate: rgba(255, 215, 0, 0.08);
 
-  --bg-input: #111111;
-  --border-input: #404040;
-  --text-input: #ffffff;
-  --heatmap-empty: #222222;
+  --bg-input: #080808;
+  --border-input: #2a2500;
+  --text-input: #FFD700;
+  --heatmap-empty: #151200;
 
-  --scrollbar-track: #111111;
-  --scrollbar-thumb: #404040;
-  --accent-glow: rgba(255, 255, 255, 0.08);
+  --scrollbar-track: #000000;
+  --scrollbar-thumb: #2a2500;
+  --accent-glow: rgba(255, 215, 0, 0.10);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -282,29 +282,33 @@ input[type="number"] {
 }
 
 /* ═══════════════════════════════════════════════════════
-   GLOW UTILITIES — Palantir Data Highlights
+   GLOW UTILITIES — Night City Neon Highlights
    ═══════════════════════════════════════════════════════ */
 .glow-cyan {
-  box-shadow: 0 0 12px rgba(123, 208, 255, 0.15);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
 }
 
 .glow-red {
-  box-shadow: 0 0 12px rgba(255, 180, 171, 0.2);
+  box-shadow: 0 0 12px rgba(255, 0, 60, 0.2);
+}
+
+.glow-yellow {
+  box-shadow: 0 0 16px rgba(252, 227, 0, 0.2);
 }
 
 .neon-glow-cyan {
-  box-shadow: 0 0 18px rgba(123, 208, 255, 0.15);
-  border-color: rgba(123, 208, 255, 0.4) !important;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.15);
+  border-color: rgba(0, 240, 255, 0.4) !important;
 }
 
 .neon-glow-green {
-  box-shadow: 0 0 18px rgba(52, 211, 153, 0.15);
-  border-color: rgba(52, 211, 153, 0.4) !important;
+  box-shadow: 0 0 18px rgba(252, 227, 0, 0.18);
+  border-color: rgba(252, 227, 0, 0.4) !important;
 }
 
 .neon-glow-red {
-  box-shadow: 0 0 18px rgba(255, 180, 171, 0.15);
-  border-color: rgba(255, 180, 171, 0.4) !important;
+  box-shadow: 0 0 18px rgba(255, 0, 60, 0.18);
+  border-color: rgba(255, 0, 60, 0.4) !important;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -448,8 +452,8 @@ input[type="number"] {
 }
 
 @keyframes pulse-green {
-  0%, 100% { opacity: 1; filter: drop-shadow(0 0 3px #34d399); }
-  50% { opacity: 0.55; filter: drop-shadow(0 0 0px #34d399); }
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 3px #FCE300); }
+  50% { opacity: 0.55; filter: drop-shadow(0 0 0px #FCE300); }
 }
 .pulse-green {
   animation: pulse-green 2s ease-in-out infinite;
