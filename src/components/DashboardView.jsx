@@ -4,7 +4,7 @@ import {
   Percent, Layers, Award, Receipt, ArrowUpRight,
   ArrowDownRight, ChevronRight, Zap, Trophy
 } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { formatCurrency, formatPercent, formatNumber, calcDailyStats } from '../utils/calculations';
 import { calcTraderRank, calcXP, calcStreak, getAchievements } from '../utils/gamification';
 
@@ -117,6 +117,14 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
     }
     return days;
   }, [dailyPnLMap]);
+
+  const histogramDays = useMemo(() => {
+    return heatmapDays.slice(-30).map(d => ({
+      ...d,
+      netPnl: d.netPnl || 0,
+      tradesCount: d.tradesCount || 0
+    }));
+  }, [heatmapDays]);
 
   const heatScale = useMemo(() => {
     let maxP = 1, maxL = 1;
@@ -440,6 +448,57 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 <span style={{ color: 'var(--color-profit)' }}>Profit</span>
               </div>
             </div>
+            
+            {/* 30-Day Histogram */}
+            <div style={{ height: 120, width: '100%', marginBottom: 20 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={histogramDays} margin={{ top: 0, right: 0, left: 0, bottom: 0 }} barGap={2} barCategoryGap="10%">
+                  <Tooltip 
+                    cursor={{ fill: 'var(--border-card)', opacity: 0.4 }}
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border-active)', padding: '10px 14px', borderRadius: 0, boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+                            <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4, fontFamily: "'JetBrains Mono', monospace" }}>{data.date}</div>
+                            <div style={{ fontSize: 14, fontWeight: 800, color: data.netPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontFamily: "'JetBrains Mono', monospace" }}>
+                              {formatCurrency(data.netPnl)}
+                            </div>
+                            <div style={{ fontSize: 10, color: 'var(--text-dark)', marginTop: 4 }}>
+                              {data.tradesCount} {data.tradesCount === 1 ? 'trade' : 'trades'}
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <ReferenceLine y={0} stroke="var(--border-active)" strokeWidth={1} />
+                  <Bar 
+                    dataKey="netPnl" 
+                    onClick={(data) => {
+                      if (data && data.date) {
+                        onSelectDate(data.date);
+                        onNavigateTab('journal');
+                      }
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {histogramDays.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={entry.netPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)'} 
+                        style={{
+                          filter: `drop-shadow(0 0 6px ${entry.netPnl >= 0 ? 'color-mix(in srgb, var(--color-profit) 40%, transparent)' : 'color-mix(in srgb, var(--color-loss) 40%, transparent)'})`
+                        }}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* 365-Day Grid */}
             <div style={{ overflowX: 'auto', paddingBottom: 8, scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
               <div style={{ display: 'flex', gap: 6, minWidth: 340 }}>
                 <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 14px)', gap: '4px', fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace", paddingTop: 1, paddingRight: 6, flexShrink: 0, lineHeight: '14px' }}>
