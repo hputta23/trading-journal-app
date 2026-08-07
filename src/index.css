@@ -269,7 +269,7 @@ input[type="number"] {
 }
 
 /* ═══════════════════════════════════════════════════════
-   GLASS PANELS — Squared Palantir Cards (0px Radius)
+   GLASS PANELS — macOS Rounded Cards
    ═══════════════════════════════════════════════════════ */
 .glass-panel {
   background: var(--bg-card);
@@ -277,6 +277,7 @@ input[type="number"] {
   border: 1px solid var(--border-card);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   border-radius: 14px !important;
+  overflow: hidden;
 }
 
 [data-theme='light'] .glass-panel {
@@ -289,6 +290,7 @@ input[type="number"] {
   border: 1px solid var(--border-active);
   box-shadow: 0 0 30px var(--accent-glow), 0 12px 32px rgba(0,0,0,0.4);
   border-radius: 14px !important;
+  overflow: hidden;
 }
 
 .heatmap-cell {
@@ -395,24 +397,28 @@ input[type="number"] {
   background: var(--bg-kpi-profit) !important;
   border: 1.5px solid var(--border-kpi-profit) !important;
   border-radius: 10px !important;
+  overflow: hidden;
 }
 
 .kpi-container-loss {
   background: var(--bg-kpi-loss) !important;
   border: 1.5px solid var(--border-kpi-loss) !important;
   border-radius: 10px !important;
+  overflow: hidden;
 }
 
 .kpi-container-cyan {
   background: var(--bg-kpi-cyan) !important;
   border: 1.5px solid var(--border-kpi-cyan) !important;
   border-radius: 10px !important;
+  overflow: hidden;
 }
 
 .kpi-container-slate {
   background: var(--bg-kpi-slate) !important;
   border: 1.5px solid var(--border-kpi-slate) !important;
   border-radius: 10px !important;
+  overflow: hidden;
 }
 
 /* ═══════════════════════════════════════════════════════
