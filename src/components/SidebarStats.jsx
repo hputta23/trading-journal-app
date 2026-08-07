@@ -1,6 +1,7 @@
 import { Radio, DollarSign, Percent, TrendingUp, Layers, Activity, LayoutDashboard, BookOpen, BarChart3, Settings, Calendar } from 'lucide-react';
 import { formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 
+// eslint-disable-next-line no-unused-vars
 export default function SidebarStats({
   stats,
   activeTab,
@@ -8,6 +9,7 @@ export default function SidebarStats({
   onOpenNewTrade,
   onSync,
   syncStatus,
+  // eslint-disable-next-line no-unused-vars
   onLoadDemo,
   userEmail
 }) {
