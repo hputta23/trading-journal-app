@@ -7,7 +7,7 @@ export default function TerminalWindow({ title, children, actions, icon }) {
       {/* ── Terminal Window Title Bar ── */}
       <div
         className="flex items-center justify-between px-5 py-3 border-b select-none shrink-0"
-        style={{ borderColor: 'var(--border-card)', background: 'var(--bg-sidebar)', gap: 12 }}
+        style={{ borderColor: 'var(--border-card)', background: 'var(--bg-sidebar)', gap: 12, borderTopLeftRadius: 'inherit', borderTopRightRadius: 'inherit' }}
       >
         <div className="flex items-center gap-2" style={{ minWidth: 0, overflow: 'hidden' }}>
           <span style={{ flexShrink: 0 }}>{icon}</span>

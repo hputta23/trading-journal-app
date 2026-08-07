@@ -196,7 +196,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
         {/* Gross P&L */}
         <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative' }}>
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: 'inherit', background: `radial-gradient(ellipse at top left, ${isPos ? 'color-mix(in srgb, var(--color-profit) 5%, transparent)' : 'color-mix(in srgb, var(--color-loss) 5%, transparent)'} 0%, transparent 70%)` }} />
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: isPos ? 'var(--color-profit)' : 'var(--color-loss)', borderRadius: 0 }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: isPos ? 'var(--color-profit)' : 'var(--color-loss)', borderTopLeftRadius: 'inherit', borderTopRightRadius: 'inherit' }} />
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
             <div style={{ minWidth: 0 }}>
               <div className="stat-label" style={{ marginBottom: 6 }}>
@@ -221,7 +221,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
         {/* After Tax */}
         <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative', border: `1px solid ${afterTaxPnl >= 0 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'}` }}>
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: 'inherit', background: `radial-gradient(ellipse at top right, ${afterTaxPnl >= 0 ? 'color-mix(in srgb, var(--color-profit) 6%, transparent)' : 'color-mix(in srgb, var(--color-loss) 6%, transparent)'} 0%, transparent 70%)` }} />
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: afterTaxPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', borderRadius: 0 }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: afterTaxPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', borderTopLeftRadius: 'inherit', borderTopRightRadius: 'inherit' }} />
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
             <div style={{ minWidth: 0 }}>
               <div className="stat-label" style={{ marginBottom: 6 }}>
@@ -276,7 +276,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
           >
             {/* Background radial glow */}
             <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: `radial-gradient(ellipse at 20% 50%, ${rank.glow} 0%, transparent 65%)` }} />
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: rank.color, borderRadius: 0 }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: rank.color, borderTopLeftRadius: 'inherit', borderTopRightRadius: 'inherit' }} />
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
 
