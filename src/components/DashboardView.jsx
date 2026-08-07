@@ -19,7 +19,7 @@ const Tip = ({ text }) => (
 );
 
 const StatCard = ({ icon, label, value, sub, color, bg, border, tip }) => (
-  <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 0, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
+  <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 14, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
     <div className="stat-label" style={{ color: 'var(--text-secondary)', fontSize: 9 }}>
       {icon} <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span> {tip && <Tip text={tip} />}
     </div>
@@ -206,7 +206,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 {isPos ? '+' : '−'}{absStr(activeVal)}
               </div>
             </div>
-            <div style={{ width: 40, height: 40, borderRadius: 0, background: isPos ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)', border: `1px solid ${isPos ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: isPos ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)', border: `1px solid ${isPos ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               {isPos ? <ArrowUpRight size={18} style={{ color: 'var(--color-profit)' }} /> : <ArrowDownRight size={18} style={{ color: 'var(--color-loss)' }} />}
             </div>
           </div>
@@ -231,7 +231,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 {afterTaxPnl >= 0 ? '+' : '−'}{absStr(afterTaxPnl)}
               </div>
             </div>
-            <div style={{ width: 40, height: 40, borderRadius: 0, background: afterTaxPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)', border: `1px solid ${afterTaxPnl >= 0 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: afterTaxPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)', border: `1px solid ${afterTaxPnl >= 0 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Receipt size={18} style={{ color: afterTaxPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }} />
             </div>
           </div>
@@ -367,7 +367,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                     alignItems: 'center',
                     gap: 4,
                     padding: '8px 4px',
-                    borderRadius: 0,
+                    borderRadius: 8,
                     background: a.unlocked ? 'var(--bg-badge-profit)' : 'var(--bg-input)',
                     border: `1px solid ${a.unlocked ? 'var(--border-profit)' : 'var(--border-card)'}`,
                     cursor: 'default',
@@ -396,7 +396,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
               Portfolio Equity Curve <Tip text="Cumulative closed P&L plotted over time. Hover to inspect dates." />
             </span>
           </div>
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 0, background: 'var(--bg-kpi-cyan)', color: 'var(--color-cyan)', border: '1px solid var(--border-kpi-cyan)' }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 8, background: 'var(--bg-kpi-cyan)', color: 'var(--color-cyan)', border: '1px solid var(--border-kpi-cyan)' }}>
             {equityCurveData.length > 1 ? `${equityCurveData.length - 1} days` : 'No data'}
           </span>
         </div>
@@ -443,7 +443,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace" }}>
                 <span style={{ color: 'var(--color-loss)' }}>Loss</span>
                 {['var(--color-loss)','color-mix(in srgb, var(--color-loss) 50%, var(--heatmap-empty))','var(--heatmap-empty)','color-mix(in srgb, var(--color-profit) 50%, var(--heatmap-empty))','var(--color-profit)'].map((bg, i) => (
-                  <div key={i} style={{ width: 10, height: 10, borderRadius: 0, background: bg }} />
+                  <div key={i} style={{ width: 10, height: 10, borderRadius: 3, background: bg }} />
                 ))}
                 <span style={{ color: 'var(--color-profit)' }}>Profit</span>
               </div>
@@ -459,7 +459,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
                         return (
-                          <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border-active)', padding: '10px 14px', borderRadius: 0, boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+                          <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border-active)', padding: '10px 14px', borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
                             <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4, fontFamily: "'JetBrains Mono', monospace" }}>{data.date}</div>
                             <div style={{ fontSize: 14, fontWeight: 800, color: data.netPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontFamily: "'JetBrains Mono', monospace" }}>
                               {formatCurrency(data.netPnl)}
@@ -548,7 +548,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 background: 'var(--bg-panel)',
                 border: '1px solid var(--border-active)',
                 padding: '8px 12px',
-                borderRadius: 0,
+                borderRadius: 10,
                 boxShadow: '0 4px 20px rgba(0,0,0,0.8)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -586,7 +586,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
               {strategySummary.length === 0 ? (
                 <p className="stat-sub" style={{ textAlign: 'center', padding: '10px 0' }}>No data yet</p>
               ) : strategySummary.map((s, i) => (
-                <div key={s.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', borderRadius: 0, background: 'var(--bg-input)', border: '1px solid var(--border-card)', marginBottom: 6 }}>
+                <div key={s.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', borderRadius: 10, background: 'var(--bg-input)', border: '1px solid var(--border-card)', marginBottom: 6 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span style={{ fontSize: 9, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-secondary)' }}>#{i+1}</span>
                     <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-dark)' }}>{s.name}</span>
@@ -606,7 +606,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 <span className="stat-label" style={{ fontSize: 10, color: 'var(--text-dark)' }}>Recent Trades</span>
               </div>
               {recentTrades.map(t => (
-                <div key={t.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 7px', borderRadius: 0, background: 'var(--bg-input)', marginBottom: 5 }}>
+                <div key={t.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 7px', borderRadius: 10, background: 'var(--bg-input)', marginBottom: 5 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, minWidth: 0 }}>
                     <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-accent)', flexShrink: 0 }}>{t.ticker}</span>
                     <span style={{ fontSize: 10, fontWeight: 800, color: t.direction === 'Long' ? 'var(--color-profit)' : 'var(--color-loss)', flexShrink: 0 }}>

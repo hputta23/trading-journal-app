@@ -541,7 +541,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                 background: form.advancedExecution ? 'var(--border-active)' : 'transparent',
                 color: form.advancedExecution ? 'var(--bg-app)' : 'var(--text-accent)',
                 borderColor: 'var(--border-active)',
-                borderRadius: 0
+                borderRadius: 10
               }}
             >
               <Calculator size={12} />

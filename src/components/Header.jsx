@@ -25,7 +25,7 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
       {/* Brand left */}
       <div className="flex items-center gap-3">
         <div
-          className="flex items-center justify-center w-8 h-8"
+          className="flex items-center justify-center w-8 h-8 rounded-lg"
           style={{ background: 'var(--border-active)' }}
         >
           <TrendingUp size={16} style={{ color: 'var(--bg-app)' }} />

@@ -3,8 +3,8 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════
-   CYBERPUNK 2077 — NIGHT CITY TERMINAL
-   Squared Geometry · Fluid Typography · Neon Yellow/Gold
+   TRADEOS — macOS-INSPIRED DESIGN SYSTEM
+   Soft Geometry · Fluid Typography · Warm Gold
    ═══════════════════════════════════════════════════════ */
 
 /* ── Dark Theme (Default — Night City) ── */
@@ -227,7 +227,7 @@ body {
    ═══════════════════════════════════════════════════════ */
 input, select, textarea {
   font-family: inherit;
-  border-radius: 0px;
+  border-radius: 10px;
   padding-left: 1rem !important;
   padding-right: 1rem !important;
   appearance: none;
@@ -276,7 +276,7 @@ input[type="number"] {
   backdrop-filter: blur(16px);
   border: 1px solid var(--border-card);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  border-radius: 0px !important;
+  border-radius: 14px !important;
 }
 
 [data-theme='light'] .glass-panel {
@@ -288,11 +288,11 @@ input[type="number"] {
   backdrop-filter: blur(16px);
   border: 1px solid var(--border-active);
   box-shadow: 0 0 30px var(--accent-glow), 0 12px 32px rgba(0,0,0,0.4);
-  border-radius: 0px !important;
+  border-radius: 14px !important;
 }
 
 .heatmap-cell {
-  border-radius: 0px !important;
+  border-radius: 4px !important;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -340,7 +340,7 @@ input[type="number"] {
   font-family: 'JetBrains Mono', monospace;
   padding: 4px 10px;
   letter-spacing: 0.02em;
-  border-radius: 0px !important;
+  border-radius: 8px !important;
 }
 
 .badge-loss {
@@ -355,7 +355,7 @@ input[type="number"] {
   font-family: 'JetBrains Mono', monospace;
   padding: 4px 10px;
   letter-spacing: 0.02em;
-  border-radius: 0px !important;
+  border-radius: 8px !important;
 }
 
 .badge-open {
@@ -370,7 +370,7 @@ input[type="number"] {
   font-family: 'JetBrains Mono', monospace;
   padding: 4px 10px;
   letter-spacing: 0.02em;
-  border-radius: 0px !important;
+  border-radius: 8px !important;
 }
 
 .badge-cyan {
@@ -385,7 +385,7 @@ input[type="number"] {
   font-family: 'JetBrains Mono', monospace;
   padding: 4px 10px;
   letter-spacing: 0.02em;
-  border-radius: 0px !important;
+  border-radius: 8px !important;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -394,25 +394,25 @@ input[type="number"] {
 .kpi-container-profit {
   background: var(--bg-kpi-profit) !important;
   border: 1.5px solid var(--border-kpi-profit) !important;
-  border-radius: 0px !important;
+  border-radius: 10px !important;
 }
 
 .kpi-container-loss {
   background: var(--bg-kpi-loss) !important;
   border: 1.5px solid var(--border-kpi-loss) !important;
-  border-radius: 0px !important;
+  border-radius: 10px !important;
 }
 
 .kpi-container-cyan {
   background: var(--bg-kpi-cyan) !important;
   border: 1.5px solid var(--border-kpi-cyan) !important;
-  border-radius: 0px !important;
+  border-radius: 10px !important;
 }
 
 .kpi-container-slate {
   background: var(--bg-kpi-slate) !important;
   border: 1.5px solid var(--border-kpi-slate) !important;
-  border-radius: 0px !important;
+  border-radius: 10px !important;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -591,7 +591,7 @@ td, th {
 .xp-bar-fill {
   background-size: 200% auto;
   animation: xpShimmer 2.5s linear infinite;
-  border-radius: 0px;
+  border-radius: 6px;
 }
 
 @keyframes achievePop {
@@ -741,7 +741,7 @@ td, th {
   width: 220px;
   text-align: center;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-  border-radius: 0px !important;
+  border-radius: 10px !important;
   z-index: 1000;
   opacity: 0;
   pointer-events: none;

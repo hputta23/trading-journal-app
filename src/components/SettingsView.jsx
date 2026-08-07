@@ -166,7 +166,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
         <div className="glass-panel flex flex-col md:flex-row items-start md:items-center justify-between p-6 gap-4">
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{
-              width: '48px', height: '48px', borderRadius: 0,
+              width: '48px', height: '48px', borderRadius: 12,
               background: 'var(--accent-glow)', border: '1px solid var(--border-active)',
               display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
@@ -189,7 +189,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
               textTransform: 'uppercase', letterSpacing: '0.1em',
               background: saveStatus === 'success' ? 'var(--color-profit)' : 'var(--border-active)',
               color: 'var(--bg-app)',
-              border: 'none', borderRadius: 0,
+              border: 'none', borderRadius: 10,
               cursor: 'pointer', transition: 'all 0.2s',
               display: 'flex', alignItems: 'center', gap: '8px',
               boxShadow: saveStatus === 'success' ? '0 0 16px rgba(252, 227, 0, 0.4)' : '0 4px 14px rgba(252, 227, 0, 0.2)'
@@ -202,7 +202,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* ── Integration & Data ── */}
-          <div className="glass-panel" style={{ padding: '32px', borderRadius: 0 }}>
+          <div className="glass-panel" style={{ padding: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Database size={20} style={{ color: 'var(--color-cyan)' }} />
               <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Integration & API</h2>
@@ -221,10 +221,10 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                 style={{
                   width: '100%', padding: '16px', fontSize: '14px', fontFamily: "'JetBrains Mono', monospace",
                   background: 'var(--bg-input)', border: '1px solid var(--border-input)',
-                  color: 'var(--text-input)', borderRadius: 0
+                  color: 'var(--text-input)', borderRadius: 10
                 }}
               />
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', marginTop: '12px', padding: '12px 16px', background: 'var(--accent-glow)', borderRadius: 0, border: '1px solid var(--border-active)' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', marginTop: '12px', padding: '12px 16px', background: 'var(--accent-glow)', borderRadius: 10, border: '1px solid var(--border-active)' }}>
                 <Shield size={14} style={{ color: 'var(--color-profit)', marginTop: '2px', flexShrink: 0 }} />
                 <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
                   Leave blank to operate purely in high-speed offline local storage mode. All data will remain strictly on this device.
@@ -234,7 +234,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
           </div>
 
           {/* ── Preferences ── */}
-          <div className="glass-panel" style={{ padding: '32px', borderRadius: 0 }}>
+          <div className="glass-panel" style={{ padding: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Sliders size={20} style={{ color: 'var(--text-accent)' }} />
               <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Trading Preferences</h2>
@@ -273,11 +273,11 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                 </label>
                 <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Dark · Light · Monochrome</p>
               </div>
-              <div style={{ display: 'flex', background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 0, padding: '4px' }}>
+              <div style={{ display: 'flex', background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 10, padding: '4px' }}>
                 <button
                   onClick={() => setTheme('dark')}
                   style={{
-                    padding: '8px 16px', border: 'none', borderRadius: 0,
+                    padding: '8px 16px', border: 'none', borderRadius: 8,
                     background: theme === 'dark' ? 'var(--bg-sidebar)' : 'transparent',
                     color: theme === 'dark' ? 'var(--text-accent)' : 'var(--text-secondary)',
                     fontWeight: '700', fontSize: '11px', letterSpacing: '0.05em', cursor: 'pointer',
@@ -290,7 +290,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                 <button
                   onClick={() => setTheme('light')}
                   style={{
-                    padding: '8px 16px', border: 'none', borderRadius: 0,
+                    padding: '8px 16px', border: 'none', borderRadius: 8,
                     background: theme === 'light' ? 'var(--bg-sidebar)' : 'transparent',
                     color: theme === 'light' ? 'var(--text-accent)' : 'var(--text-secondary)',
                     fontWeight: '700', fontSize: '11px', letterSpacing: '0.05em', cursor: 'pointer',
@@ -303,7 +303,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                 <button
                   onClick={() => setTheme('monochrome')}
                   style={{
-                    padding: '8px 16px', border: 'none', borderRadius: 0,
+                    padding: '8px 16px', border: 'none', borderRadius: 8,
                     background: theme === 'monochrome' ? 'var(--bg-sidebar)' : 'transparent',
                     color: theme === 'monochrome' ? 'var(--text-accent)' : 'var(--text-secondary)',
                     fontWeight: '700', fontSize: '11px', letterSpacing: '0.05em', cursor: 'pointer',
@@ -318,7 +318,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
           </div>
           
           {/* ── Data Management (Backups & Imports) ── */}
-          <div className="glass-panel" style={{ padding: '32px', borderRadius: 0, gridColumn: '1 / -1' }}>
+          <div className="glass-panel" style={{ padding: '32px', gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Download size={20} style={{ color: 'var(--text-accent)' }} />
               <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Data Import & Export</h2>
@@ -326,7 +326,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               
-              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)' }}>
+              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 12, border: '1px solid var(--border-card)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <FileJson size={16} className="text-[var(--text-dark)]" />
                   <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)' }}>Backup Data</h3>
@@ -339,7 +339,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                   style={{
                     padding: '10px 16px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
-                    borderRadius: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
+                    borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
@@ -348,7 +348,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                 </button>
               </div>
 
-              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)' }}>
+              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 12, border: '1px solid var(--border-card)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <Upload size={16} className="text-[var(--text-dark)]" />
                   <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)' }}>Restore Backup</h3>
@@ -362,7 +362,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                   style={{
                     padding: '10px 16px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
-                    borderRadius: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
+                    borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
@@ -371,7 +371,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                 </button>
               </div>
 
-              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)' }}>
+              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 12, border: '1px solid var(--border-card)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <FileSpreadsheet size={16} className="text-[var(--text-dark)]" />
                   <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)' }}>Import Broker CSV</h3>
@@ -385,7 +385,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                   style={{
                     padding: '10px 16px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'var(--border-active)', border: 'none', color: 'var(--bg-app)',
-                    borderRadius: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
+                    borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; }}
                   onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
@@ -394,7 +394,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                 </button>
               </div>
 
-              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)' }}>
+              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 12, border: '1px solid var(--border-card)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <Download size={16} className="text-[var(--text-dark)]" />
                   <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)' }}>Export CSV</h3>
@@ -407,7 +407,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                   style={{
                     padding: '10px 16px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
-                    borderRadius: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
+                    borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
@@ -420,14 +420,14 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
           </div>
 
           {/* ── User Profile ── */}
-          <div className="glass-panel" style={{ padding: '32px', borderRadius: 0, border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
+          <div className="glass-panel" style={{ padding: '32px', border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Shield size={20} style={{ color: 'var(--text-accent)' }} />
               <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>User Profile</h2>
             </div>
             
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-              <div style={{ flex: 1, minWidth: 'min(300px, 100%)', padding: '24px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)' }}>
+              <div style={{ flex: 1, minWidth: 'min(300px, 100%)', padding: '24px', background: 'var(--bg-input)', borderRadius: 12, border: '1px solid var(--border-card)' }}>
                 <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)', marginBottom: '8px' }}>Signed in as</h3>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
                   {userEmail}
@@ -437,7 +437,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                   style={{
                     padding: '10px 20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
-                    borderRadius: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
+                    borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
@@ -449,7 +449,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
           </div>
 
           {/* ── Activity Log ── */}
-          <div className="glass-panel" style={{ padding: '32px', borderRadius: 0, border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
+          <div className="glass-panel" style={{ padding: '32px', border: '1px solid var(--border-card)', gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <Clock size={20} style={{ color: 'var(--text-accent)' }} />
@@ -461,7 +461,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                   style={{
                     padding: '6px 12px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                     background: 'var(--bg-kpi-loss)', border: '1px solid var(--border-loss)', color: 'var(--color-loss)',
-                    borderRadius: 0, cursor: 'pointer'
+                    borderRadius: 10, cursor: 'pointer'
                   }}
                 >
                   Clear Log
@@ -486,9 +486,9 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                   else if (log.type === 'JOURNAL_UPDATED') badgeColor = 'var(--text-accent)';
                   
                   return (
-                    <div key={log.id} style={{ padding: '16px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div key={log.id} style={{ padding: '16px', background: 'var(--bg-input)', borderRadius: 10, border: '1px solid var(--border-card)', display: 'flex', alignItems: 'center', gap: '16px' }}>
                       <div style={{ 
-                        fontSize: '10px', fontWeight: '700', letterSpacing: '0.05em', padding: '4px 8px', borderRadius: 0,
+                        fontSize: '10px', fontWeight: '700', letterSpacing: '0.05em', padding: '4px 8px', borderRadius: 8,
                         background: `color-mix(in srgb, ${badgeColor} 15%, transparent)`, color: badgeColor, minWidth: '110px', textAlign: 'center'
                       }}>
                         {log.type.replace(/_/g, ' ')}

@@ -39,7 +39,7 @@ export default function SettingsModal({ settings, onSave, onClose }) {
           boxShadow: `0 24px 60px rgba(0, 0, 0, 0.85), 0 0 40px ${activeColor}15`,
           position: 'relative',
           overflow: 'hidden',
-          borderRadius: 0,
+          borderRadius: 16,
           padding: '0'
         }}
       >
@@ -97,13 +97,13 @@ export default function SettingsModal({ settings, onSave, onClose }) {
                   background: 'var(--bg-input)',
                   borderColor: 'var(--border-input)',
                   color: 'var(--text-input)',
-                  borderRadius: 0,
+                  borderRadius: 10,
                   height: '42px',
                   boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5)'
                 }}
               />
             </div>
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center', background: 'rgba(255,255,255,0.015)', padding: '10px 12px', borderRadius: 0, border: '1px solid var(--border-card)' }}>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center', background: 'rgba(255,255,255,0.015)', padding: '10px 12px', borderRadius: 12, border: '1px solid var(--border-card)' }}>
               <Shield size={11} style={{ color: 'var(--text-accent)', flexShrink: 0 }} />
               <p className="text-[9px] text-[var(--text-secondary)] leading-relaxed uppercase tracking-wider font-bold">
                 Leave blank to operate purely in high-speed offline local storage mode.
@@ -166,7 +166,7 @@ export default function SettingsModal({ settings, onSave, onClose }) {
                 border: '1px solid var(--border-card)', 
                 padding: '2px', 
                 background: 'rgba(0,0,0,0.35)', 
-                borderRadius: 0,
+                borderRadius: 12,
                 flexShrink: 0
               }}
             >
@@ -184,7 +184,7 @@ export default function SettingsModal({ settings, onSave, onClose }) {
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   cursor: 'pointer',
-                  borderRadius: 0,
+                  borderRadius: 10,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -208,7 +208,7 @@ export default function SettingsModal({ settings, onSave, onClose }) {
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   cursor: 'pointer',
-                  borderRadius: 0,
+                  borderRadius: 10,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -237,7 +237,7 @@ export default function SettingsModal({ settings, onSave, onClose }) {
               fontWeight: 'bold',
               textTransform: 'uppercase',
               letterSpacing: '0.12em',
-              borderRadius: 0,
+              borderRadius: 10,
               boxShadow: `0 4px 14px ${activeColor}44`,
               cursor: 'pointer',
               display: 'flex',
@@ -263,7 +263,7 @@ export default function SettingsModal({ settings, onSave, onClose }) {
               fontWeight: 'bold',
               textTransform: 'uppercase',
               letterSpacing: '0.12em',
-              borderRadius: 0,
+              borderRadius: 10,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
