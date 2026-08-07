@@ -90,18 +90,17 @@ export default function CalendarView({ allTrades }) {
           </h1>
           <p className="text-sm text-[var(--text-secondary)] mt-1 font-medium">Monthly heatmap of your daily P&L.</p>
         </div>
-        
         {/* Monthly Summary Badges */}
         <div className="flex items-center gap-3">
-          <div className="glass-panel px-6 py-2.5 rounded-lg border border-[var(--border-card)]" style={{ borderRadius: 8 }}>
+          <div className="px-3 py-1.5 rounded-md border border-[var(--border-card)] bg-[var(--bg-card)]">
             <span className="text-[10px] uppercase font-bold text-[var(--text-secondary)] tracking-widest block mb-0.5">Win Days</span>
             <span className="font-mono-data font-bold text-[var(--color-profit)]">{monthlyStats.winDays}</span>
           </div>
-          <div className="glass-panel px-6 py-2.5 rounded-lg border border-[var(--border-card)]" style={{ borderRadius: 8 }}>
+          <div className="px-3 py-1.5 rounded-md border border-[var(--border-card)] bg-[var(--bg-card)]">
             <span className="text-[10px] uppercase font-bold text-[var(--text-secondary)] tracking-widest block mb-0.5">Loss Days</span>
             <span className="font-mono-data font-bold text-[var(--color-loss)]">{monthlyStats.lossDays}</span>
           </div>
-          <div className="glass-panel px-6 py-2.5 rounded-lg border border-[var(--border-card)]" style={{ borderRadius: 8 }}>
+          <div className="px-3 py-1.5 rounded-md border border-[var(--border-card)] bg-[var(--bg-card)]">
             <span className="text-[10px] uppercase font-bold text-[var(--text-secondary)] tracking-widest block mb-0.5">Net P&L</span>
             <span className={`font-mono-data font-bold ${monthlyStats.netPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
               {formatCurrency(monthlyStats.netPnl)}

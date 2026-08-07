@@ -51,7 +51,7 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
         {/* Cloud Sync Status / Refresh Button */}
         <button 
           onClick={onManualSync}
-          className="flex items-center justify-center w-9 h-9 rounded-lg cursor-pointer transition-all duration-200"
+          className="flex items-center justify-center w-9 h-9 rounded-md cursor-pointer transition-all duration-200"
           style={{ 
             background: 'var(--bg-card)', 
             border: '1px solid var(--border-card)', 
@@ -65,7 +65,7 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
         
         {/* Live Clock — hidden on very small screens */}
         <div
-          className="hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-lg"
+          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md"
           style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)' }}
         >
           <Activity size={11} style={{ color: 'var(--text-accent)' }} />
@@ -87,7 +87,7 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
         <button
           onClick={onToggleTheme}
           title={theme === 'dark' ? 'Switch to Light' : theme === 'light' ? 'Switch to Monochrome' : 'Switch to Dark'}
-          className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 cursor-pointer"
+          className="flex items-center justify-center w-9 h-9 rounded-md transition-all duration-200 cursor-pointer"
           style={{
             background: 'var(--bg-card)',
             border: '1px solid var(--border-card)',
@@ -99,7 +99,7 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg cursor-pointer transition-all duration-200"
+          className="md:hidden flex items-center justify-center w-9 h-9 rounded-md cursor-pointer transition-all duration-200"
           style={{
             background: 'var(--bg-card)',
             border: '1px solid var(--border-card)',
