@@ -12,6 +12,7 @@ import EntryForm from './components/EntryForm';
 import { loadTrades, saveTrades, loadSettings, saveSettings, getDateKey } from './utils/storage';
 import { calcDailyStats } from './utils/calculations';
 import { loadActivityLogs, saveActivityLogs, logActivity } from './utils/logger';
+import { generateDemoTrades } from './utils/demoData';
 import { LayoutDashboard, FileText, TrendingUp, BarChart3, Calendar, Settings, RefreshCw } from 'lucide-react';
 
 import { supabase } from './utils/supabaseClient';
@@ -32,6 +33,14 @@ export default function App() {
   const [syncStatus, setSyncStatus] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showGlobalTradeModal, setShowGlobalTradeModal] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
+
+  const handleLoadDemo = useCallback(() => {
+    setIsDemo(true);
+    setAllTrades(generateDemoTrades());
+    setAllJournals({});
+    setSession({ user: { id: 'demo', email: 'demo@tradeos.local' } });
+  }, []);
 
   // Pull to Refresh State
   const [pullY, setPullY] = useState(0);
@@ -82,7 +91,7 @@ export default function App() {
   }, []);
 
   const fetchCloudData = useCallback(async () => {
-    if (!session) return;
+    if (!session || isDemo) return;
     
     setCloudSyncStatus('syncing');
     const localTrades = loadTrades();
@@ -152,7 +161,7 @@ export default function App() {
 
   // Load data on mount and on visibility change
   useEffect(() => {
-    if (!session) return;
+    if (!session || isDemo) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCloudData();
     
@@ -185,7 +194,7 @@ export default function App() {
   // Sync to Cloud whenever trades or journals change
   const initialMount = useRef(true);
   useEffect(() => {
-    if (!session) return;
+    if (!session || isDemo) return;
     
     if (initialMount.current) {
       initialMount.current = false;
@@ -249,8 +258,10 @@ export default function App() {
   // Save trades helper
   const persistTrades = useCallback((updated) => {
     setAllTrades(updated);
-    saveTrades(updated);
-  }, []);
+    if (!isDemo) {
+      saveTrades(updated);
+    }
+  }, [isDemo]);
 
   // Derived state for the active selected day
   const todayTrades = allTrades[currentDate] || [];
@@ -359,8 +370,8 @@ export default function App() {
     return <ResetPasswordView onComplete={() => setRecoveryMode(false)} />;
   }
 
-  if (!session) {
-    return <AuthView />;
+  if (!session && !isDemo) {
+    return <AuthView onLoadDemo={handleLoadDemo} />;
   }
 
   return (
@@ -398,6 +409,8 @@ export default function App() {
             onSync={handleSync}
             syncStatus={syncStatus}
             userEmail={session.user.email}
+            isDemo={isDemo}
+            onLoadDemo={handleLoadDemo}
           />
         </div>
 

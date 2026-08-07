@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../utils/supabaseClient';
 
-export default function AuthView() {
+export default function AuthView({ onLoadDemo }) {
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -148,6 +148,17 @@ export default function AuthView() {
                 : "Already have an account? Sign in"}
           </button>
         </div>
+
+        {onLoadDemo && (
+          <div className="mt-6 text-center border-t border-[var(--border-card)] pt-6">
+            <button
+              onClick={onLoadDemo}
+              className="text-xs font-bold uppercase tracking-wider transition-all px-4 py-2 rounded border border-[var(--border-active)] text-[var(--text-accent)] hover:bg-[var(--border-active)] hover:text-[var(--bg-app)]"
+            >
+              Or view Demo Dashboard
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

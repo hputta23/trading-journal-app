@@ -9,8 +9,8 @@ export default function SidebarStats({
   onOpenNewTrade,
   onSync,
   syncStatus,
-  // eslint-disable-next-line no-unused-vars
   onLoadDemo,
+  isDemo,
   userEmail
 }) {
 
@@ -187,6 +187,15 @@ export default function SidebarStats({
         >
           LOG TRADE SESSION
         </button>
+        {onLoadDemo && !isDemo && (
+          <button
+            onClick={onLoadDemo}
+            className="w-full py-2.5 text-[10px] font-semibold uppercase tracking-widest cursor-pointer transition-all duration-200 border bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-accent)] hover:border-[var(--border-active)]"
+            style={{ borderColor: 'var(--border-card)' }}
+          >
+            Load Demo Data
+          </button>
+        )}
       </div>
 
       {/* ── Boxed Sync Status ── */}
