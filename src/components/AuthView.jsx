@@ -3,6 +3,7 @@ import { supabase } from '../utils/supabaseClient';
 
 export default function AuthView() {
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,7 +17,13 @@ export default function AuthView() {
     setMessage(null);
 
     try {
-      if (isLogin) {
+      if (isForgotPassword) {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin,
+        });
+        if (error) throw error;
+        setMessage('Password reset link sent to your email.');
+      } else if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       } else {
@@ -42,7 +49,7 @@ export default function AuthView() {
             Perseverance
           </h1>
           <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
-            {isLogin ? 'Sign in to your account' : 'Create a new profile'}
+            {isForgotPassword ? 'Reset your password' : isLogin ? 'Sign in to your account' : 'Create a new profile'}
           </p>
         </div>
 
@@ -74,20 +81,38 @@ export default function AuthView() {
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--text-secondary)' }}>
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg text-sm font-semibold outline-none transition-all focus:ring-1 focus:ring-[var(--border-active)]"
-              style={{ background: 'var(--bg-input)', border: '1px solid var(--border-input)', color: 'var(--text-primary)' }}
-              placeholder="••••••••"
-            />
-          </div>
+          {!isForgotPassword && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                  Password
+                </label>
+                {isLogin && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsForgotPassword(true);
+                      setError(null);
+                      setMessage(null);
+                    }}
+                    className="text-[10px] font-bold uppercase tracking-wider hover:underline"
+                    style={{ color: 'var(--text-accent)' }}
+                  >
+                    Forgot?
+                  </button>
+                )}
+              </div>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg text-sm font-semibold outline-none transition-all focus:ring-1 focus:ring-[var(--border-active)]"
+                style={{ background: 'var(--bg-input)', border: '1px solid var(--border-input)', color: 'var(--text-primary)' }}
+                placeholder="••••••••"
+              />
+            </div>
+          )}
 
           <button
             type="submit"
@@ -100,23 +125,27 @@ export default function AuthView() {
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.7 : 1
             }}
-            onMouseEnter={e => { if(!loading) e.currentTarget.style.opacity = '0.9'; }}
-            onMouseLeave={e => { if(!loading) e.currentTarget.style.opacity = '1'; }}
           >
-            {loading ? 'Working...' : isLogin ? 'Sign In' : 'Sign Up'}
+            {loading ? 'Processing...' : isForgotPassword ? 'Send Reset Link' : isLogin ? 'Sign In' : 'Create Account'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <button
-            type="button"
-            onClick={() => { setIsLogin(!isLogin); setError(null); setMessage(null); }}
-            className="text-xs font-medium transition-colors cursor-pointer"
-            style={{ color: 'var(--text-secondary)', background: 'none', border: 'none' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--text-dark)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+            onClick={() => {
+              setIsForgotPassword(false);
+              setIsLogin(!isLogin);
+              setError(null);
+              setMessage(null);
+            }}
+            className="text-xs font-bold tracking-wider hover:underline transition-all"
+            style={{ color: 'var(--text-secondary)' }}
           >
-            {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+            {isForgotPassword 
+              ? 'Back to login' 
+              : isLogin 
+                ? "Don't have an account? Sign up" 
+                : "Already have an account? Sign in"}
           </button>
         </div>
       </div>

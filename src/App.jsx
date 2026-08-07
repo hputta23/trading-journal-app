@@ -16,9 +16,11 @@ import { LayoutDashboard, FileText, TrendingUp, BarChart3, Calendar, Settings, R
 
 import { supabase } from './utils/supabaseClient';
 import AuthView from './components/AuthView';
+import ResetPasswordView from './components/ResetPasswordView';
 
 export default function App() {
   const [session, setSession] = useState(null);
+  const [recoveryMode, setRecoveryMode] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [currentDate, setCurrentDate] = useState(getDateKey());
   const [allTrades, setAllTrades] = useState({});
@@ -69,7 +71,10 @@ export default function App() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setRecoveryMode(true);
+      }
       setSession(session);
     });
 
@@ -349,6 +354,10 @@ export default function App() {
     setActiveTab(tab);
     setMobileMenuOpen(false);
   };
+
+  if (recoveryMode) {
+    return <ResetPasswordView onComplete={() => setRecoveryMode(false)} />;
+  }
 
   if (!session) {
     return <AuthView />;
