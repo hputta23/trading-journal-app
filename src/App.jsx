@@ -74,21 +74,23 @@ export default function App() {
 
   // Auth Initialization
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setRecoveryMode(true);
-      }
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
+    // Check local storage for universal session
+    const storedSession = localStorage.getItem('trading-journal-session');
+    if (storedSession) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSession(JSON.parse(storedSession));
+    }
   }, []);
+
+  const handleLogin = (newSession) => {
+    setSession(newSession);
+    localStorage.setItem('trading-journal-session', JSON.stringify(newSession));
+  };
+
+  const handleLogout = () => {
+    setSession(null);
+    localStorage.removeItem('trading-journal-session');
+  };
 
   const fetchCloudData = useCallback(async () => {
     if (!session || isDemo) return;
@@ -97,6 +99,14 @@ export default function App() {
     const localTrades = loadTrades();
     const localJournals = JSON.parse(localStorage.getItem('trading-journal-entries') || '{}');
     
+    // Hardcoded universal login bypasses cloud sync
+    if (session.user.id === 'universal-user') {
+      setAllTrades(localTrades);
+      setAllJournals(localJournals);
+      setCloudSyncStatus('synced');
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('user_data')
@@ -205,6 +215,13 @@ export default function App() {
     saveTrades(allTrades);
     localStorage.setItem('trading-journal-entries', JSON.stringify(allJournals));
     
+    // Hardcoded universal login bypasses cloud sync
+    if (session.user.id === 'universal-user') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCloudSyncStatus('synced');
+      return;
+    }
+
     const syncToCloud = async () => {
       setCloudSyncStatus('syncing');
       try {
@@ -370,9 +387,18 @@ export default function App() {
     return <ResetPasswordView onComplete={() => setRecoveryMode(false)} />;
   }
 
-  if (!session && !isDemo) {
-    return <AuthView onLoadDemo={handleLoadDemo} />;
+  if (!session) {
+    return <AuthView onLoadDemo={handleLoadDemo} onLogin={handleLogin} />;
   }
+
+  const handleLogoutClick = async () => {
+    if (session.user.id === 'universal-user') {
+      handleLogout();
+      return;
+    }
+    await supabase.auth.signOut();
+    handleLogout();
+  };
 
   return (
     <div className="flex flex-col h-[100dvh] w-screen overflow-hidden" style={{ background: 'var(--bg-app)' }}>
@@ -389,6 +415,8 @@ export default function App() {
         onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
         theme={settings.theme}
         onToggleTheme={handleToggleTheme}
+        userEmail={session.user.email}
+        onLogout={handleLogoutClick}
         cloudSyncStatus={cloudSyncStatus}
         onManualSync={fetchCloudData}
       />
