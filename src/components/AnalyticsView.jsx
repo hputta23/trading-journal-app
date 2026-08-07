@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { Target, TrendingUp, Activity, BarChart3, AlertTriangle } from 'lucide-react';
+import { Target, TrendingUp, Activity, BarChart3, AlertTriangle, Clock } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, BarChart, Bar, Cell } from 'recharts';
-import { formatCurrency, formatPercent } from '../utils/calculations';
+import { formatCurrency, formatPercent, groupTradeStats, SESSIONS, getSession, calcRMultiple } from '../utils/calculations';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -114,6 +114,56 @@ export default function AnalyticsView({ allTrades }) {
     };
   }, [closedTrades]);
 
+  // Task 5: Mistake Tax Stats
+  const mistakeStats = useMemo(() => groupTradeStats(closedTrades, t => t.mistake || 'None / Plan Followed'), [closedTrades]);
+  const mistakeTax = mistakeStats.filter(m => m.name !== 'None / Plan Followed' && m.totalPnl < 0).reduce((s, m) => s + m.totalPnl, 0);
+  const planFollowedStats = mistakeStats.find(m => m.name === 'None / Plan Followed') || { totalPnl: 0, winRate: 0, count: 0 };
+  const sortedMistakes = mistakeStats.filter(m => m.name !== 'None / Plan Followed').sort((a, b) => a.totalPnl - b.totalPnl);
+  const maxMistakePnl = sortedMistakes.length > 0 ? Math.max(...sortedMistakes.map(m => Math.abs(m.totalPnl))) : 1;
+
+  // Task 6: Session Stats
+  const sessionStats = useMemo(() => {
+    const stats = groupTradeStats(closedTrades, t => getSession(t.time));
+    const order = SESSIONS.reduce((acc, s, i) => ({ ...acc, [s]: i }), {});
+    return stats.filter(s => s.count > 0).sort((a, b) => (order[a.name] ?? 99) - (order[b.name] ?? 99));
+  }, [closedTrades]);
+
+  // Task 6: R-Multiple Distribution
+  const rDistributionData = useMemo(() => {
+    const bins = { '<-2R': 0, '-2 to -1R': 0, '-1 to 0R': 0, '0 to 1R': 0, '1 to 2R': 0, '>2R': 0 };
+    const rStats = { expectancy: 0, avgWinR: 0, avgLossR: 0, rCount: 0, badLossCount: 0, totalLossCount: 0 };
+    const rValues = closedTrades.map(calcRMultiple).filter(r => r !== null);
+    
+    if (rValues.length === 0) return { bins: [], stats: rStats };
+    
+    rStats.rCount = rValues.length;
+    
+    const winners = rValues.filter(r => r > 0);
+    const losers = rValues.filter(r => r < 0);
+    rStats.totalLossCount = losers.length;
+    rStats.expectancy = rValues.reduce((a, b) => a + b, 0) / rValues.length;
+    rStats.avgWinR = winners.length > 0 ? winners.reduce((a, b) => a + b, 0) / winners.length : 0;
+    rStats.avgLossR = losers.length > 0 ? losers.reduce((a, b) => a + b, 0) / losers.length : 0;
+    rStats.badLossCount = losers.filter(r => r < -1).length;
+    
+    rValues.forEach(r => {
+      if (r < -2) bins['<-2R']++;
+      else if (r < -1) bins['-2 to -1R']++;
+      else if (r <= 0) bins['-1 to 0R']++;
+      else if (r <= 1) bins['0 to 1R']++;
+      else if (r <= 2) bins['1 to 2R']++;
+      else bins['>2R']++;
+    });
+    
+    const binArr = Object.entries(bins).map(([name, count]) => ({
+      name,
+      count,
+      isProfit: name === '0 to 1R' || name === '1 to 2R' || name === '>2R'
+    }));
+    
+    return { bins: binArr, stats: rStats };
+  }, [closedTrades]);
+
   return (
     <div className="h-full w-full overflow-y-auto bg-[var(--bg-app)] pb-12">
       
@@ -136,6 +186,54 @@ export default function AnalyticsView({ allTrades }) {
           </div>
         ) : (
           <>
+            {/* ── MISTAKE TAX ROW ── */}
+            {closedTrades.length < 5 ? (
+              <div className="glass-panel p-8 border" style={{ borderColor: 'color-mix(in srgb, var(--color-loss) 35%, transparent)' }}>
+                <p className="text-center text-[var(--text-secondary)] font-bold">Log at least 5 trades to see where your P&L leaks.</p>
+              </div>
+            ) : (
+              <div className="glass-panel p-6 md:p-8 border" style={{ borderColor: 'color-mix(in srgb, var(--color-loss) 35%, transparent)' }}>
+                <p className="stat-label mb-2 text-[var(--text-secondary)]">MISTAKE TAX</p>
+                <p className="font-mono-data font-black text-[var(--color-loss)] leading-none" style={{ fontSize: 'clamp(28px, 6vw, 42px)' }}>
+                  {formatCurrency(mistakeTax)}
+                </p>
+                <p className="text-sm mt-3 font-bold text-[var(--text-secondary)]">
+                  Plan-followed trades made <span className="text-[var(--color-profit)] font-mono-data">{formatCurrency(planFollowedStats.totalPnl)}</span> at a <span className="text-[var(--color-profit)] font-mono-data">{planFollowedStats.winRate.toFixed(1)}%</span> win rate.
+                </p>
+                
+                {sortedMistakes.length > 0 && (
+                  <div className="mt-8 space-y-4">
+                    {sortedMistakes.map(m => {
+                      const widthPct = Math.min((Math.abs(m.totalPnl) / maxMistakePnl) * 100, 100);
+                      const isProfit = m.totalPnl >= 0;
+                      return (
+                        <div key={m.name} className="flex flex-col gap-1.5">
+                          <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)]">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[var(--text-dark)] truncate max-w-[200px] sm:max-w-xs">{m.name}</span>
+                              <span className="opacity-50">({m.count})</span>
+                            </div>
+                            <span className={`font-mono-data ${isProfit ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
+                              {formatCurrency(m.totalPnl)}
+                            </span>
+                          </div>
+                          <div className="h-1.5 w-full bg-[var(--bg-card)] rounded-full overflow-hidden">
+                            <div 
+                              className="h-full transition-all duration-400 ease-out"
+                              style={{ 
+                                width: `${widthPct}%`, 
+                                backgroundColor: isProfit ? 'var(--color-profit)' : 'var(--color-loss)',
+                              }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* ── KPI ROW ── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
               <div className="glass-panel p-5 border border-[var(--border-card)]">
@@ -316,8 +414,135 @@ export default function AnalyticsView({ allTrades }) {
                   ))}
                 </div>
               </div>
-
             </div>
+
+            {/* ── SESSION BREAKDOWN & R-MULTIPLE ── */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              
+              {/* Session Breakdown */}
+              <div className="glass-panel rounded p-6 border border-[var(--border-card)] flex flex-col">
+                <div className="flex items-center gap-2 mb-6">
+                  <Clock size={16} className="text-[var(--text-accent)]" />
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Performance by Session</h2>
+                </div>
+                <div className="table-scroll flex-1 -mx-6 px-6 sm:mx-0 sm:px-0">
+                  <table className="w-full text-left border-collapse min-w-[500px]">
+                    <thead>
+                      <tr>
+                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)]">Session</th>
+                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Trades</th>
+                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Win %</th>
+                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Avg R</th>
+                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Net P&L</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-sm font-bold font-mono-data">
+                      {sessionStats.map(s => (
+                        <tr key={s.name} className="border-b border-[var(--border-card)] last:border-0 hover:bg-white/[0.02] transition-colors">
+                          <td className="py-3 font-sans text-[var(--text-dark)] truncate">{s.name}</td>
+                          <td className="py-3 text-right text-[var(--text-secondary)]">{s.count}</td>
+                          <td className="py-3 text-right text-[var(--text-dark)]">{s.winRate.toFixed(1)}%</td>
+                          <td className="py-3 text-right text-[var(--text-secondary)]">{s.avgR !== null ? `${s.avgR > 0 ? '+' : ''}${s.avgR.toFixed(2)}R` : '—'}</td>
+                          <td className={`py-3 text-right ${s.totalPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>{formatCurrency(s.totalPnl)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-[11px] text-[var(--text-secondary)] mt-4 font-bold">Sessions use trade entry time. A consistently negative session is usually worth cutting entirely.</p>
+              </div>
+
+              {/* R-Multiple Distribution */}
+              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
+                <div className="flex items-center gap-2 mb-6">
+                  <Target size={16} className="text-[var(--text-accent)]" />
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">R-Multiple Distribution</h2>
+                </div>
+                
+                {rDistributionData.stats.rCount > 0 ? (
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 pb-6 border-b border-[var(--border-card)]">
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Expectancy</p>
+                        <p className={`text-base font-bold font-mono-data ${rDistributionData.stats.expectancy >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
+                          {rDistributionData.stats.expectancy > 0 ? '+' : ''}{rDistributionData.stats.expectancy.toFixed(2)}R
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Avg Winner</p>
+                        <p className="text-base font-bold font-mono-data text-[var(--color-profit)]">+{rDistributionData.stats.avgWinR.toFixed(2)}R</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Avg Loser</p>
+                        <p className="text-base font-bold font-mono-data text-[var(--color-loss)]">{rDistributionData.stats.avgLossR.toFixed(2)}R</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Has Stops</p>
+                        <p className="text-base font-bold font-mono-data text-[var(--text-dark)]">
+                          {((rDistributionData.stats.rCount / closedTrades.length) * 100).toFixed(0)}%
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {(rDistributionData.stats.totalLossCount > 0 && (rDistributionData.stats.badLossCount / rDistributionData.stats.totalLossCount) > 0.20) && (
+                      <div className="mb-6 flex items-center gap-2 p-3 rounded bg-[var(--bg-badge-loss)] border border-[var(--border-loss)] text-[var(--color-loss)] text-xs font-bold">
+                        <AlertTriangle size={14} className="shrink-0" />
+                        <p>{rDistributionData.stats.badLossCount} losses exceeded their planned stop. Cross-reference the "Ignored Stop Loss" tag.</p>
+                      </div>
+                    )}
+                    
+                    <div className="w-full h-[220px] sm:h-[250px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={rDistributionData.bins} margin={{ top: 10, right: 20, left: 0, bottom: 40 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-card)" vertical={false} />
+                          <XAxis 
+                            dataKey="name" 
+                            tick={{ fill: 'var(--text-secondary)', fontSize: 10, fontFamily: "'Inter', sans-serif", fontWeight: 'bold' }}
+                            axisLine={false}
+                            tickLine={false}
+                            angle={-45}
+                            textAnchor="end"
+                            dy={15}
+                            dx={-5}
+                          />
+                          <YAxis 
+                            tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 'bold' }}
+                            axisLine={false}
+                            tickLine={false}
+                            dx={-5}
+                          />
+                          <Tooltip 
+                            cursor={{ fill: 'var(--border-card)', opacity: 0.5 }}
+                            content={({ active, payload }) => {
+                              if (active && payload && payload.length) {
+                                return (
+                                  <div className="px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-card)] rounded shadow-lg backdrop-blur-md">
+                                    <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">{payload[0].payload.name}</p>
+                                    <p className="text-sm font-bold font-mono-data text-[var(--text-dark)]">{payload[0].value} Trades</p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }} 
+                          />
+                          <Bar dataKey="count" radius={[4, 4, 0, 0]} animationDuration={1500}>
+                            {rDistributionData.bins.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.isProfit ? 'var(--color-profit)' : 'var(--color-loss)'} opacity={0.8} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
+                    <Target size={32} className="text-[var(--text-secondary)] opacity-50 mb-3" />
+                    <p className="text-sm font-bold text-[var(--text-secondary)]">Add stop prices to your trades<br/>to unlock risk-adjusted stats.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
           </>
         )}
       </div>
