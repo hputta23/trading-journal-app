@@ -109,7 +109,7 @@ export default function SidebarStats({
             </span>
           </div>
           <div 
-            className="text-xl font-bold font-mono-data tracking-tight whitespace-nowrap"
+            className="text-lg font-bold font-mono-data tracking-tight whitespace-nowrap overflow-hidden text-ellipsis"
             style={{ color: stats.totalNetPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}
           >
             {formatCurrency(stats.totalNetPnl)}

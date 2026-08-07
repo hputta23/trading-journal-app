@@ -23,7 +23,7 @@ const StatCard = ({ icon, label, value, sub, color, bg, border, tip }) => (
     <div className="stat-label" style={{ color: 'var(--text-secondary)', fontSize: 9 }}>
       {icon} <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span> {tip && <Tip text={tip} />}
     </div>
-    <div className="stat-value" style={{ fontSize: 'clamp(14px, 3vw, 19px)', color, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+    <div className="stat-value" style={{ fontSize: 'clamp(12px, 2.5vw, 16px)', color, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
       {value}
     </div>
     {sub && <div className="stat-sub" style={{ fontSize: 9, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub}</div>}
@@ -202,7 +202,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
               <div className="stat-label" style={{ marginBottom: 6 }}>
                 {activeDate ?? 'All-Time Net Return'} <Tip text="Cumulative net P&L across all closed trades." />
               </div>
-              <div className="stat-value" style={{ fontSize: 'clamp(22px, 4vw, 34px)', color: isPos ? 'var(--color-profit)' : 'var(--color-loss)' }}>
+              <div className="stat-value" style={{ fontSize: 'clamp(18px, 3vw, 26px)', color: isPos ? 'var(--color-profit)' : 'var(--color-loss)' }}>
                 {isPos ? '+' : '−'}{absStr(activeVal)}
               </div>
             </div>
@@ -227,7 +227,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
               <div className="stat-label" style={{ marginBottom: 6 }}>
                 After Tax (30% Rate) <Tip text="Estimated take-home after 30% capital gains tax. Consult a tax advisor." />
               </div>
-              <div className="stat-value" style={{ fontSize: 'clamp(22px, 4vw, 34px)', color: stats.totalNetPnl > 0 ? 'var(--color-profit)' : 'var(--text-secondary)' }}>
+              <div className="stat-value" style={{ fontSize: 'clamp(18px, 3vw, 26px)', color: stats.totalNetPnl > 0 ? 'var(--color-profit)' : 'var(--text-secondary)' }}>
                 {afterTaxPnl >= 0 ? '+' : '−'}{absStr(afterTaxPnl)}
               </div>
             </div>
