@@ -93,15 +93,15 @@ export default function CalendarView({ allTrades }) {
         
         {/* Monthly Summary Badges */}
         <div className="flex items-center gap-3">
-          <div className="glass-panel px-4 py-2 rounded-lg border border-[var(--border-card)]">
+          <div className="glass-panel px-4 py-2 rounded-xl border border-[var(--border-card)]" style={{ borderRadius: 12 }}>
             <span className="text-[10px] uppercase font-bold text-[var(--text-secondary)] tracking-widest block mb-0.5">Win Days</span>
             <span className="font-mono-data font-bold text-[var(--color-profit)]">{monthlyStats.winDays}</span>
           </div>
-          <div className="glass-panel px-4 py-2 rounded-lg border border-[var(--border-card)]">
+          <div className="glass-panel px-4 py-2 rounded-xl border border-[var(--border-card)]" style={{ borderRadius: 12 }}>
             <span className="text-[10px] uppercase font-bold text-[var(--text-secondary)] tracking-widest block mb-0.5">Loss Days</span>
             <span className="font-mono-data font-bold text-[var(--color-loss)]">{monthlyStats.lossDays}</span>
           </div>
-          <div className="glass-panel px-4 py-2 rounded-lg border border-[var(--border-card)]">
+          <div className="glass-panel px-4 py-2 rounded-xl border border-[var(--border-card)]" style={{ borderRadius: 12 }}>
             <span className="text-[10px] uppercase font-bold text-[var(--text-secondary)] tracking-widest block mb-0.5">Net P&L</span>
             <span className={`font-mono-data font-bold ${monthlyStats.netPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
               {formatCurrency(monthlyStats.netPnl)}
@@ -118,10 +118,10 @@ export default function CalendarView({ allTrades }) {
             {monthName} <span className="text-[var(--text-secondary)] font-normal">{year}</span>
           </h2>
           <div className="flex items-center gap-2">
-            <button onClick={prevMonth} className="p-2 glass-panel hover:bg-white/5 rounded-lg transition-colors cursor-pointer border border-[var(--border-card)]">
+            <button onClick={prevMonth} className="p-2 glass-panel hover:bg-white/5 rounded-lg transition-colors cursor-pointer border border-[var(--border-card)]" style={{ borderRadius: 10 }}>
               <ChevronLeft size={20} className="text-[var(--text-secondary)]" />
             </button>
-            <button onClick={nextMonth} className="p-2 glass-panel hover:bg-white/5 rounded-lg transition-colors cursor-pointer border border-[var(--border-card)]">
+            <button onClick={nextMonth} className="p-2 glass-panel hover:bg-white/5 rounded-lg transition-colors cursor-pointer border border-[var(--border-card)]" style={{ borderRadius: 10 }}>
               <ChevronRight size={20} className="text-[var(--text-secondary)]" />
             </button>
           </div>
@@ -142,7 +142,7 @@ export default function CalendarView({ allTrades }) {
           <div className="grid grid-cols-7 auto-rows-fr">
             {calendarData.map((dayData, idx) => {
               if (!dayData) {
-                return <div key={`empty-${idx}`} className="min-h-[120px] border-r border-b border-[var(--border-card)] bg-black/20" />;
+                return <div key={`empty-${idx}`} className="min-h-[120px] border-r border-b border-[var(--border-card)] bg-black/20 rounded-lg" style={{ borderRadius: 8 }} />;
               }
               
               const isToday = dayData.dateKey === new Date().toISOString().split('T')[0];
@@ -157,14 +157,15 @@ export default function CalendarView({ allTrades }) {
               return (
                 <div 
                   key={dayData.dateKey} 
-                  className={`min-h-[120px] p-3 border-r border-b border-[var(--border-card)] relative transition-colors ${bgColorClass} hover:opacity-80`}
+                  className={`min-h-[120px] p-3 border-r border-b border-[var(--border-card)] relative transition-colors ${bgColorClass} hover:opacity-80 rounded-lg`}
+                  style={{ borderRadius: 8 }}
                 >
                   <div className="flex justify-between items-start mb-2">
                     <span className={`text-sm font-bold ${isToday ? 'bg-[var(--border-active)] text-black w-7 h-7 rounded-full flex items-center justify-center' : 'text-[var(--text-secondary)]'}`}>
                       {dayData.day}
                     </span>
                     {dayData.isTraded && (
-                      <span className="hidden md:inline-block text-[10px] font-bold text-[var(--text-secondary)] uppercase bg-black/40 px-2 py-0.5 rounded">
+                      <span className="hidden md:inline-block text-[10px] font-bold text-[var(--text-secondary)] uppercase bg-black/40 px-2 py-0.5 rounded-lg" style={{ borderRadius: 8 }}>
                         {dayData.trades.length} Trades
                       </span>
                     )}

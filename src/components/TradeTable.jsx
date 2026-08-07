@@ -3,7 +3,7 @@ import { Pencil, Trash2, Check, X, Image as ImageIcon } from 'lucide-react';
 import { formatCurrency, formatNumber } from '../utils/calculations';
 
 const EmptyTable = () => (
-  <div className="border flex flex-col items-center justify-center py-24 gap-5 glass-panel animate-fade-in" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-card)' }}>
+  <div className="border flex flex-col items-center justify-center py-24 gap-5 glass-panel animate-fade-in" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-card)', borderRadius: 12 }}>
     <div className="w-20 h-px" style={{ background: 'var(--border-card)' }} />
     <p className="text-sm tracking-[0.2em] uppercase font-bold text-[var(--text-secondary)]">
       Awaiting first trade data...
@@ -34,7 +34,7 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
       {/* ── MOBILE CARD VIEW (< md) ── */}
       <div className="md:hidden space-y-4">
         {trades.map((trade) => (
-          <div key={trade.id} className="glass-panel p-4 border border-[var(--border-card)] space-y-4 relative">
+          <div key={trade.id} className="glass-panel p-4 border border-[var(--border-card)] space-y-4 relative" style={{ borderRadius: 12 }}>
             
             {/* Header: Ticker & Direction */}
             <div className="flex justify-between items-start">
@@ -53,17 +53,17 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
               </div>
               <div className="text-right">
                 {trade.isOpen ? (
-                  <span className="badge-open">OPEN</span>
+                  <span className="badge-open" style={{ borderRadius: 8 }}>OPEN</span>
                 ) : trade.netPnl >= 0 ? (
-                  <span className="badge-profit text-sm">{formatCurrency(trade.netPnl)}</span>
+                  <span className="badge-profit text-sm" style={{ borderRadius: 8 }}>{formatCurrency(trade.netPnl)}</span>
                 ) : (
-                  <span className="badge-loss text-sm">{formatCurrency(trade.netPnl)}</span>
+                  <span className="badge-loss text-sm" style={{ borderRadius: 8 }}>{formatCurrency(trade.netPnl)}</span>
                 )}
               </div>
             </div>
 
             {/* Grid Stats */}
-            <div className="grid grid-cols-2 gap-3 text-xs bg-[var(--bg-input)] p-3 rounded-lg border border-[var(--border-input)]">
+            <div className="grid grid-cols-2 gap-3 text-xs bg-[var(--bg-input)] p-3 border border-[var(--border-input)]" style={{ borderRadius: 10 }}>
               <div>
                 <span className="block text-[10px] uppercase tracking-wider text-[var(--text-secondary)] mb-1">Entry</span>
                 <span className="font-mono-data font-bold">${Number(trade.entryPrice).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
@@ -89,17 +89,17 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
               </div>
               <div className="flex items-center gap-3">
                 {confirmingDelete === trade.id ? (
-                  <div className="flex items-center gap-2 bg-[var(--bg-badge-loss)] px-2 py-1 rounded">
+                  <div className="flex items-center gap-2 bg-[var(--bg-badge-loss)] px-2 py-1" style={{ borderRadius: 8 }}>
                     <span className="text-[10px] font-bold text-[var(--color-loss)] uppercase">Del?</span>
-                    <button onClick={() => handleDelete(trade.id)} className="text-[var(--color-loss)]"><Check size={14} /></button>
-                    <button onClick={() => setConfirmingDelete(null)} className="text-[var(--text-secondary)]"><X size={14} /></button>
+                    <button onClick={() => handleDelete(trade.id)} className="text-[var(--color-loss)] p-0.5" style={{ borderRadius: 10 }}><Check size={14} /></button>
+                    <button onClick={() => setConfirmingDelete(null)} className="text-[var(--text-secondary)] p-0.5" style={{ borderRadius: 10 }}><X size={14} /></button>
                   </div>
                 ) : (
                   <>
-                    <button onClick={() => onEdit(trade)} className="p-1.5 glass-panel rounded cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-cyan)]">
+                    <button onClick={() => onEdit(trade)} className="p-1.5 glass-panel cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-cyan)]" style={{ borderRadius: 10 }}>
                       <Pencil size={14} />
                     </button>
-                    <button onClick={() => setConfirmingDelete(trade.id)} className="p-1.5 glass-panel rounded cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-loss)]">
+                    <button onClick={() => setConfirmingDelete(trade.id)} className="p-1.5 glass-panel cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-loss)]" style={{ borderRadius: 10 }}>
                       <Trash2 size={14} />
                     </button>
                   </>
@@ -111,7 +111,7 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
       </div>
 
       {/* ── DESKTOP TABLE VIEW (>= md) ── */}
-      <div className="hidden md:block border overflow-hidden glass-panel" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-card)' }}>
+      <div className="hidden md:block border overflow-hidden glass-panel" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-card)', borderRadius: 16 }}>
         <div className="overflow-x-auto">
           <table className="w-full" style={{ minWidth: '1050px' }}>
             <thead>
@@ -125,7 +125,7 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
             </thead>
             <tbody>
               {trades.map((trade, idx) => (
-                <tr key={trade.id} className="transition-all duration-150 border-b hover:!bg-[var(--accent-glow)]" style={{ background: getRowBg(trade, idx), borderColor: 'rgba(255, 255, 255, 0.02)' }}>
+                <tr key={trade.id} className="transition-all duration-150 border-b hover:!bg-[var(--accent-glow)]" style={{ background: getRowBg(trade, idx), borderColor: 'rgba(255, 255, 255, 0.02)', borderRadius: 8 }}>
                   <td className="px-5 py-4 text-xs font-semibold text-[var(--text-secondary)] font-mono-data">{idx + 1}</td>
                   <td className="px-5 py-4 text-xs whitespace-nowrap font-mono-data font-semibold text-[var(--text-primary)]">{trade.time}</td>
                   <td className="px-5 py-4 whitespace-nowrap">
@@ -146,15 +146,15 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
                   <td className="px-5 py-4 text-xs font-mono-data font-bold text-[var(--text-secondary)]">{formatNumber(trade.qty)}</td>
                   
                   <td className="px-5 py-4 text-xs font-mono-data font-bold whitespace-nowrap">
-                    {trade.isOpen ? <span className="badge-open">OPEN</span> : trade.grossPnl >= 0 ? <span className="badge-profit">{formatCurrency(trade.grossPnl)}</span> : <span className="badge-loss">{formatCurrency(trade.grossPnl)}</span>}
+                    {trade.isOpen ? <span className="badge-open" style={{ borderRadius: 8 }}>OPEN</span> : trade.grossPnl >= 0 ? <span className="badge-profit" style={{ borderRadius: 8 }}>{formatCurrency(trade.grossPnl)}</span> : <span className="badge-loss" style={{ borderRadius: 8 }}>{formatCurrency(trade.grossPnl)}</span>}
                   </td>
 
                   <td className="px-5 py-4 text-xs font-mono-data font-semibold">
-                    <span className="badge-cyan">${(trade.fees || 0).toFixed(2)}</span>
+                    <span className="badge-cyan" style={{ borderRadius: 8 }}>${(trade.fees || 0).toFixed(2)}</span>
                   </td>
 
                   <td className="px-5 py-4 text-xs font-mono-data font-bold whitespace-nowrap">
-                    {trade.isOpen ? <span className="badge-open">OPEN</span> : trade.netPnl >= 0 ? <span className="badge-profit">{formatCurrency(trade.netPnl)}</span> : <span className="badge-loss">{formatCurrency(trade.netPnl)}</span>}
+                    {trade.isOpen ? <span className="badge-open" style={{ borderRadius: 8 }}>OPEN</span> : trade.netPnl >= 0 ? <span className="badge-profit" style={{ borderRadius: 8 }}>{formatCurrency(trade.netPnl)}</span> : <span className="badge-loss" style={{ borderRadius: 8 }}>{formatCurrency(trade.netPnl)}</span>}
                   </td>
 
                   <td className="px-5 py-4 text-xs font-semibold text-[var(--text-primary)] truncate max-w-[100px]">{trade.strategy}</td>
@@ -171,23 +171,23 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
 
                   <td className="px-5 py-4 whitespace-nowrap">
                     {trade.isOpen ? (
-                      <span className="badge-open pulse-yellow">OPEN</span>
+                      <span className="badge-open pulse-yellow" style={{ borderRadius: 8 }}>OPEN</span>
                     ) : (
-                      <span className="badge-cyan">CLOSED</span>
+                      <span className="badge-cyan" style={{ borderRadius: 8 }}>CLOSED</span>
                     )}
                   </td>
 
                   <td className="px-5 py-4 whitespace-nowrap">
                     {confirmingDelete === trade.id ? (
-                      <div className="flex items-center gap-2 bg-[var(--bg-badge-loss)] px-2 py-1 rounded">
+                      <div className="flex items-center gap-2 bg-[var(--bg-badge-loss)] px-2 py-1" style={{ borderRadius: 8 }}>
                         <span className="text-[9px] font-bold text-[var(--color-loss)] uppercase">Del?</span>
-                        <button onClick={() => handleDelete(trade.id)} className="p-1 cursor-pointer text-[var(--color-loss)] hover:opacity-85 font-bold"><Check size={14} /></button>
-                        <button onClick={() => setConfirmingDelete(null)} className="p-1 cursor-pointer text-[var(--text-secondary)] hover:opacity-85 font-bold"><X size={14} /></button>
+                        <button onClick={() => handleDelete(trade.id)} className="p-1 cursor-pointer text-[var(--color-loss)] hover:opacity-85 font-bold" style={{ borderRadius: 10 }}><Check size={14} /></button>
+                        <button onClick={() => setConfirmingDelete(null)} className="p-1 cursor-pointer text-[var(--text-secondary)] hover:opacity-85 font-bold" style={{ borderRadius: 10 }}><X size={14} /></button>
                       </div>
                     ) : (
                       <div className="flex items-center gap-2.5">
-                        <button onClick={() => onEdit(trade)} className="p-1 cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-cyan)] transition-colors" title="Edit"><Pencil size={14} /></button>
-                        <button onClick={() => setConfirmingDelete(trade.id)} className="p-1 cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-loss)] transition-colors" title="Delete"><Trash2 size={14} /></button>
+                        <button onClick={() => onEdit(trade)} className="p-1 cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-cyan)] transition-colors" title="Edit" style={{ borderRadius: 10 }}><Pencil size={14} /></button>
+                        <button onClick={() => setConfirmingDelete(trade.id)} className="p-1 cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-loss)] transition-colors" title="Delete" style={{ borderRadius: 10 }}><Trash2 size={14} /></button>
                       </div>
                     )}
                   </td>
@@ -200,3 +200,4 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
     </div>
   );
 }
+

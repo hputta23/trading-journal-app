@@ -94,7 +94,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
         actions={
           <button
             onClick={() => { onCancelEdit(); setShowLogModal(true); }}
-            className="flex items-center gap-2 px-5 py-2 text-xs font-bold uppercase tracking-widest cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all duration-200 bg-[var(--border-active)] text-[var(--bg-sidebar)]"
+            className="flex items-center gap-2 px-5 py-2 text-xs font-bold uppercase tracking-widest cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all duration-200 bg-[var(--border-active)] text-[var(--bg-sidebar)] rounded-xl"
           >
             <Plus size={14} />
             RECORD NEW TRADE
@@ -103,10 +103,10 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
       >
         <div className="p-6 space-y-8" style={{ background: 'var(--bg-app)' }}>
           {/* ── Filters Command Bar ── */}
-          <div className="border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel">
+          <div className="border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-xl">
             <div className="flex items-center justify-between border-b pb-4 mb-6 border-[var(--border-card)]">
               <div className="flex items-center gap-3">
-                <div className="p-1.5 rounded-md bg-[var(--border-active)]/10 text-[var(--border-active)]">
+                <div className="p-1.5 rounded-lg bg-[var(--border-active)]/10 text-[var(--border-active)]">
                   <Filter size={16} />
                 </div>
                 <span className="text-sm font-bold text-[var(--text-dark)] uppercase tracking-widest flex items-center gap-2">
@@ -122,7 +122,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
               {hasActiveFilters && (
                 <button
                   onClick={handleResetFilters}
-                  className="flex items-center gap-1.5 text-[11px] font-bold hover:opacity-85 transition-opacity cursor-pointer uppercase tracking-wider bg-transparent border border-[var(--color-loss)]/20 px-3 py-1.5 rounded-md"
+                  className="flex items-center gap-1.5 text-[11px] font-bold hover:opacity-85 transition-opacity cursor-pointer uppercase tracking-wider bg-transparent border border-[var(--color-loss)]/20 px-3 py-1.5 rounded-lg"
                   style={{ color: 'var(--color-loss)' }}
                 >
                   <RotateCcw size={13} />
@@ -209,38 +209,38 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
           </div>
 
           {/* ── Sub-Filtered Dynamic Metrics ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-xl">
             {[
               [
                 'FILTERED NET P&L', 
                 filteredStats.totalNetPnl >= 0 ? (
-                  <span className="badge-profit text-base font-black font-mono-data px-4 py-2">{formatCurrency(filteredStats.totalNetPnl)}</span>
+                  <span className="badge-profit text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatCurrency(filteredStats.totalNetPnl)}</span>
                 ) : (
-                  <span className="badge-loss text-base font-black font-mono-data px-4 py-2">{formatCurrency(filteredStats.totalNetPnl)}</span>
+                  <span className="badge-loss text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatCurrency(filteredStats.totalNetPnl)}</span>
                 )
               ],
               [
                 'WIN RATE %', 
                 filteredStats.winRate >= 50 ? (
-                  <span className="badge-profit text-base font-black font-mono-data px-4 py-2">{formatPercent(filteredStats.winRate)}</span>
+                  <span className="badge-profit text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatPercent(filteredStats.winRate)}</span>
                 ) : filteredStats.winRate > 0 ? (
-                  <span className="badge-loss text-base font-black font-mono-data px-4 py-2">{formatPercent(filteredStats.winRate)}</span>
+                  <span className="badge-loss text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatPercent(filteredStats.winRate)}</span>
                 ) : (
-                  <span className="badge-cyan text-base font-black font-mono-data px-4 py-2">{formatPercent(filteredStats.winRate)}</span>
+                  <span className="badge-cyan text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatPercent(filteredStats.winRate)}</span>
                 )
               ],
               [
                 'MATCHED SESSIONS', 
-                <span className="badge-cyan text-base font-black font-mono-data px-4 py-2">{formatNumber(filteredStats.totalTrades)} trades</span>
+                <span className="badge-cyan text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatNumber(filteredStats.totalTrades)} trades</span>
               ],
               [
                 'PROFIT FACTOR', 
                 filteredStats.profitFactor >= 1.0 ? (
-                  <span className="badge-profit text-base font-black font-mono-data px-4 py-2">{filteredStats.profitFactor === Infinity ? '∞' : filteredStats.profitFactor.toFixed(2)}</span>
+                  <span className="badge-profit text-base font-black font-mono-data px-4 py-2 rounded-lg">{filteredStats.profitFactor === Infinity ? '∞' : filteredStats.profitFactor.toFixed(2)}</span>
                 ) : filteredStats.profitFactor > 0 ? (
-                  <span className="badge-loss text-base font-black font-mono-data px-4 py-2">{filteredStats.profitFactor.toFixed(2)}</span>
+                  <span className="badge-loss text-base font-black font-mono-data px-4 py-2 rounded-lg">{filteredStats.profitFactor.toFixed(2)}</span>
                 ) : (
-                  <span className="badge-cyan text-base font-black font-mono-data px-4 py-2">{filteredStats.profitFactor.toFixed(2)}</span>
+                  <span className="badge-cyan text-base font-black font-mono-data px-4 py-2 rounded-lg">{filteredStats.profitFactor.toFixed(2)}</span>
                 )
               ],
             ].map(([lbl, element]) => (
@@ -265,7 +265,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
       {/* ── LOG TRADE MODAL OVERLAY ── */}
       {showLogModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-3xl border overflow-y-auto max-h-[90vh] glass-panel" style={{ borderColor: 'var(--border-card)', borderRadius: '12px' }}>
+          <div className="w-full max-w-3xl border overflow-y-auto max-h-[90vh] glass-panel" style={{ borderColor: 'var(--border-card)', borderRadius: '16px' }}>
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b p-4 select-none" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-sidebar)' }}>
               <span className="text-xs uppercase tracking-widest font-bold text-[var(--text-accent)]">
@@ -273,7 +273,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
               </span>
               <button
                 onClick={() => { setShowLogModal(false); onCancelEdit(); }}
-                className="w-8 h-8 flex items-center justify-center hover:bg-white/5 hover:text-[var(--color-loss)] cursor-pointer text-[var(--text-secondary)] text-sm font-bold border border-white/[0.04] bg-white/[0.01]"
+                className="w-8 h-8 flex items-center justify-center hover:bg-white/5 hover:text-[var(--color-loss)] cursor-pointer text-[var(--text-secondary)] text-sm font-bold border border-white/[0.04] bg-white/[0.01] rounded-lg"
               >
                 ✕
               </button>
