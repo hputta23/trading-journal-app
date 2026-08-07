@@ -554,6 +554,7 @@ export default function App() {
                 onCancelEdit={() => { setShowGlobalTradeModal(false); setEditingTrade(null); }}
                 quickEntry={settings.quickEntry}
                 currentDate={currentDate}
+                settings={settings}
               />
             </div>
           </div>

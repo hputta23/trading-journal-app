@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, Check, Clock, Zap, Target, Plus, X, Calculator } from 'lucide-react';
-import { calcGrossPnl, calcNetPnl, formatCurrency } from '../utils/calculations';
+import { calcGrossPnl, calcNetPnl, formatCurrency, validateStop, calcPlannedRisk } from '../utils/calculations';
 import { v4 as uuidv4 } from 'uuid';
 
 const ASSET_CLASSES = ['Stock', 'Option', 'Future'];
@@ -94,6 +94,7 @@ const emptyForm = {
   strategy: 'Breakout',
   tickMultiplier: '',
   entryPrice: '',
+  stopPrice: '',
   exitPrice: '',
   qty: '',
   entryTime: '',
@@ -108,7 +109,7 @@ const emptyForm = {
   exitLegs: [{ price: '', qty: '' }]
 };
 
-export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickEntry, currentDate }) {
+export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickEntry, currentDate, settings = {} }) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({ ...emptyForm });
 
@@ -124,6 +125,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
         strategy: editingTrade.strategy || 'Breakout',
         tickMultiplier: editingTrade.tickMultiplier || '',
         entryPrice: editingTrade.entryPrice || '',
+        stopPrice: editingTrade.stopPrice !== undefined && editingTrade.stopPrice !== null ? editingTrade.stopPrice : '',
         exitPrice: editingTrade.exitPrice || '',
         qty: editingTrade.qty || '',
         entryTime: editingTrade.time || '',
@@ -232,6 +234,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
       assetClass: form.assetClass,
       tickMultiplier: form.assetClass === 'Future' ? Number(form.tickMultiplier) || 1 : 1,
       entryPrice: Number(form.entryPrice),
+      stopPrice: form.stopPrice === '' ? null : Number(form.stopPrice),
       exitPrice: form.exitPrice ? Number(form.exitPrice) : null,
       qty: Number(form.qty),
       fees: Number(form.fees) || 0,
@@ -278,6 +281,24 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
   const netPreview = (form.netPnlOverride !== '' && form.netPnlOverride !== undefined && form.netPnlOverride !== null)
     ? Number(form.netPnlOverride)
     : netPreviewRaw;
+
+  const renderRiskReadout = () => {
+    const risk = calcPlannedRisk(form);
+    if (risk === null) return null;
+    let pctStr = '';
+    if (settings && settings.accountSize && Number(settings.accountSize) > 0) {
+      const pct = (risk / Number(settings.accountSize)) * 100;
+      pctStr = `  ·  ${pct.toFixed(2)}% of account`;
+    }
+    return (
+      <div className="col-span-1 sm:col-span-2 lg:col-span-full mb-4">
+        <span className="text-[10px] uppercase font-bold text-[var(--text-secondary)]">Planned Risk</span>
+        <div className="text-sm font-mono-data font-bold text-[var(--color-loss)]">
+          Risk: {formatCurrency(risk * -1).replace('+', '')}{pctStr}
+        </div>
+      </div>
+    );
+  };
 
   const renderPnlPreview = () => {
     if (grossPreview === null) return null;
@@ -368,6 +389,11 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           <div>
+            <FieldLabel optional>Stop Price</FieldLabel>
+            <input type="number" step="any" value={form.stopPrice} onChange={e => update('stopPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={{...whiteInputStyle, borderColor: validateStop(form.entryPrice, form.stopPrice, form.direction) ? 'var(--color-loss)' : whiteInputStyle.borderColor}} />
+            {validateStop(form.entryPrice, form.stopPrice, form.direction) && <div className="text-[10px] mt-1 font-bold" style={{color: 'var(--color-loss)'}}>{validateStop(form.entryPrice, form.stopPrice, form.direction)}</div>}
+          </div>
+          <div>
             <FieldLabel optional>Exit $</FieldLabel>
             <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
@@ -375,6 +401,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             <FieldLabel>Qty</FieldLabel>
             <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
+          {renderRiskReadout()}
           <div>
             <FieldLabel>Fees</FieldLabel>
             <input type="number" step="any" value={form.fees} onChange={e => update('fees', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
@@ -523,10 +550,15 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           </div>
 
           {!form.advancedExecution ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <FieldLabel>Entry Price ($)</FieldLabel>
                 <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} autoFocus />
+              </div>
+              <div>
+                <FieldLabel optional>Stop Price</FieldLabel>
+                <input type="number" step="any" value={form.stopPrice} onChange={e => update('stopPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={{...whiteInputStyle, borderColor: validateStop(form.entryPrice, form.stopPrice, form.direction) ? 'var(--color-loss)' : whiteInputStyle.borderColor}} />
+                {validateStop(form.entryPrice, form.stopPrice, form.direction) && <div className="text-[10px] mt-1 font-bold" style={{color: 'var(--color-loss)'}}>{validateStop(form.entryPrice, form.stopPrice, form.direction)}</div>}
               </div>
               <div>
                 <FieldLabel optional>Exit Price ($)</FieldLabel>
@@ -536,6 +568,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                 <FieldLabel>Shares / Qty</FieldLabel>
                 <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
               </div>
+              {renderRiskReadout()}
             </div>
           ) : (
             <div className="space-y-4 p-5 border border-[var(--border-active)] bg-[var(--bg-sidebar)] shadow-md">
@@ -680,6 +713,8 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                 ['Direction', form.direction, form.direction === 'Long' ? 'var(--color-profit)' : 'var(--color-loss)'],
                 ['Strategy name', form.strategy, 'var(--text-primary)'],
                 ['Entry Price', `$${Number(form.entryPrice).toLocaleString('en-US', { minimumFractionDigits: 2 })}`, 'var(--text-accent)'],
+                form.stopPrice ? ['Stop Price', `$${Number(form.stopPrice).toLocaleString('en-US', { minimumFractionDigits: 2 })}`, 'var(--color-loss)'] : null,
+                calcPlannedRisk(form) !== null ? ['Planned Risk', formatCurrency(calcPlannedRisk(form) * -1).replace('+', ''), 'var(--color-loss)'] : null,
                 ['Exit Price', form.exitPrice ? `$${Number(form.exitPrice).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '—', 'var(--text-accent)'],
                 ['Shares Qty', Number(form.qty).toLocaleString('en-US'), 'var(--text-accent)'],
                 ['Fees Accrued', `$${Number(form.fees || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`, 'var(--color-loss)'],
