@@ -376,6 +376,11 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-[100dvh] w-screen overflow-hidden" style={{ background: 'var(--bg-app)' }}>
+      {isDemo && (
+        <div className="bg-[var(--bg-badge-loss)] text-[var(--color-loss)] text-[10px] font-bold uppercase tracking-widest text-center py-1 border-b border-[var(--border-loss)]">
+          Demo Mode — Data will not be saved
+        </div>
+      )}
       
       {/* ── Top Header spanning 100% width (EXACTLY MATCHING IMAGE) ── */}
       <Header
@@ -491,6 +496,7 @@ export default function App() {
               settings={settings}
               onSave={handleSaveSettings}
               userEmail={session.user.email}
+              allTrades={allTrades}
             />
             )}
           </div>

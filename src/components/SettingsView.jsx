@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Settings, Database, Sliders, Shield, Info, Download, Sun, Moon, Monitor, Upload, FileJson, FileSpreadsheet, LogOut, Clock } from 'lucide-react';
 import { supabase } from '../utils/supabaseClient';
 import { loadActivityLogs, clearActivityLogs } from '../utils/logger';
+import { exportTradesToCSV } from '../utils/csv';
 
 /* ── Small reusable info tooltip ── */
 const Tip = ({ text }) => (
@@ -11,7 +12,7 @@ const Tip = ({ text }) => (
   </span>
 );
 
-export default function SettingsView({ settings, onSave, userEmail }) {
+export default function SettingsView({ settings, onSave, userEmail, allTrades }) {
   const [googleSheetId, setGoogleSheetId] = useState(settings.googleSheetId || '');
   const [quickEntry, setQuickEntry] = useState(settings.quickEntry || false);
   const [theme, setTheme] = useState(settings.theme || 'dark');
@@ -323,7 +324,7 @@ export default function SettingsView({ settings, onSave, userEmail }) {
               <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>Data Import & Export</h2>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               
               <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)' }}>
                 <div className="flex items-center gap-2 mb-2">
@@ -390,6 +391,28 @@ export default function SettingsView({ settings, onSave, userEmail }) {
                   onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
                 >
                   <Upload size={14} /> Import CSV
+                </button>
+              </div>
+
+              <div style={{ padding: '24px', background: 'var(--bg-input)', borderRadius: 0, border: '1px solid var(--border-card)' }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Download size={16} className="text-[var(--text-dark)]" />
+                  <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)' }}>Export CSV</h3>
+                </div>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
+                  Download a raw CSV dump of all your trades.
+                </p>
+                <button
+                  onClick={() => exportTradesToCSV(allTrades)}
+                  style={{
+                    padding: '10px 16px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
+                    background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
+                    borderRadius: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                >
+                  <Download size={14} /> Export CSV
                 </button>
               </div>
 
