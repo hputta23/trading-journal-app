@@ -65,7 +65,7 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
         
         {/* Live Clock — hidden on very small screens */}
         <div
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg"
+          className="hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-lg"
           style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)' }}
         >
           <Activity size={11} style={{ color: 'var(--text-accent)' }} />
