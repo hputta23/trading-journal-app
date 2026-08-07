@@ -183,7 +183,7 @@ export default function SidebarStats({
       <div className="space-y-2 pt-2">
         <button
           onClick={onOpenNewTrade}
-          className="w-full py-3 text-xs font-semibold uppercase tracking-widest cursor-pointer transition-all duration-200 border bg-[var(--border-active)] text-[var(--bg-sidebar)] hover:opacity-90 active:scale-[0.98] rounded-xl"
+          className="w-full py-3 text-xs font-semibold uppercase tracking-widest cursor-pointer transition-all duration-200 border bg-[var(--border-active)] text-[var(--bg-sidebar)] hover:opacity-90 active:scale-[0.98] rounded-lg"
           style={{ borderColor: 'var(--border-active)' }}
         >
           LOG TRADE SESSION
@@ -191,7 +191,7 @@ export default function SidebarStats({
         {onLoadDemo && !isDemo && (
           <button
             onClick={onLoadDemo}
-            className="w-full py-2.5 text-[10px] font-semibold uppercase tracking-widest cursor-pointer transition-all duration-200 border bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-accent)] hover:border-[var(--border-active)] rounded-xl"
+            className="w-full py-2.5 text-[10px] font-semibold uppercase tracking-widest cursor-pointer transition-all duration-200 border bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-accent)] hover:border-[var(--border-active)] rounded-lg"
             style={{ borderColor: 'var(--border-card)' }}
           >
             Load Demo Data
@@ -199,9 +199,8 @@ export default function SidebarStats({
         )}
       </div>
 
-      {/* ── Boxed Sync Status ── */}
       <div 
-        className="flex items-center justify-between border px-2.5 py-2 bg-[var(--bg-card)] rounded-xl" 
+        className="flex items-center justify-between border px-2.5 py-2 bg-[var(--bg-card)] rounded-lg" 
         style={{ borderColor: 'var(--border-card)' }}
       >
         <span className="text-[9px] font-semibold text-[var(--text-secondary)] tracking-widest uppercase flex items-center gap-1">

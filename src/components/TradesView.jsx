@@ -94,7 +94,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
         actions={
           <button
             onClick={() => { onCancelEdit(); setShowLogModal(true); }}
-            className="flex items-center gap-2 px-5 py-2 text-xs font-bold uppercase tracking-widest cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all duration-200 bg-[var(--border-active)] text-[var(--bg-sidebar)] rounded-xl"
+            className="flex items-center gap-2 px-5 py-2 text-xs font-bold uppercase tracking-widest cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all duration-200 bg-[var(--border-active)] text-[var(--bg-sidebar)] rounded-lg"
           >
             <Plus size={14} />
             RECORD NEW TRADE
@@ -103,7 +103,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
       >
         <div className="p-6 space-y-8" style={{ background: 'var(--bg-app)' }}>
           {/* ── Filters Command Bar ── */}
-          <div className="border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-xl">
+          <div className="border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-lg">
             <div className="flex items-center justify-between border-b pb-4 mb-6 border-[var(--border-card)]">
               <div className="flex items-center gap-3">
                 <div className="p-1.5 rounded-lg bg-[var(--border-active)]/10 text-[var(--border-active)]">
@@ -209,7 +209,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
           </div>
 
           {/* ── Sub-Filtered Dynamic Metrics ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-lg">
             {[
               [
                 'FILTERED NET P&L', 
