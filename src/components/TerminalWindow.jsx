@@ -1,7 +1,7 @@
 export default function TerminalWindow({ title, children, actions, icon }) {
   return (
     <div
-      className="flex flex-col h-full border overflow-hidden glass-panel"
+      className="flex flex-col h-full border overflow-hidden glass-panel rounded-xl"
       style={{ borderColor: 'var(--border-card)', background: 'var(--bg-card)' }}
     >
       {/* ── Terminal Window Title Bar ── */}

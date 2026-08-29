@@ -21,6 +21,7 @@ const inputStyle = {
   background: 'var(--bg-input)',
   borderColor: 'var(--border-input)',
   color: 'var(--text-input)', 
+  borderRadius: 10,
   ...fontStyle,
 };
 
@@ -29,6 +30,7 @@ const whiteInputStyle = {
   borderColor: 'var(--border-input)',
   color: 'var(--text-input)',
   fontWeight: '600', /* Clean, non-chunky semibold style */
+  borderRadius: 10,
   ...fontStyle,
 };
 
@@ -70,8 +72,8 @@ const NowButton = ({ onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="px-5 text-sm border cursor-pointer hover:bg-[var(--border-active)] hover:text-[var(--bg-app)] transition-all shrink-0 flex items-center justify-center gap-2 bg-[var(--bg-sidebar)] text-[var(--text-accent)] border-[var(--border-card)] font-bold"
-    style={{ ...fontStyle }}
+    className="px-5 text-sm border-y border-r cursor-pointer hover:bg-[var(--border-active)] hover:text-[var(--bg-app)] transition-all shrink-0 flex items-center justify-center gap-2 bg-[var(--bg-sidebar)] text-[var(--text-accent)] border-[var(--border-card)] font-bold"
+    style={{ ...fontStyle, borderTopRightRadius: 10, borderBottomRightRadius: 10 }}
     title="Stamp current time"
   >
     <Clock size={16} />
@@ -330,7 +332,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
       onClick={handleSubmit}
       disabled={!canSubmit}
       className="w-full py-4 text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-[var(--border-active)] disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
-      style={{ background: 'var(--border-active)', color: 'var(--bg-app)', ...fontStyle }}
+      style={{ background: 'var(--border-active)', color: 'var(--bg-app)', borderRadius: 10, ...fontStyle }}
     >
       {label} <span className="opacity-60 font-mono-data ml-1.5">⌘↵</span>
     </button>
@@ -423,14 +425,14 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           <div>
             <FieldLabel>Entry Time</FieldLabel>
             <div className="flex">
-              <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="09:30:00" className="w-full px-4 py-4 text-base border-y border-l font-bold font-mono-data" style={whiteInputStyle} />
+              <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="09:30:00" className="flex-1 min-w-0 px-4 py-4 text-base border-y border-l font-bold font-mono-data" style={{ ...whiteInputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
               <NowButton onClick={() => update('entryTime', getNowTime())} />
             </div>
           </div>
           <div>
             <FieldLabel optional>Exit Time</FieldLabel>
             <div className="flex">
-              <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="15:45:00" className="w-full px-4 py-4 text-base border-y border-l font-bold font-mono-data" style={whiteInputStyle} />
+              <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="15:45:00" className="flex-1 min-w-0 px-4 py-4 text-base border-y border-l font-bold font-mono-data" style={{ ...whiteInputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
               <NowButton onClick={() => update('exitTime', getNowTime())} />
             </div>
           </div>
@@ -520,7 +522,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               onClick={() => setStep(1)}
               disabled={!canAdvanceStep1}
               className="px-6 py-3.5 text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-[var(--border-active)] disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
-              style={{ background: 'var(--border-active)', color: 'var(--bg-app)', ...fontStyle }}
+              style={{ background: 'var(--border-active)', color: 'var(--bg-app)', borderRadius: 10, ...fontStyle }}
             >
               Next: HOW [02/03]
             </button>
@@ -641,15 +643,15 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             </div>
             <div>
               <FieldLabel>Entry Time</FieldLabel>
-              <div className="flex gap-2">
-                <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-4 py-4 text-sm border font-bold font-mono-data" style={inputStyle} />
+              <div className="flex">
+                <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-4 py-4 text-sm border-y border-l font-bold font-mono-data" style={{ ...inputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
                 <NowButton onClick={() => update('entryTime', getNowTime())} />
               </div>
             </div>
             <div>
               <FieldLabel>Exit Time</FieldLabel>
-              <div className="flex gap-2">
-                <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-4 py-4 text-sm border font-bold font-mono-data" style={inputStyle} />
+              <div className="flex">
+                <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-4 py-4 text-sm border-y border-l font-bold font-mono-data" style={{ ...inputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
                 <NowButton onClick={() => update('exitTime', getNowTime())} />
               </div>
             </div>
@@ -685,6 +687,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               type="button"
               onClick={() => setStep(0)}
               className="flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-bold uppercase tracking-widest border cursor-pointer bg-transparent text-[var(--text-secondary)] border-[var(--border-card)] hover:text-[var(--text-dark)] hover:border-[var(--border-active)] transition-all"
+              style={{ borderRadius: 10 }}
             >
               <ChevronLeft size={14} /> Back
             </button>
@@ -694,7 +697,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               onClick={() => setStep(2)}
               disabled={!canAdvanceStep2}
               className="px-6 py-3.5 text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-[var(--border-active)] disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
-              style={{ background: 'var(--border-active)', color: 'var(--bg-app)', ...fontStyle }}
+              style={{ background: 'var(--border-active)', color: 'var(--bg-app)', borderRadius: 10, ...fontStyle }}
             >
               Next: Confirm [03/03]
             </button>
@@ -746,6 +749,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               type="button"
               onClick={() => setStep(1)}
               className="flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-bold uppercase tracking-widest border cursor-pointer bg-transparent text-[var(--text-secondary)] border-[var(--border-card)] hover:text-[var(--text-dark)] hover:border-[var(--border-active)] transition-all"
+              style={{ borderRadius: 10 }}
             >
               <ChevronLeft size={14} /> Back
             </button>
@@ -754,7 +758,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               type="button"
               onClick={handleSubmit}
               className="px-6 py-3.5 text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-[var(--border-active)] transition-all duration-200"
-              style={{ background: 'var(--border-active)', color: 'var(--bg-app)', ...fontStyle }}
+              style={{ background: 'var(--border-active)', color: 'var(--bg-app)', borderRadius: 10, ...fontStyle }}
             >
               Confirm & Submit <span className="opacity-60 font-mono-data ml-2">⌘↵</span>
             </button>

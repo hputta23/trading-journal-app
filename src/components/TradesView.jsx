@@ -267,7 +267,7 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="w-full max-w-3xl border overflow-y-auto max-h-[90vh] glass-panel" style={{ borderColor: 'var(--border-card)', borderRadius: '16px' }}>
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b p-4 select-none" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-sidebar)' }}>
+            <div className="flex items-center justify-between border-b p-4 select-none" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-sidebar)', borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
               <span className="text-xs uppercase tracking-widest font-bold text-[var(--text-accent)]">
                 {editingTrade ? 'Edit Trade Entry' : 'Record Trade Session'}
               </span>

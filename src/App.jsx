@@ -586,9 +586,9 @@ export default function App() {
       {/* ── Global Log Trade Modal Overlay ── */}
       {showGlobalTradeModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-3xl border overflow-y-auto max-h-[90vh] glass-panel fade-in" style={{ borderColor: 'var(--border-card)' }}>
+          <div className="w-full max-w-3xl border overflow-y-auto max-h-[90vh] glass-panel fade-in" style={{ borderColor: 'var(--border-card)', borderRadius: 16 }}>
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b p-4 select-none shrink-0" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-sidebar)' }}>
+            <div className="flex items-center justify-between border-b p-4 select-none shrink-0" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-sidebar)', borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
               <span className="text-xs font-bold uppercase tracking-widest text-[var(--text-accent)]">
                 {editingTrade ? 'Edit Trade Entry' : 'Record Trade Session'}
               </span>
