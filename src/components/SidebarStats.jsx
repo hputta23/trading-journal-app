@@ -111,27 +111,29 @@ export default function SidebarStats({
           </div>
         ))}
 
-        {/* ── High-Contrast Session Metrics (Numbers wrapped inside glowing container cards) ── */}
-        <div className="mt-4 space-y-3">
-          <div className="text-[10px] font-bold text-[var(--text-secondary)] tracking-widest uppercase mb-2 whitespace-nowrap px-3">
+        {/* ── Live Metrics ── */}
+        <div className="mt-4 space-y-2">
+          <div className="text-[10px] font-bold text-[var(--text-secondary)] tracking-widest uppercase mb-3 whitespace-nowrap px-2">
             LIVE METRICS
           </div>
 
-          <div className="grid grid-cols-2 gap-2 px-1">
-            <div className="glass-panel p-3 rounded-xl flex flex-col gap-1 border border-[var(--border-card)]">
-              <span className="text-[9px] font-medium uppercase tracking-wider flex items-center gap-1 whitespace-nowrap text-[var(--text-secondary)]">
+          <div className="flex flex-col gap-2 px-1">
+            {/* Net Return — full width */}
+            <div className="glass-panel rounded-xl border border-[var(--border-card)]" style={{ padding: '14px 16px' }}>
+              <span className="text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 text-[var(--text-secondary)] mb-2">
                 <DollarSign size={10} /> Net Return
               </span>
-              <span className={`text-sm font-bold font-mono-data truncate ${stats.totalNetPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
+              <span className={`text-[18px] font-black font-mono-data block leading-none ${stats.totalNetPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
                 {formatCurrency(stats.totalNetPnl)}
               </span>
             </div>
-            
-            <div className="glass-panel p-3 rounded-xl flex flex-col gap-1 border border-[var(--border-card)]">
-              <span className="text-[9px] font-medium uppercase tracking-wider flex items-center gap-1 whitespace-nowrap text-[var(--text-secondary)]">
+
+            {/* Win Rate — full width */}
+            <div className="glass-panel rounded-xl border border-[var(--border-card)]" style={{ padding: '14px 16px' }}>
+              <span className="text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 text-[var(--text-secondary)] mb-2">
                 <Percent size={10} /> Win Rate
               </span>
-              <span className="text-sm font-bold font-mono-data truncate text-[var(--text-dark)]">
+              <span className="text-[18px] font-black font-mono-data block leading-none text-[var(--text-dark)]">
                 {formatPercent(stats.winRate)}
               </span>
             </div>

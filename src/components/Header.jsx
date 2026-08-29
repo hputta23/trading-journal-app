@@ -76,19 +76,20 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
         
         {/* Live Clock — hidden on very small screens */}
         <div
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md"
-          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)' }}
+          className="hidden sm:flex items-center gap-2.5 rounded-xl"
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-card)', padding: '8px 14px' }}
         >
-          <Activity size={11} style={{ color: 'var(--text-accent)' }} />
+          <Activity size={12} style={{ color: 'var(--text-accent)', flexShrink: 0 }} />
           <span
-            className="font-mono-data text-[11px] font-semibold"
-            style={{ color: 'var(--text-primary)' }}
+            className="font-mono-data font-bold"
+            style={{ color: 'var(--text-primary)', fontSize: '13px', letterSpacing: '0.04em' }}
           >
             {timeStr}
           </span>
+          <span style={{ color: 'var(--border-card)', fontSize: '14px', fontWeight: 300 }}>·</span>
           <span
-            className="text-[10px] font-medium"
-            style={{ color: 'var(--text-secondary)' }}
+            className="font-medium"
+            style={{ color: 'var(--text-secondary)', fontSize: '12px', whiteSpace: 'nowrap' }}
           >
             {dateStr}
           </span>

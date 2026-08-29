@@ -209,43 +209,43 @@ export default function TradesView({ allTrades, onSubmitTrade, onEditTrade, onDe
           </div>
 
           {/* ── Sub-Filtered Dynamic Metrics ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 border p-6 bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-lg">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 border bg-[var(--bg-card)] border-[var(--border-card)] glass-panel rounded-xl" style={{ padding: '20px 24px' }}>
             {[
               [
                 'FILTERED NET P&L', 
                 filteredStats.totalNetPnl >= 0 ? (
-                  <span className="badge-profit text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatCurrency(filteredStats.totalNetPnl)}</span>
+                  <span className="badge-profit font-black font-mono-data rounded-lg" style={{ fontSize: '20px', padding: '8px 16px' }}>{formatCurrency(filteredStats.totalNetPnl)}</span>
                 ) : (
-                  <span className="badge-loss text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatCurrency(filteredStats.totalNetPnl)}</span>
+                  <span className="badge-loss font-black font-mono-data rounded-lg" style={{ fontSize: '20px', padding: '8px 16px' }}>{formatCurrency(filteredStats.totalNetPnl)}</span>
                 )
               ],
               [
                 'WIN RATE %', 
                 filteredStats.winRate >= 50 ? (
-                  <span className="badge-profit text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatPercent(filteredStats.winRate)}</span>
+                  <span className="badge-profit font-black font-mono-data rounded-lg" style={{ fontSize: '20px', padding: '8px 16px' }}>{formatPercent(filteredStats.winRate)}</span>
                 ) : filteredStats.winRate > 0 ? (
-                  <span className="badge-loss text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatPercent(filteredStats.winRate)}</span>
+                  <span className="badge-loss font-black font-mono-data rounded-lg" style={{ fontSize: '20px', padding: '8px 16px' }}>{formatPercent(filteredStats.winRate)}</span>
                 ) : (
-                  <span className="badge-cyan text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatPercent(filteredStats.winRate)}</span>
+                  <span className="badge-cyan font-black font-mono-data rounded-lg" style={{ fontSize: '20px', padding: '8px 16px' }}>{formatPercent(filteredStats.winRate)}</span>
                 )
               ],
               [
                 'MATCHED SESSIONS', 
-                <span className="badge-cyan text-base font-black font-mono-data px-4 py-2 rounded-lg">{formatNumber(filteredStats.totalTrades)} trades</span>
+                <span className="badge-cyan font-black font-mono-data rounded-lg" style={{ fontSize: '20px', padding: '8px 16px' }}>{formatNumber(filteredStats.totalTrades)} trades</span>
               ],
               [
                 'PROFIT FACTOR', 
                 filteredStats.profitFactor >= 1.0 ? (
-                  <span className="badge-profit text-base font-black font-mono-data px-4 py-2 rounded-lg">{filteredStats.profitFactor === Infinity ? '∞' : filteredStats.profitFactor.toFixed(2)}</span>
+                  <span className="badge-profit font-black font-mono-data rounded-lg" style={{ fontSize: '20px', padding: '8px 16px' }}>{filteredStats.profitFactor === Infinity ? '∞' : filteredStats.profitFactor.toFixed(2)}</span>
                 ) : filteredStats.profitFactor > 0 ? (
-                  <span className="badge-loss text-base font-black font-mono-data px-4 py-2 rounded-lg">{filteredStats.profitFactor.toFixed(2)}</span>
+                  <span className="badge-loss font-black font-mono-data rounded-lg" style={{ fontSize: '20px', padding: '8px 16px' }}>{filteredStats.profitFactor.toFixed(2)}</span>
                 ) : (
-                  <span className="badge-cyan text-base font-black font-mono-data px-4 py-2 rounded-lg">{filteredStats.profitFactor.toFixed(2)}</span>
+                  <span className="badge-cyan font-black font-mono-data rounded-lg" style={{ fontSize: '20px', padding: '8px 16px' }}>{filteredStats.profitFactor.toFixed(2)}</span>
                 )
               ],
             ].map(([lbl, element]) => (
-              <div key={lbl} className="px-5 border-r border-transparent lg:border-[var(--border-card)] last:border-transparent flex flex-col justify-center gap-3" style={{ minWidth: 0 }}>
-                <span className="block text-[11px] text-[var(--text-secondary)] tracking-widest font-bold uppercase" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lbl}</span>
+              <div key={lbl} className="flex flex-col gap-3" style={{ minWidth: 0 }}>
+                <span className="block text-[11px] text-[var(--text-secondary)] tracking-widest font-bold uppercase">{lbl}</span>
                 <div className="flex" style={{ minWidth: 0 }}>{element}</div>
               </div>
             ))}
