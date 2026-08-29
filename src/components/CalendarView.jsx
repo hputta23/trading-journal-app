@@ -143,7 +143,7 @@ export default function CalendarView({ allTrades, allJournals = {}, onSelectDate
           <div className="grid grid-cols-7 auto-rows-fr">
             {calendarData.map((dayData, idx) => {
               if (!dayData) {
-                return <div key={`empty-${idx}`} className="min-h-[120px] border-r border-b border-[var(--border-card)] bg-black/20 rounded-lg" style={{ borderRadius: 8 }} />;
+                return <div key={`empty-${idx}`} className="min-h-[120px] border-r border-b border-[var(--border-card)] bg-[var(--bg-card)]/30 rounded-lg" style={{ borderRadius: 8 }} />;
               }
               
               const isToday = dayData.dateKey === new Date().toISOString().split('T')[0];
@@ -166,17 +166,17 @@ export default function CalendarView({ allTrades, allJournals = {}, onSelectDate
                   }}
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <span className={`text-sm font-bold ${isToday ? 'bg-[var(--border-active)] text-black w-7 h-7 rounded-full flex items-center justify-center' : 'text-[var(--text-secondary)]'}`}>
+                    <span className={`text-sm font-bold ${isToday ? 'bg-[var(--border-active)] text-[var(--bg-app)] w-7 h-7 rounded-full flex items-center justify-center' : 'text-[var(--text-secondary)]'}`}>
                       {dayData.day}
                     </span>
                     <div className="flex flex-col gap-1 items-end">
                       {dayData.isTraded && (
-                        <span className="hidden md:inline-block text-[10px] font-bold text-[var(--text-secondary)] uppercase bg-black/40 px-2 py-0.5 rounded-lg" style={{ borderRadius: 8 }}>
+                        <span className="hidden md:inline-block text-[10px] font-bold text-[var(--text-primary)] uppercase bg-[var(--bg-card)] px-2 py-0.5 border border-[var(--border-card)] rounded-lg" style={{ borderRadius: 8 }}>
                           {dayData.trades.length} Trades
                         </span>
                       )}
                       {dayData.hasJournal && (
-                        <span className="hidden md:inline-block text-[10px] font-bold text-[var(--text-accent)] uppercase bg-black/40 px-2 py-0.5 rounded-lg" style={{ borderRadius: 8 }}>
+                        <span className="hidden md:inline-block text-[10px] font-bold text-[var(--text-accent)] uppercase bg-[var(--bg-card)] px-2 py-0.5 border border-[var(--border-card)] rounded-lg" style={{ borderRadius: 8 }}>
                           Journal
                         </span>
                       )}

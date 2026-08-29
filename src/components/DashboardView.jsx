@@ -19,14 +19,14 @@ const Tip = ({ text }) => (
 );
 
 const StatCard = ({ icon, label, value, sub, color, bg, border, tip }) => (
-  <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 14, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
-    <div className="stat-label" style={{ color: 'var(--text-secondary)', fontSize: 9 }}>
-      {icon} <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span> {tip && <Tip text={tip} />}
+  <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 14, padding: '16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+    <div className="stat-label" style={{ color: 'var(--text-secondary)', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+      {icon} <span>{label}</span> {tip && <Tip text={tip} />}
     </div>
-    <div className="stat-value" style={{ fontSize: 'clamp(12px, 2.5vw, 16px)', color, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+    <div className="stat-value" style={{ fontSize: '18px', fontWeight: '800', color, wordBreak: 'break-word', lineHeight: '1.2' }}>
       {value}
     </div>
-    {sub && <div className="stat-sub" style={{ fontSize: 9, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub}</div>}
+    {sub && <div className="stat-sub" style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{sub}</div>}
   </div>
 );
 
@@ -250,7 +250,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
 
       {/* ══ ROW 2 — KPI RIBBON ══ */}
       <div className="kpi-r">
-        <style>{`.kpi-r{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}@media(min-width:600px){.kpi-r{grid-template-columns:repeat(3,1fr)}}@media(min-width:1024px){.kpi-r{grid-template-columns:repeat(5,1fr)}}`}</style>
+        <style>{`.kpi-r{display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:14px}`}</style>
         <StatCard icon={<DollarSign size={10}/>} label="Net Return" tip="Total closed net P&L." value={formatCurrency(stats.totalNetPnl)} color={stats.totalNetPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)'} bg={stats.totalNetPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)'} border={stats.totalNetPnl >= 0 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'} />
         <StatCard icon={<Percent size={10}/>}     label="Win Rate"    tip="% of closed trades that were profitable." value={formatPercent(stats.winRate)} color="var(--color-cyan)" bg="var(--bg-kpi-cyan)" border="var(--border-kpi-cyan)" />
         <StatCard icon={<TrendingUp size={10}/>}  label="Profit Factor" tip="Gross profits / gross losses. >1.5 is excellent." value={stats.profitFactor === Infinity ? '∞' : stats.profitFactor.toFixed(2)} color={stats.profitFactor >= 1 ? 'var(--color-profit)' : 'var(--color-loss)'} bg={stats.profitFactor >= 1 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)'} border={stats.profitFactor >= 1 ? 'var(--border-kpi-profit)' : 'var(--border-kpi-loss)'} />
@@ -355,7 +355,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 {unlocked} / {achievements.length}
               </span>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(60px, 1fr))', gap: 8 }}>
               {achievements.map((a, i) => (
                 <div
                   key={a.id}

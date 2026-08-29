@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Target, DollarSign, TrendingUp, Calendar, Check, Save } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { formatCurrency } from '../utils/calculations';
 
 export default function CapitalView({ allTrades, allJournals, onSaveJournal, settings, onSaveSettings }) {
@@ -62,7 +63,7 @@ export default function CapitalView({ allTrades, allJournals, onSaveJournal, set
     let monthPnl = 0;
 
     Object.values(allTrades).flat().forEach(trade => {
-      if (trade.isOpen || !trade.netPnl) return;
+      if (!trade || trade.isOpen || !trade.netPnl) return;
       const tradeDate = new Date(trade.date);
       if (tradeDate >= startOfWeek) weekPnl += trade.netPnl;
       if (tradeDate >= startOfMonth) monthPnl += trade.netPnl;
@@ -71,7 +72,7 @@ export default function CapitalView({ allTrades, allJournals, onSaveJournal, set
     return { currentWeekPnl: weekPnl, currentMonthPnl: monthPnl };
   }, [allTrades]);
 
-  // Extract all historical balances for the chart/list
+  // Extract all historical balances for the chart
   const history = useMemo(() => {
     const entries = Object.keys(allJournals)
       .filter(date => allJournals[date].accountBalance != null)
@@ -79,7 +80,7 @@ export default function CapitalView({ allTrades, allJournals, onSaveJournal, set
         date,
         balance: allJournals[date].accountBalance
       }))
-      .sort((a, b) => new Date(b.date) - new Date(a.date)); // Newest first
+      .sort((a, b) => new Date(a.date) - new Date(b.date)); // Oldest first for chart
     return entries;
   }, [allJournals]);
 
@@ -101,162 +102,185 @@ export default function CapitalView({ allTrades, allJournals, onSaveJournal, set
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* ── Targets Section ── */}
+        <div className="glass-panel p-6" style={{ borderRadius: 14 }}>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <TrendingUp size={20} className="text-[var(--text-accent)]" />
+              <h2 className="text-lg font-bold text-[var(--text-dark)]">Profit Targets</h2>
+            </div>
+            <button
+              onClick={handleSaveTargets}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
+              style={{
+                background: saveStatus === 'targets' ? 'var(--color-profit)' : 'var(--border-active)',
+                color: 'var(--bg-app)',
+                border: 'none'
+              }}
+            >
+              {saveStatus === 'targets' ? <><Check size={14} /> Saved</> : <><Save size={14} /> Save Targets</>}
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Weekly Target */}
+            <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-card)]">
+              <div className="flex justify-between text-sm mb-4">
+                <span className="font-bold text-[var(--text-primary)]">Weekly</span>
+                <span className="text-[var(--text-secondary)]">
+                  <span className={currentWeekPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}>{formatCurrency(currentWeekPnl)}</span>
+                </span>
+              </div>
+              <div className="relative mb-4">
+                <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
+                <input
+                  type="number"
+                  value={weeklyTarget}
+                  onChange={(e) => setWeeklyTarget(e.target.value)}
+                  className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-2 text-[var(--text-primary)] outline-none focus:border-[var(--color-profit)] transition-colors"
+                />
+              </div>
+              <div className="h-2 w-full bg-[var(--bg-input)] rounded-full overflow-hidden">
+                <div className="h-full bg-[var(--color-profit)] transition-all" style={{ width: `${weeklyProgress}%` }} />
+              </div>
+            </div>
+
+            {/* Bi-Weekly Target */}
+            <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-card)]">
+              <div className="flex justify-between text-sm mb-4">
+                <span className="font-bold text-[var(--text-primary)]">Bi-Weekly</span>
+              </div>
+              <div className="relative mb-4">
+                <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
+                <input
+                  type="number"
+                  value={biWeeklyTarget}
+                  onChange={(e) => setBiWeeklyTarget(e.target.value)}
+                  className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-2 text-[var(--text-primary)] outline-none focus:border-[var(--color-profit)] transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Monthly Target */}
+            <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-card)]">
+              <div className="flex justify-between text-sm mb-4">
+                <span className="font-bold text-[var(--text-primary)]">Monthly</span>
+                <span className="text-[var(--text-secondary)]">
+                  <span className={currentMonthPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}>{formatCurrency(currentMonthPnl)}</span>
+                </span>
+              </div>
+              <div className="relative mb-4">
+                <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
+                <input
+                  type="number"
+                  value={monthlyTarget}
+                  onChange={(e) => setMonthlyTarget(e.target.value)}
+                  className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-2 text-[var(--text-primary)] outline-none focus:border-[var(--color-profit)] transition-colors"
+                />
+              </div>
+              <div className="h-2 w-full bg-[var(--bg-input)] rounded-full overflow-hidden">
+                <div className="h-full bg-[var(--text-accent)] transition-all" style={{ width: `${monthlyProgress}%` }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Daily Balance Tracker ── */}
+        <div className="glass-panel p-6 flex flex-col" style={{ borderRadius: 14 }}>
+          <div className="flex items-center gap-3 mb-6">
+            <DollarSign size={20} className="text-[var(--color-profit)]" />
+            <h2 className="text-lg font-bold text-[var(--text-dark)]">Capital Growth Graph</h2>
+          </div>
           
-          {/* ── Targets Section ── */}
-          <div className="glass-panel p-6" style={{ borderRadius: 14 }}>
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <TrendingUp size={20} className="text-[var(--text-accent)]" />
-                <h2 className="text-lg font-bold text-[var(--text-dark)]">Profit Targets</h2>
-              </div>
-              <button
-                onClick={handleSaveTargets}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
-                style={{
-                  background: saveStatus === 'targets' ? 'var(--color-profit)' : 'var(--border-active)',
-                  color: 'var(--bg-app)',
-                  border: 'none'
-                }}
-              >
-                {saveStatus === 'targets' ? <><Check size={14} /> Saved</> : <><Save size={14} /> Save Targets</>}
-              </button>
-            </div>
+          <p className="text-xs text-[var(--text-secondary)] mb-6 leading-relaxed">
+            Record your daily or weekly account balance to visualize your capital growth over time.
+          </p>
 
-            <div className="space-y-6">
-              {/* Weekly Target */}
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="font-bold text-[var(--text-primary)]">Weekly Target</span>
-                  <span className="text-[var(--text-secondary)]">
-                    Current: <span className={currentWeekPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}>{formatCurrency(currentWeekPnl)}</span>
-                  </span>
-                </div>
-                <div className="relative mb-3">
-                  <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
-                  <input
-                    type="number"
-                    value={weeklyTarget}
-                    onChange={(e) => setWeeklyTarget(e.target.value)}
-                    className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-2 text-[var(--text-primary)] outline-none focus:border-[var(--color-profit)] transition-colors"
-                  />
-                </div>
-                <div className="h-2 w-full bg-[var(--bg-input)] rounded-full overflow-hidden">
-                  <div className="h-full bg-[var(--color-profit)] transition-all" style={{ width: `${weeklyProgress}%` }} />
-                </div>
-              </div>
-
-              {/* Bi-Weekly Target */}
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="font-bold text-[var(--text-primary)]">Bi-Weekly Target</span>
-                </div>
-                <div className="relative mb-3">
-                  <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
-                  <input
-                    type="number"
-                    value={biWeeklyTarget}
-                    onChange={(e) => setBiWeeklyTarget(e.target.value)}
-                    className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-2 text-[var(--text-primary)] outline-none focus:border-[var(--color-profit)] transition-colors"
-                  />
-                </div>
-              </div>
-
-              {/* Monthly Target */}
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="font-bold text-[var(--text-primary)]">Monthly Target</span>
-                  <span className="text-[var(--text-secondary)]">
-                    Current: <span className={currentMonthPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}>{formatCurrency(currentMonthPnl)}</span>
-                  </span>
-                </div>
-                <div className="relative mb-3">
-                  <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
-                  <input
-                    type="number"
-                    value={monthlyTarget}
-                    onChange={(e) => setMonthlyTarget(e.target.value)}
-                    className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-2 text-[var(--text-primary)] outline-none focus:border-[var(--color-profit)] transition-colors"
-                  />
-                </div>
-                <div className="h-2 w-full bg-[var(--bg-input)] rounded-full overflow-hidden">
-                  <div className="h-full bg-[var(--text-accent)] transition-all" style={{ width: `${monthlyProgress}%` }} />
-                </div>
+          <div className="flex flex-col md:flex-row items-end gap-4 mb-8 p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-card)]">
+            <div className="w-full md:flex-1">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2">Record Date</label>
+              <div className="relative">
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                  className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg px-4 py-3 text-[var(--text-primary)] font-mono-data text-sm outline-none focus:border-[var(--color-profit)] transition-colors"
+                />
               </div>
             </div>
+            <div className="w-full md:flex-1">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2">Total Account Balance</label>
+              <div className="relative">
+                <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
+                <input
+                  type="number"
+                  value={balanceInput}
+                  onChange={(e) => setBalanceInput(e.target.value)}
+                  placeholder="150000"
+                  className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-3 text-[var(--text-primary)] font-mono-data text-sm outline-none focus:border-[var(--color-profit)] transition-colors"
+                />
+              </div>
+            </div>
+            <button
+              onClick={handleSaveBalance}
+              className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all h-[46px] cursor-pointer"
+              style={{
+                background: saveStatus === 'balance' ? 'var(--color-profit)' : 'var(--text-primary)',
+                color: 'var(--bg-app)',
+                border: 'none'
+              }}
+            >
+              {saveStatus === 'balance' ? 'SAVED' : 'PLOT ON GRAPH'}
+            </button>
           </div>
 
-          {/* ── Daily Balance Tracker ── */}
-          <div className="glass-panel p-6 flex flex-col" style={{ borderRadius: 14 }}>
-            <div className="flex items-center gap-3 mb-6">
-              <DollarSign size={20} className="text-[var(--color-profit)]" />
-              <h2 className="text-lg font-bold text-[var(--text-dark)]">Daily Capital Tracker</h2>
-            </div>
-            
-            <p className="text-xs text-[var(--text-secondary)] mb-6 leading-relaxed">
-              Manually enter the actual amount of money held in your account. This is strictly isolated and does NOT interfere with trade PnL calculations.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-end gap-4 mb-8">
-              <div className="w-full sm:flex-1">
-                <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2">Date</label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                    className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg px-4 py-3 text-[var(--text-primary)] font-mono-data text-sm outline-none focus:border-[var(--color-profit)] transition-colors"
-                  />
-                </div>
+          {/* Chart */}
+          <div className="mt-4 bg-[var(--bg-card)] p-4 rounded-xl border border-[var(--border-card)] min-h-[300px]">
+            {history.length === 0 ? (
+              <div className="h-[250px] flex items-center justify-center text-[var(--text-secondary)] text-sm">
+                Enter your first balance above to start the graph!
               </div>
-              <div className="w-full sm:flex-1">
-                <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2">Account Balance</label>
-                <div className="relative">
-                  <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
-                  <input
-                    type="number"
-                    value={balanceInput}
-                    onChange={(e) => setBalanceInput(e.target.value)}
-                    placeholder="150000"
-                    className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-3 text-[var(--text-primary)] font-mono-data text-sm outline-none focus:border-[var(--color-profit)] transition-colors"
-                  />
-                </div>
+            ) : (
+              <div className="h-[250px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={history} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--text-accent)" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="var(--text-accent)" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis 
+                      dataKey="date" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: 'var(--text-secondary)', fontSize: 10 }}
+                      dy={10}
+                    />
+                    <YAxis 
+                      hide
+                      domain={['auto', 'auto']}
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-card)', borderRadius: 8, fontSize: '12px' }}
+                      itemStyle={{ color: 'var(--text-primary)', fontWeight: 'bold' }}
+                      formatter={(value) => [formatCurrency(value), 'Balance']}
+                      labelStyle={{ color: 'var(--text-secondary)', marginBottom: '4px' }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="balance" 
+                      stroke="var(--text-accent)" 
+                      strokeWidth={3}
+                      fillOpacity={1} 
+                      fill="url(#colorBalance)" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
-              <button
-                onClick={handleSaveBalance}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all h-[46px] cursor-pointer"
-                style={{
-                  background: saveStatus === 'balance' ? 'var(--color-profit)' : 'var(--bg-sidebar)',
-                  color: saveStatus === 'balance' ? 'var(--bg-app)' : 'var(--text-primary)',
-                  border: `1px solid ${saveStatus === 'balance' ? 'var(--color-profit)' : 'var(--border-card)'}`
-                }}
-              >
-                {saveStatus === 'balance' ? 'SAVED' : 'SAVE'}
-              </button>
-            </div>
-
-            {/* History List */}
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-4">Historical Balances</h3>
-            <div className="flex-1 overflow-y-auto bg-[var(--bg-input)] rounded-xl border border-[var(--border-input)]">
-              {history.length === 0 ? (
-                <div className="p-8 text-center text-[var(--text-secondary)] text-sm">
-                  No account balances recorded yet.
-                </div>
-              ) : (
-                <div className="divide-y divide-[var(--border-input)]">
-                  {history.map((entry) => (
-                    <div key={entry.date} className="flex justify-between items-center p-4 hover:bg-[var(--bg-sidebar)] transition-colors">
-                      <span className="text-sm text-[var(--text-secondary)] font-mono-data">{entry.date}</span>
-                      <span className="text-sm font-bold text-[var(--text-primary)] font-mono-data">
-                        {formatCurrency(entry.balance)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
+            )}
           </div>
+
         </div>
       </div>
     </div>
