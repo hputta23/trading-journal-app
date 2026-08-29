@@ -120,10 +120,21 @@ export default function App() {
     if (!session || isDemo) return;
     
     setCloudSyncStatus('syncing');
+    const previousOwner = localStorage.getItem('trading-journal-owner');
+    
+    // If the browser data belongs to a DIFFERENT user, wipe it!
+    if (previousOwner && previousOwner !== session.user.id) {
+      console.warn("Switching accounts! Wiping previous user's local data to prevent cross-contamination.");
+      localStorage.removeItem('trading-journal-trades');
+      localStorage.removeItem('trading-journal-entries');
+      localStorage.removeItem('trading-journal-activity');
+    }
+    
+    // Claim ownership of this browser's data
+    localStorage.setItem('trading-journal-owner', session.user.id);
+
     const localTrades = loadTrades();
     const localJournals = JSON.parse(localStorage.getItem('trading-journal-entries') || '{}');
-    
-
 
     try {
       const { data, error } = await supabase
@@ -134,8 +145,8 @@ export default function App() {
         
       if (error) {
         if (error.code === 'PGRST116') {
-          // If inserting, we don't know if journals column exists, so just insert trades to be safe.
-          const { error: insertErr } = await supabase.from('user_data').insert([{ user_id: session.user.id, trades: localTrades }]);
+          // New user sign up - adopt whatever is currently in local storage (it's safe because we wiped it if they switched accounts)
+          const { error: insertErr } = await supabase.from('user_data').insert([{ user_id: session.user.id, trades: localTrades, journals: localJournals }]);
           if (insertErr) console.error("Supabase insert error:", insertErr.message);
         } else {
           console.error("Supabase fetch error:", error.message);
