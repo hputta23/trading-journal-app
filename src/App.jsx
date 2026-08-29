@@ -452,7 +452,7 @@ export default function App() {
         onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
         theme={settings.theme}
         onToggleTheme={handleToggleTheme}
-        userEmail={session.user.email}
+        userEmail={settings.displayName || session.user.email}
         onLogout={handleLogoutClick}
         cloudSyncStatus={cloudSyncStatus}
         onManualSync={fetchCloudData}
@@ -478,7 +478,7 @@ export default function App() {
             onOpenNewTrade={() => { setEditingTrade(null); setShowGlobalTradeModal(true); setMobileMenuOpen(false); }}
             onSync={handleSync}
             syncStatus={syncStatus}
-            userEmail={session.user.email}
+            userEmail={settings.displayName || session.user.email}
             isDemo={isDemo}
             onLoadDemo={handleLoadDemo}
           />
@@ -575,7 +575,7 @@ export default function App() {
                   <SettingsView
                     settings={settings}
                     onSave={handleSaveSettings}
-                    userEmail={session.user.email}
+                    userEmail={settings.displayName || session.user.email}
                     allTrades={allTrades}
                   />
                 </PageWrapper>

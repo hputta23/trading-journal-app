@@ -13,6 +13,7 @@ const Tip = ({ text }) => (
 );
 
 export default function SettingsView({ settings, onSave, userEmail, allTrades }) {
+  const [displayName, setDisplayName] = useState(settings.displayName || '');
   const [googleSheetId, setGoogleSheetId] = useState(settings.googleSheetId || '');
   const [quickEntry, setQuickEntry] = useState(settings.quickEntry || false);
   const [theme, setTheme] = useState(settings.theme || 'dark');
@@ -35,7 +36,7 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
   };
 
   const handleSave = () => {
-    onSave({ googleSheetId, quickEntry, theme });
+    onSave({ googleSheetId, quickEntry, theme, displayName });
     setSaveStatus('success');
     setTimeout(() => setSaveStatus(null), 3000);
   };
@@ -428,8 +429,26 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
             
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
               <div style={{ flex: 1, minWidth: 'min(300px, 100%)', padding: '24px', background: 'var(--bg-input)', borderRadius: 12, border: '1px solid var(--border-card)' }}>
+                
+                <div style={{ marginBottom: '24px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                    Display Name
+                  </label>
+                  <input
+                    type="text"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    placeholder="Enter your name"
+                    style={{
+                      width: '100%', padding: '12px 16px', fontSize: '14px', fontFamily: "'Inter', sans-serif",
+                      background: 'var(--bg-card)', border: '1px solid var(--border-card)',
+                      color: 'var(--text-primary)', borderRadius: 10
+                    }}
+                  />
+                </div>
+
                 <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-dark)', marginBottom: '8px' }}>Signed in as</h3>
-                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.5' }}>
                   {userEmail}
                 </p>
                 <div style={{ display: 'flex', gap: '12px' }}>

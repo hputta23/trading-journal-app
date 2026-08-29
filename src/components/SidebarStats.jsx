@@ -53,12 +53,12 @@ export default function SidebarStats({
     >
       {/* ── Cockpit Navigation Header ── */}
       <div className="space-y-1 py-2 border-b border-[var(--border-card)] pb-4 mb-2">
-        <div className="flex items-center gap-3 flex-nowrap whitespace-nowrap">
-          <div className="w-8 h-8 rounded-lg bg-[var(--border-active)] flex items-center justify-center text-[var(--bg-app)]">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-[var(--border-active)] flex items-center justify-center text-[var(--bg-app)] flex-shrink-0">
             <Activity size={16} strokeWidth={3} />
           </div>
-          <div className="text-sm font-black tracking-widest uppercase whitespace-nowrap" style={{ color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}>
-            TradeOS
+          <div className="text-sm font-black tracking-wide truncate" style={{ color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }} title={userEmail}>
+            {userEmail || 'TradeOS'}
           </div>
         </div>
       </div>

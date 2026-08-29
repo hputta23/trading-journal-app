@@ -1,7 +1,7 @@
 import { Menu, TrendingUp, Sun, Moon, Monitor, Activity, Cloud, CloudOff, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleTheme, cloudSyncStatus = 'synced', onManualSync }) {
+export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleTheme, cloudSyncStatus = 'synced', onManualSync, userEmail }) {
   const [now, setNow] = useState(new Date());
 
   // Keep clock ticking
@@ -23,22 +23,23 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
       }}
     >
       {/* Brand left */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 min-w-0">
         <div
-          className="flex items-center justify-center w-8 h-8 rounded-lg"
+          className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
           style={{ background: 'var(--border-active)' }}
         >
           <TrendingUp size={16} style={{ color: 'var(--bg-app)' }} />
         </div>
-        <div className="flex flex-col leading-none">
+        <div className="flex flex-col leading-none truncate">
           <span
-            className="text-[13px] font-extrabold tracking-[0.12em] uppercase"
+            className="text-[13px] font-extrabold tracking-[0.12em] uppercase truncate"
             style={{ color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }}
+            title={userEmail}
           >
-            TradeOS
+            {userEmail || 'TradeOS'}
           </span>
           <span
-            className="text-[9px] font-semibold tracking-widest uppercase"
+            className="text-[9px] font-semibold tracking-widest uppercase truncate"
             style={{ color: 'var(--text-accent)' }}
           >
             Professional Trading Journal
