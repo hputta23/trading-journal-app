@@ -453,6 +453,7 @@ export default function App() {
         theme={settings.theme}
         onToggleTheme={handleToggleTheme}
         userEmail={settings.displayName || session.user.email}
+        isDemo={isDemo}
         onLogout={handleLogoutClick}
         cloudSyncStatus={cloudSyncStatus}
         onManualSync={fetchCloudData}

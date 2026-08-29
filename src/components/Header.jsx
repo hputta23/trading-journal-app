@@ -1,7 +1,7 @@
 import { Menu, TrendingUp, Sun, Moon, Monitor, Activity, Cloud, CloudOff, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleTheme, cloudSyncStatus = 'synced', onManualSync, userEmail }) {
+export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleTheme, cloudSyncStatus = 'synced', onManualSync, userEmail, isDemo }) {
   const [now, setNow] = useState(new Date());
 
   // Keep clock ticking
@@ -49,6 +49,16 @@ export default function Header({ onToggleMobileMenu, theme = 'dark', onToggleThe
 
       {/* Right side: live clock + theme toggle + menu */}
       <div className="flex items-center gap-3">
+        {/* Status Badge */}
+        {!isDemo && (
+          <div className="hidden sm:flex items-center px-2.5 py-1 rounded-md border" style={{ background: 'var(--bg-badge-profit)', borderColor: 'var(--border-profit)', color: 'var(--color-profit)' }}>
+            <span className="text-[9px] font-extrabold tracking-widest uppercase flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-profit)] animate-pulse" />
+              Live Data
+            </span>
+          </div>
+        )}
+
         {/* Cloud Sync Status / Refresh Button */}
         <button 
           onClick={onManualSync}
