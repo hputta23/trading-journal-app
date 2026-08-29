@@ -52,14 +52,19 @@ export default function SidebarStats({
         borderColor: 'var(--border-card)',
       }}
     >
-      {/* ── Cockpit Navigation Header ── */}
-      <div className="space-y-1 py-2 border-b border-[var(--border-card)] pb-4 mb-2">
+      {/* ── User Header ── */}
+      <div className="border-b border-[var(--border-card)] pb-4 mb-2">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-[var(--border-active)] flex items-center justify-center text-[var(--bg-app)] flex-shrink-0">
-            <Activity size={16} strokeWidth={3} />
+          <div className="w-9 h-9 rounded-xl bg-[var(--border-active)] flex items-center justify-center flex-shrink-0" style={{ minWidth: 36 }}>
+            <Activity size={16} strokeWidth={3} style={{ color: 'var(--bg-app)' }} />
           </div>
-          <div className="text-sm font-black tracking-wide truncate" style={{ color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif" }} title={userEmail}>
-            {userEmail || 'TradeOS'}
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <div className="text-[12px] font-bold truncate" style={{ color: 'var(--text-dark)', fontFamily: "'Inter', sans-serif", letterSpacing: '-0.01em' }} title={userEmail}>
+              {userEmail || 'TradeOS'}
+            </div>
+            <div className="text-[9px] font-semibold uppercase tracking-widest" style={{ color: 'var(--text-accent)' }}>
+              Professional Journal
+            </div>
           </div>
         </div>
       </div>
@@ -78,8 +83,9 @@ export default function SidebarStats({
                 <button
                   key={tab.id}
                   onClick={() => onTabChange(tab.id)}
-                  className="relative px-3 py-2.5 text-[13px] font-semibold tracking-wide transition-all duration-200 cursor-pointer flex items-center gap-3 flex-nowrap whitespace-nowrap rounded-lg group overflow-hidden"
+                  className="relative py-2.5 text-[13px] font-semibold tracking-wide transition-all duration-200 cursor-pointer flex items-center gap-3 flex-nowrap whitespace-nowrap rounded-xl group w-full overflow-hidden"
                   style={{
+                    paddingLeft: 14, paddingRight: 12,
                     color: isActive ? 'var(--text-dark)' : 'var(--text-secondary)',
                     background: isActive ? 'color-mix(in srgb, var(--border-active) 10%, transparent)' : 'transparent',
                   }}
@@ -98,10 +104,10 @@ export default function SidebarStats({
                 >
                   {/* Glowing active indicator line */}
                   {isActive && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-[var(--border-active)] rounded-r-full shadow-[0_0_8px_var(--border-active)]" />
+                    <div className="absolute left-0 top-2 bottom-2 w-[3px] bg-[var(--border-active)] rounded-r-full" style={{ boxShadow: '0 0 8px var(--border-active)' }} />
                   )}
                   
-                  <span className={isActive ? 'text-[var(--border-active)] ml-1 transition-all' : 'text-[var(--text-secondary)] transition-all group-hover:text-[var(--text-primary)]'}>
+                  <span className={isActive ? 'text-[var(--border-active)] transition-all' : 'text-[var(--text-secondary)] transition-all group-hover:text-[var(--text-primary)]'}>
                     {tab.icon}
                   </span>
                   <span className="whitespace-nowrap font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>{tab.label}</span>

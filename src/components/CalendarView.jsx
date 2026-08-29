@@ -93,21 +93,17 @@ export default function CalendarView({ allTrades, allJournals = {}, onSelectDate
           <p className="text-sm text-[var(--text-secondary)] mt-1 font-medium">Monthly heatmap of your daily P&L.</p>
         </div>
         {/* Monthly Summary Badges */}
-        <div className="flex items-center gap-3">
-          <div className="px-3 py-1.5 rounded-md border border-[var(--border-card)] bg-[var(--bg-card)]">
-            <span className="text-[10px] uppercase font-bold text-[var(--text-secondary)] tracking-widest block mb-0.5">Win Days</span>
-            <span className="font-mono-data font-bold text-[var(--color-profit)]">{monthlyStats.winDays}</span>
-          </div>
-          <div className="px-3 py-1.5 rounded-md border border-[var(--border-card)] bg-[var(--bg-card)]">
-            <span className="text-[10px] uppercase font-bold text-[var(--text-secondary)] tracking-widest block mb-0.5">Loss Days</span>
-            <span className="font-mono-data font-bold text-[var(--color-loss)]">{monthlyStats.lossDays}</span>
-          </div>
-          <div className="px-3 py-1.5 rounded-md border border-[var(--border-card)] bg-[var(--bg-card)]">
-            <span className="text-[10px] uppercase font-bold text-[var(--text-secondary)] tracking-widest block mb-0.5">Net P&L</span>
-            <span className={`font-mono-data font-bold ${monthlyStats.netPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
-              {formatCurrency(monthlyStats.netPnl)}
-            </span>
-          </div>
+        <div className="flex items-center gap-3 flex-wrap">
+          {[
+            { label: 'Win Days', value: monthlyStats.winDays, color: 'var(--color-profit)', bg: 'var(--bg-kpi-profit)', border: 'var(--border-profit)' },
+            { label: 'Loss Days', value: monthlyStats.lossDays, color: 'var(--color-loss)', bg: 'var(--bg-kpi-loss)', border: 'var(--border-loss)' },
+            { label: 'Net P&L', value: formatCurrency(monthlyStats.netPnl), color: monthlyStats.netPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', bg: monthlyStats.netPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)', border: monthlyStats.netPnl >= 0 ? 'var(--border-profit)' : 'var(--border-loss)' },
+          ].map(({ label, value, color, bg, border }) => (
+            <div key={label} style={{ padding: '12px 18px', borderRadius: 12, border: `1px solid ${border}`, background: bg, minWidth: 90 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>{label}</span>
+              <span style={{ fontSize: 20, fontWeight: 900, color, fontFamily: "'JetBrains Mono', monospace", lineHeight: 1, display: 'block' }}>{value}</span>
+            </div>
+          ))}
         </div>
       </div>
 
