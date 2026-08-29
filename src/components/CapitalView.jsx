@@ -132,13 +132,13 @@ export default function CapitalView({ allTrades, allJournals, onSaveJournal, set
                     Current: <span className={currentWeekPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}>{formatCurrency(currentWeekPnl)}</span>
                   </span>
                 </div>
-                <div className="flex items-center gap-4 mb-3">
-                  <span className="text-[var(--text-secondary)] font-bold">$</span>
+                <div className="relative mb-3">
+                  <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
                   <input
                     type="number"
                     value={weeklyTarget}
                     onChange={(e) => setWeeklyTarget(e.target.value)}
-                    className="flex-1 bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg px-4 py-2 text-[var(--text-primary)]"
+                    className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-2 text-[var(--text-primary)] outline-none focus:border-[var(--color-profit)] transition-colors"
                   />
                 </div>
                 <div className="h-2 w-full bg-[var(--bg-input)] rounded-full overflow-hidden">
@@ -151,13 +151,13 @@ export default function CapitalView({ allTrades, allJournals, onSaveJournal, set
                 <div className="flex justify-between text-sm mb-2">
                   <span className="font-bold text-[var(--text-primary)]">Bi-Weekly Target</span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-[var(--text-secondary)] font-bold">$</span>
+                <div className="relative mb-3">
+                  <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
                   <input
                     type="number"
                     value={biWeeklyTarget}
                     onChange={(e) => setBiWeeklyTarget(e.target.value)}
-                    className="flex-1 bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg px-4 py-2 text-[var(--text-primary)]"
+                    className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-2 text-[var(--text-primary)] outline-none focus:border-[var(--color-profit)] transition-colors"
                   />
                 </div>
               </div>
@@ -170,13 +170,13 @@ export default function CapitalView({ allTrades, allJournals, onSaveJournal, set
                     Current: <span className={currentMonthPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}>{formatCurrency(currentMonthPnl)}</span>
                   </span>
                 </div>
-                <div className="flex items-center gap-4 mb-3">
-                  <span className="text-[var(--text-secondary)] font-bold">$</span>
+                <div className="relative mb-3">
+                  <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
                   <input
                     type="number"
                     value={monthlyTarget}
                     onChange={(e) => setMonthlyTarget(e.target.value)}
-                    className="flex-1 bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg px-4 py-2 text-[var(--text-primary)]"
+                    className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-2 text-[var(--text-primary)] outline-none focus:border-[var(--color-profit)] transition-colors"
                   />
                 </div>
                 <div className="h-2 w-full bg-[var(--bg-input)] rounded-full overflow-hidden">
@@ -197,39 +197,41 @@ export default function CapitalView({ allTrades, allJournals, onSaveJournal, set
               Manually enter the actual amount of money held in your account. This is strictly isolated and does NOT interfere with trade PnL calculations.
             </p>
 
-            <div className="flex items-end gap-4 mb-8">
-              <div className="flex-1">
+            <div className="flex flex-col sm:flex-row items-end gap-4 mb-8">
+              <div className="w-full sm:flex-1">
                 <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2">Date</label>
                 <div className="relative">
-                  <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
                   <input
                     type="date"
                     value={selectedDate}
                     onChange={handleDateChange}
-                    className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-10 pr-4 py-3 text-[var(--text-primary)] font-mono-data text-sm"
+                    className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg px-4 py-3 text-[var(--text-primary)] font-mono-data text-sm outline-none focus:border-[var(--color-profit)] transition-colors"
                   />
                 </div>
               </div>
-              <div className="flex-1">
+              <div className="w-full sm:flex-1">
                 <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2">Account Balance</label>
-                <input
-                  type="number"
-                  value={balanceInput}
-                  onChange={(e) => setBalanceInput(e.target.value)}
-                  placeholder="e.g. 150000"
-                  className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg px-4 py-3 text-[var(--text-primary)] font-mono-data text-sm"
-                />
+                <div className="relative">
+                  <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
+                  <input
+                    type="number"
+                    value={balanceInput}
+                    onChange={(e) => setBalanceInput(e.target.value)}
+                    placeholder="150000"
+                    className="w-full bg-[var(--bg-input)] border border-[var(--border-input)] rounded-lg pl-9 pr-4 py-3 text-[var(--text-primary)] font-mono-data text-sm outline-none focus:border-[var(--color-profit)] transition-colors"
+                  />
+                </div>
               </div>
               <button
                 onClick={handleSaveBalance}
-                className="flex items-center gap-2 px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all h-[46px] cursor-pointer"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all h-[46px] cursor-pointer"
                 style={{
                   background: saveStatus === 'balance' ? 'var(--color-profit)' : 'var(--bg-sidebar)',
                   color: saveStatus === 'balance' ? 'var(--bg-app)' : 'var(--text-primary)',
                   border: `1px solid ${saveStatus === 'balance' ? 'var(--color-profit)' : 'var(--border-card)'}`
                 }}
               >
-                {saveStatus === 'balance' ? 'Saved' : 'Save'}
+                {saveStatus === 'balance' ? 'SAVED' : 'SAVE'}
               </button>
             </div>
 
