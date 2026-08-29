@@ -64,7 +64,6 @@ export default function App() {
     setAllTrades(trades);
     const journals = generateDemoJournals(trades);
     setAllJournals(journals);
-    localStorage.setItem('trading-journal-entries', JSON.stringify(journals));
     setSession({ user: { id: 'demo', email: 'demo@tradeos.local' } });
   }, []);
 

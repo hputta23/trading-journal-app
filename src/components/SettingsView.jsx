@@ -432,18 +432,46 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
                   {userEmail}
                 </p>
-                <button
-                  onClick={handleLogout}
-                  style={{
-                    padding: '10px 20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
-                    background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
-                    borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-                >
-                  <LogOut size={14} /> Log Out
-                </button>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button
+                    onClick={handleLogout}
+                    style={{
+                      padding: '10px 20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
+                      background: 'transparent', border: '1px solid var(--border-card)', color: 'var(--text-primary)',
+                      borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-accent)'; e.currentTarget.style.color = 'var(--text-accent)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                  >
+                    <LogOut size={14} /> Log Out
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (window.confirm('Are you absolutely sure? This will PERMANENTLY delete all trades and journals from both this device and your cloud account.')) {
+                        localStorage.removeItem('trading-journal-trades');
+                        localStorage.removeItem('trading-journal-entries');
+                        localStorage.removeItem('trading-journal-activity');
+                        
+                        // Delete from Supabase
+                        const { data: { session } } = await supabase.auth.getSession();
+                        if (session?.user?.id) {
+                          await supabase.from('user_data').delete().eq('user_id', session.user.id);
+                        }
+                        
+                        window.location.reload();
+                      }
+                    }}
+                    style={{
+                      padding: '10px 20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
+                      background: 'transparent', border: '1px solid var(--border-loss)', color: 'var(--color-loss)',
+                      borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-kpi-loss)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    Wipe All Data
+                  </button>
+                </div>
               </div>
             </div>
           </div>
