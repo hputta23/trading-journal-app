@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import Header from './components/Header';
 import SidebarStats from './components/SidebarStats';
 import SettingsView from './components/SettingsView';
+import CapitalView from './components/CapitalView';
 import DashboardView from './components/DashboardView';
 import JournalView from './components/JournalView';
 import TradesView from './components/TradesView';
@@ -567,6 +568,18 @@ export default function App() {
                     allJournals={allJournals}
                     onSelectDate={setCurrentDate}
                     onNavigateTab={handleTabChange}
+                  />
+                </PageWrapper>
+              )}
+
+              {activeTab === 'capital' && (
+                <PageWrapper activeTab="capital">
+                  <CapitalView
+                    allTrades={allTrades}
+                    allJournals={allJournals}
+                    onSaveJournal={handleSaveJournal}
+                    settings={settings}
+                    onSaveSettings={handleSaveSettings}
                   />
                 </PageWrapper>
               )}

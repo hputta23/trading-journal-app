@@ -1,4 +1,4 @@
-import { Radio, DollarSign, Percent, TrendingUp, Layers, Activity, LayoutDashboard, BookOpen, BarChart3, Settings, Calendar, LogOut } from 'lucide-react';
+import { Radio, DollarSign, Percent, TrendingUp, Layers, Activity, LayoutDashboard, BookOpen, BarChart3, Settings, Calendar, LogOut, Target } from 'lucide-react';
 import { formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 import { supabase } from '../utils/supabaseClient';
 
@@ -22,6 +22,7 @@ export default function SidebarStats({
         { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={16} /> },
         { id: 'journal', label: 'Daily Journal', icon: <BookOpen size={16} /> },
         { id: 'calendar', label: 'Calendar', icon: <Calendar size={16} /> },
+        { id: 'capital', label: 'Capital & Targets', icon: <Target size={16} /> },
       ]
     },
     {
