@@ -100,22 +100,21 @@ export default function App() {
 
   // Auth Initialization
   useEffect(() => {
-    // Check local storage for universal session
-    const storedSession = localStorage.getItem('trading-journal-session');
-    if (storedSession) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSession(JSON.parse(storedSession));
-    }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogin = (newSession) => {
-    setSession(newSession);
-    localStorage.setItem('trading-journal-session', JSON.stringify(newSession));
-  };
-
-  const handleLogout = () => {
-    setSession(null);
-    localStorage.removeItem('trading-journal-session');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
   };
 
   const fetchCloudData = useCallback(async () => {
@@ -125,13 +124,7 @@ export default function App() {
     const localTrades = loadTrades();
     const localJournals = JSON.parse(localStorage.getItem('trading-journal-entries') || '{}');
     
-    // Hardcoded universal login bypasses cloud sync
-    if (session.user.id === 'universal-user') {
-      setAllTrades(localTrades);
-      setAllJournals(localJournals);
-      setCloudSyncStatus('synced');
-      return;
-    }
+
 
     try {
       const { data, error } = await supabase
