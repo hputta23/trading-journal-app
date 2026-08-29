@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { MOODS, MARKET_CONDITIONS, GRADES, loadJournalEntries, saveJournalEntry, emptyJournalEntry } from '../utils/journal';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 
@@ -117,24 +117,57 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
           <BookOpen size={18} style={{ color: 'var(--text-accent)', flexShrink: 0 }} />
-          <div style={{ minWidth: 0 }}>
+          <div style={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-dark)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               Daily Journal
             </div>
-            <input 
-              type="date"
-              value={currentDate}
-              onChange={(e) => onSelectDate && onSelectDate(e.target.value)}
-              style={{ 
-                fontSize: 12, 
-                color: 'var(--text-secondary)', 
-                background: 'transparent',
-                border: 'none',
-                outline: 'none',
-                cursor: 'pointer',
-                ...monoStyle 
-              }}
-            />
+            
+            {/* Date Navigation Controls */}
+            <div className="flex items-center gap-1 ml-2">
+              <button 
+                onClick={() => {
+                  if (!onSelectDate) return;
+                  const d = new Date(currentDate);
+                  // handle timezone offsets correctly by using setUTCDate if currentDate is YYYY-MM-DD
+                  // actually simpler: parse the string, subtract 1 day
+                  const [y, m, day] = currentDate.split('-');
+                  const dateObj = new Date(y, m - 1, day);
+                  dateObj.setDate(dateObj.getDate() - 1);
+                  const prevStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+                  onSelectDate(prevStr);
+                }}
+                className="p-1.5 rounded-md hover:bg-white/5 text-[var(--text-secondary)] transition-colors cursor-pointer"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <input 
+                type="date"
+                value={currentDate}
+                onChange={(e) => onSelectDate && onSelectDate(e.target.value)}
+                style={{ 
+                  fontSize: 12, 
+                  color: 'var(--text-secondary)', 
+                  background: 'transparent',
+                  border: 'none',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  ...monoStyle 
+                }}
+              />
+              <button 
+                onClick={() => {
+                  if (!onSelectDate) return;
+                  const [y, m, day] = currentDate.split('-');
+                  const dateObj = new Date(y, m - 1, day);
+                  dateObj.setDate(dateObj.getDate() + 1);
+                  const nextStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+                  onSelectDate(nextStr);
+                }}
+                className="p-1.5 rounded-md hover:bg-white/5 text-[var(--text-secondary)] transition-colors cursor-pointer"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
         </div>
         <button

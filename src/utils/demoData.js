@@ -89,3 +89,27 @@ export const generateDemoTrades = () => {
 
   return trades;
 };
+
+export const generateDemoJournals = (tradesMap) => {
+  const journals = {};
+  const dates = Object.keys(tradesMap);
+  
+  dates.forEach(date => {
+    // Generate a journal for about 70% of traded days
+    if (Math.random() > 0.3) {
+      journals[date] = {
+        grade: ['A+', 'A', 'B', 'C', 'D', 'F'][Math.floor(Math.random() * 6)],
+        discipline: Math.floor(Math.random() * 5) + 1,
+        mood: ['Focused', 'Calm', 'Tired', 'Anxious', 'Frustrated'][Math.floor(Math.random() * 5)],
+        marketConditions: ['Trending', 'Choppy', 'Volatile', 'Slow'][Math.floor(Math.random() * 4)],
+        preMarketPlan: '• Watch NVDA for morning breakout\n• Do not overtrade\n• Max 2 stop outs',
+        whatWorked: '• Good patience on the first setup\n• Cut losers quickly',
+        mistakes: Math.random() > 0.5 ? '• Chased one entry slightly' : '',
+        postMarketReview: 'Overall a decent session. Followed my plan for the most part.',
+        lessonsLearned: 'Patience pays off. Let the setups come to you.'
+      };
+    }
+  });
+  
+  return journals;
+};

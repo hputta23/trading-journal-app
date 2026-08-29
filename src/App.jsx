@@ -12,7 +12,7 @@ import EntryForm from './components/EntryForm';
 import { loadTrades, saveTrades, loadSettings, saveSettings, getDateKey } from './utils/storage';
 import { calcDailyStats } from './utils/calculations';
 import { loadActivityLogs, saveActivityLogs, logActivity } from './utils/logger';
-import { generateDemoTrades } from './utils/demoData';
+import { generateDemoTrades, generateDemoJournals } from './utils/demoData';
 import { LayoutDashboard, FileText, TrendingUp, BarChart3, Calendar, Settings, RefreshCw } from 'lucide-react';
 
 import { supabase } from './utils/supabaseClient';
@@ -37,8 +37,11 @@ export default function App() {
 
   const handleLoadDemo = useCallback(() => {
     setIsDemo(true);
-    setAllTrades(generateDemoTrades());
-    setAllJournals({});
+    const trades = generateDemoTrades();
+    setAllTrades(trades);
+    const journals = generateDemoJournals(trades);
+    setAllJournals(journals);
+    localStorage.setItem('trading-journal-entries', JSON.stringify(journals));
     setSession({ user: { id: 'demo', email: 'demo@tradeos.local' } });
   }, []);
 
@@ -516,6 +519,9 @@ export default function App() {
           {activeTab === 'calendar' && (
             <CalendarView
               allTrades={allTrades}
+              allJournals={allJournals}
+              onSelectDate={setCurrentDate}
+              onNavigateTab={handleTabChange}
             />
           )}
 

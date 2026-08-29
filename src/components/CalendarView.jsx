@@ -4,7 +4,7 @@ import { formatCurrency } from '../utils/calculations';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-export default function CalendarView({ allTrades }) {
+export default function CalendarView({ allTrades, allJournals = {}, onSelectDate, onNavigateTab }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   
   // Get days in month
@@ -30,18 +30,20 @@ export default function CalendarView({ allTrades }) {
       const tradesForDay = allTrades[dateKey] || [];
       const netPnl = tradesForDay.reduce((sum, t) => sum + (t.netPnl || 0), 0);
       const isTraded = tradesForDay.length > 0;
+      const hasJournal = allJournals[dateKey] !== undefined;
       
       days.push({
         day: i,
         dateKey,
         trades: tradesForDay,
         netPnl,
-        isTraded
+        isTraded,
+        hasJournal
       });
     }
     
     return days;
-  }, [currentDate, allTrades]);
+  }, [currentDate, allTrades, allJournals]);
 
   const prevMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
@@ -156,25 +158,40 @@ export default function CalendarView({ allTrades }) {
               return (
                 <div 
                   key={dayData.dateKey} 
-                  className={`min-h-[120px] p-3 border-r border-b border-[var(--border-card)] relative transition-colors ${bgColorClass} hover:opacity-80 rounded-lg`}
+                  className={`min-h-[120px] p-3 border-r border-b border-[var(--border-card)] relative transition-colors ${bgColorClass} hover:opacity-80 rounded-lg cursor-pointer group`}
                   style={{ borderRadius: 8 }}
+                  onClick={() => {
+                    if (onSelectDate) onSelectDate(dayData.dateKey);
+                    if (onNavigateTab) onNavigateTab('journal');
+                  }}
                 >
                   <div className="flex justify-between items-start mb-2">
                     <span className={`text-sm font-bold ${isToday ? 'bg-[var(--border-active)] text-black w-7 h-7 rounded-full flex items-center justify-center' : 'text-[var(--text-secondary)]'}`}>
                       {dayData.day}
                     </span>
-                    {dayData.isTraded && (
-                      <span className="hidden md:inline-block text-[10px] font-bold text-[var(--text-secondary)] uppercase bg-black/40 px-2 py-0.5 rounded-lg" style={{ borderRadius: 8 }}>
-                        {dayData.trades.length} Trades
-                      </span>
-                    )}
+                    <div className="flex flex-col gap-1 items-end">
+                      {dayData.isTraded && (
+                        <span className="hidden md:inline-block text-[10px] font-bold text-[var(--text-secondary)] uppercase bg-black/40 px-2 py-0.5 rounded-lg" style={{ borderRadius: 8 }}>
+                          {dayData.trades.length} Trades
+                        </span>
+                      )}
+                      {dayData.hasJournal && (
+                        <span className="hidden md:inline-block text-[10px] font-bold text-[var(--text-accent)] uppercase bg-black/40 px-2 py-0.5 rounded-lg" style={{ borderRadius: 8 }}>
+                          Journal
+                        </span>
+                      )}
+                    </div>
                   </div>
                   
-                  {dayData.isTraded && (
+                  {dayData.isTraded ? (
                     <div className="absolute bottom-3 left-3 right-3 text-center">
                       <div className={`font-mono-data font-bold text-sm ${dayData.netPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
                         {formatCurrency(dayData.netPnl)}
                       </div>
+                    </div>
+                  ) : !dayData.hasJournal && (
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                       <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)]">No Data</span>
                     </div>
                   )}
                 </div>
