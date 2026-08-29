@@ -164,6 +164,117 @@ export default function AnalyticsView({ allTrades }) {
     return { bins: binArr, stats: rStats };
   }, [closedTrades]);
 
+  // ── NEW: Advanced Ratios (Sharpe, Sortino, Payoff, Recovery) ──
+  const advancedRatios = useMemo(() => {
+    if (closedTrades.length < 2) return { sharpe: null, sortino: null, payoff: null, recovery: null };
+
+    // Group trades by date for daily returns
+    const dailyMap = {};
+    closedTrades.forEach(t => {
+      if (!dailyMap[t.date]) dailyMap[t.date] = 0;
+      dailyMap[t.date] += t.netPnl;
+    });
+    const dailyReturns = Object.values(dailyMap);
+
+    const avgReturn = dailyReturns.reduce((s, r) => s + r, 0) / dailyReturns.length;
+
+    // Std dev of daily returns
+    const variance = dailyReturns.reduce((s, r) => s + (r - avgReturn) ** 2, 0) / dailyReturns.length;
+    const stdDev = Math.sqrt(variance);
+
+    // Downside deviation (only negative returns)
+    const downsideVariance = dailyReturns.reduce((s, r) => s + (r < 0 ? r ** 2 : 0), 0) / dailyReturns.length;
+    const downsideDev = Math.sqrt(downsideVariance);
+
+    const sharpe = stdDev > 0 ? (avgReturn / stdDev) * Math.sqrt(252) : null; // Annualized
+    const sortino = downsideDev > 0 ? (avgReturn / downsideDev) * Math.sqrt(252) : null;
+
+    // Payoff ratio
+    const ws = closedTrades.filter(t => t.netPnl > 0);
+    const ls = closedTrades.filter(t => t.netPnl < 0);
+    const avgWin = ws.length > 0 ? ws.reduce((s, t) => s + t.netPnl, 0) / ws.length : 0;
+    const avgLoss = ls.length > 0 ? Math.abs(ls.reduce((s, t) => s + t.netPnl, 0) / ls.length) : 0;
+    const payoff = avgLoss > 0 ? avgWin / avgLoss : avgWin > 0 ? Infinity : 0;
+
+    // Recovery factor = net profit / max drawdown
+    const netProfit = closedTrades.reduce((s, t) => s + t.netPnl, 0);
+    const recovery = Math.abs(maxHistoricalDrawdown) > 0 ? netProfit / Math.abs(maxHistoricalDrawdown) : null;
+
+    return { sharpe, sortino, payoff, recovery };
+  }, [closedTrades, maxHistoricalDrawdown]);
+
+  // ── NEW: Consecutive Win/Loss Streaks ──
+  const streaks = useMemo(() => {
+    let currentWinStreak = 0, currentLossStreak = 0;
+    let maxWinStreak = 0, maxLossStreak = 0;
+
+    closedTrades.forEach(t => {
+      if (t.netPnl >= 0) {
+        currentWinStreak++;
+        currentLossStreak = 0;
+        if (currentWinStreak > maxWinStreak) maxWinStreak = currentWinStreak;
+      } else {
+        currentLossStreak++;
+        currentWinStreak = 0;
+        if (currentLossStreak > maxLossStreak) maxLossStreak = currentLossStreak;
+      }
+    });
+
+    return { currentWinStreak, currentLossStreak, maxWinStreak, maxLossStreak };
+  }, [closedTrades]);
+
+  // ── NEW: Performance by Day of Week ──
+  const dayOfWeekData = useMemo(() => {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayStats = days.map(d => ({ day: d, pnl: 0, count: 0, wins: 0 }));
+
+    closedTrades.forEach(t => {
+      const dow = new Date(t.date + 'T12:00:00').getDay();
+      dayStats[dow].pnl += t.netPnl;
+      dayStats[dow].count++;
+      if (t.netPnl > 0) dayStats[dow].wins++;
+    });
+
+    // Only return days that have trades
+    return dayStats.filter(d => d.count > 0);
+  }, [closedTrades]);
+
+  // ── NEW: Performance by Ticker (Top 5 Best / Worst) ──
+  const tickerPerformance = useMemo(() => {
+    const tickerMap = {};
+    closedTrades.forEach(t => {
+      if (!tickerMap[t.ticker]) tickerMap[t.ticker] = { ticker: t.ticker, pnl: 0, count: 0, wins: 0 };
+      tickerMap[t.ticker].pnl += t.netPnl;
+      tickerMap[t.ticker].count++;
+      if (t.netPnl > 0) tickerMap[t.ticker].wins++;
+    });
+    const all = Object.values(tickerMap).sort((a, b) => b.pnl - a.pnl);
+    return { best: all.slice(0, 5), worst: all.slice(-5).reverse() };
+  }, [closedTrades]);
+
+  // ── NEW: Performance by Strategy ──
+  const strategyPerformance = useMemo(() => {
+    return groupTradeStats(closedTrades, t => t.strategy || 'Untagged');
+  }, [closedTrades]);
+
+  // ── NEW: Monthly P&L Grid (Year × Month) ──
+  const monthlyPnlGrid = useMemo(() => {
+    const map = {}; // { "2026": { 0: 123, 1: -456, ... } }
+    closedTrades.forEach(t => {
+      const d = new Date(t.date);
+      const y = d.getFullYear();
+      const m = d.getMonth();
+      if (!map[y]) map[y] = {};
+      if (!map[y][m]) map[y][m] = 0;
+      map[y][m] += t.netPnl;
+    });
+
+    const years = Object.keys(map).sort();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    return { map, years, months };
+  }, [closedTrades]);
+
   return (
     <div className="h-full w-full overflow-y-auto bg-[var(--bg-app)] pb-12">
       
@@ -235,41 +346,53 @@ export default function AnalyticsView({ allTrades }) {
             )}
 
             {/* ── KPI ROW ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-              <div className="glass-panel p-5 border border-[var(--border-card)]">
-                <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Net Equity</p>
-                <p className={`text-xl font-black font-mono-data ${currentEquity >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Net Equity</p>
+                <p className={`text-lg font-black font-mono-data ${currentEquity >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
                   {formatCurrency(currentEquity)}
                 </p>
               </div>
-              <div className="glass-panel p-5 border border-[var(--border-card)]">
-                <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Max Drawdown</p>
-                <p className="text-xl font-black font-mono-data text-[var(--color-loss)]">
-                  {formatCurrency(maxHistoricalDrawdown)}
-                </p>
-              </div>
-              <div className="glass-panel p-5 border border-[var(--border-card)]">
-                <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Win Rate</p>
-                <p className="text-xl font-black font-mono-data text-[var(--text-dark)]">
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Win Rate</p>
+                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
                   {formatPercent(statsSummary.winRate)}
                 </p>
               </div>
-              <div className="glass-panel p-5 border border-[var(--border-card)]">
-                <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Profit Factor</p>
-                <p className="text-xl font-black font-mono-data text-[var(--text-dark)]">
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Profit Factor</p>
+                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
                   {statsSummary.profitFactor === Infinity ? '∞' : statsSummary.profitFactor.toFixed(2)}
                 </p>
               </div>
-              <div className="glass-panel p-5 border border-[var(--border-card)]">
-                <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Trade Expectancy</p>
-                <p className={`text-xl font-black font-mono-data ${statsSummary.expectancy >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
-                  {formatCurrency(statsSummary.expectancy)}
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Payoff Ratio</p>
+                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
+                  {advancedRatios.payoff === Infinity ? '∞' : advancedRatios.payoff !== null ? advancedRatios.payoff.toFixed(2) : '—'}
                 </p>
               </div>
-              <div className="glass-panel p-5 border border-[var(--border-card)]">
-                <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">Total Trades</p>
-                <p className="text-xl font-black font-mono-data text-[var(--text-dark)]">
-                  {statsSummary.totalTrades}
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Sharpe Ratio</p>
+                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
+                  {advancedRatios.sharpe !== null ? advancedRatios.sharpe.toFixed(2) : '—'}
+                </p>
+              </div>
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Sortino</p>
+                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
+                  {advancedRatios.sortino !== null ? advancedRatios.sortino.toFixed(2) : '—'}
+                </p>
+              </div>
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Recovery</p>
+                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
+                  {advancedRatios.recovery !== null ? advancedRatios.recovery.toFixed(2) : '—'}
+                </p>
+              </div>
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Max Drawdown</p>
+                <p className="text-lg font-black font-mono-data text-[var(--color-loss)]">
+                  {formatCurrency(maxHistoricalDrawdown)}
                 </p>
               </div>
             </div>
@@ -335,6 +458,170 @@ export default function AnalyticsView({ allTrades }) {
                     />
                   </AreaChart>
                 </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* ── STREAKS & STATS ROW ── */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Current Streak</p>
+                <p className={`text-lg font-black font-mono-data ${streaks.currentWinStreak > 0 ? 'text-[var(--color-profit)]' : streaks.currentLossStreak > 0 ? 'text-[var(--color-loss)]' : 'text-[var(--text-dark)]'}`}>
+                  {streaks.currentWinStreak > 0 ? `${streaks.currentWinStreak} Wins` : streaks.currentLossStreak > 0 ? `${streaks.currentLossStreak} Losses` : '0'}
+                </p>
+              </div>
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Max Win Streak</p>
+                <p className="text-lg font-black font-mono-data text-[var(--color-profit)]">{streaks.maxWinStreak} Trades</p>
+              </div>
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Max Loss Streak</p>
+                <p className="text-lg font-black font-mono-data text-[var(--color-loss)]">{streaks.maxLossStreak} Trades</p>
+              </div>
+              <div className="glass-panel p-4 border border-[var(--border-card)]">
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Total Trades</p>
+                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">{statsSummary.totalTrades}</p>
+              </div>
+            </div>
+
+            {/* ── DAY OF WEEK & MONTHLY P&L ── */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              
+              {/* Day of Week */}
+              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
+                <div className="flex items-center gap-2 mb-6">
+                  <BarChart3 size={16} className="text-[var(--text-accent)]" />
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Performance by Day</h2>
+                </div>
+                
+                <div className="w-full h-[250px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={dayOfWeekData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-card)" vertical={false} />
+                      <XAxis 
+                        dataKey="day" 
+                        tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontFamily: "'Inter', sans-serif", fontWeight: 'bold' }}
+                        axisLine={false}
+                        tickLine={false}
+                        dy={10}
+                      />
+                      <YAxis hide domain={['auto', 'auto']} />
+                      <Tooltip 
+                        cursor={{ fill: 'var(--border-card)', opacity: 0.5 }}
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const d = payload[0].payload;
+                            return (
+                              <div className="px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-card)] rounded shadow-lg backdrop-blur-md">
+                                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">{d.day} ({d.count} Trades)</p>
+                                <p className={`text-sm font-bold font-mono-data ${d.pnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
+                                  {formatCurrency(d.pnl)}
+                                </p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }} 
+                      />
+                      <Bar dataKey="pnl" radius={[4, 4, 4, 4]} animationDuration={1500} barSize={40}>
+                        {dayOfWeekData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.pnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)'} opacity={0.8} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Monthly P&L Grid */}
+              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
+                <div className="flex items-center gap-2 mb-6">
+                  <Target size={16} className="text-[var(--text-accent)]" />
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Monthly Returns</h2>
+                </div>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr>
+                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-2 border-b border-[var(--border-card)]">Year</th>
+                        {monthlyPnlGrid.months.map(m => (
+                          <th key={m} className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-2 border-b border-[var(--border-card)] text-right px-1">{m}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="text-[11px] font-bold font-mono-data">
+                      {monthlyPnlGrid.years.map(y => {
+                        let yTotal = 0;
+                        return (
+                          <tr key={y} className="border-b border-[var(--border-card)] last:border-0 hover:bg-white/[0.02]">
+                            <td className="py-2 text-[var(--text-dark)]">{y}</td>
+                            {monthlyPnlGrid.months.map((m, i) => {
+                              const pnl = monthlyPnlGrid.map[y][i];
+                              if (pnl) yTotal += pnl;
+                              return (
+                                <td key={i} className={`py-2 text-right px-1 ${!pnl ? 'text-[var(--text-secondary)] opacity-30' : pnl > 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
+                                  {pnl ? formatCurrency(pnl) : '—'}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* ── TICKER & STRATEGY ROW ── */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Tickers */}
+              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
+                <div className="flex items-center gap-2 mb-6">
+                  <Activity size={16} className="text-[var(--text-accent)]" />
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Edge by Ticker</h2>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2 border-b border-[var(--border-card)] pb-1">Top 5 Best</p>
+                    {tickerPerformance.best.map(t => (
+                      <div key={t.ticker} className="flex justify-between py-1.5 text-xs font-mono-data font-bold">
+                        <span className="text-[var(--text-dark)]">{t.ticker}</span>
+                        <span className="text-[var(--color-profit)]">{formatCurrency(t.pnl)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2 border-b border-[var(--border-card)] pb-1">Top 5 Worst</p>
+                    {tickerPerformance.worst.map(t => (
+                      <div key={t.ticker} className="flex justify-between py-1.5 text-xs font-mono-data font-bold">
+                        <span className="text-[var(--text-dark)]">{t.ticker}</span>
+                        <span className="text-[var(--color-loss)]">{formatCurrency(t.pnl)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Strategies */}
+              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
+                <div className="flex items-center gap-2 mb-6">
+                  <Target size={16} className="text-[var(--text-accent)]" />
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Edge by Strategy</h2>
+                </div>
+                <div className="space-y-2">
+                  {strategyPerformance.slice(0, 5).map(s => (
+                    <div key={s.name} className="flex justify-between items-center py-1.5 border-b border-[var(--border-card)] last:border-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-[var(--text-dark)]">{s.name}</span>
+                        <span className="text-[10px] text-[var(--text-secondary)] font-bold">({s.count}T, {s.winRate.toFixed(0)}% W)</span>
+                      </div>
+                      <span className={`text-xs font-mono-data font-bold ${s.totalPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
+                        {formatCurrency(s.totalPnl)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
