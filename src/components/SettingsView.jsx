@@ -470,12 +470,20 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                         // 1. Upsert empty data to Supabase FIRST (before clearing local auth tokens)
                         const { data: { session } } = await supabase.auth.getSession();
                         if (session?.user?.id && session.user.id !== 'demo') {
-                          const { error } = await supabase.from('user_data').update({
+                          // Fetch first to see what columns exist
+                          const { data: userData } = await supabase.from('user_data').select('*').eq('user_id', session.user.id).single();
+                          
+                          const updatePayload = {
                             trades: {},
-                            journals: {},
-                            activity_logs: [],
                             updated_at: new Date()
-                          }).eq('user_id', session.user.id);
+                          };
+                          
+                          if (userData) {
+                            if ('journals' in userData) updatePayload.journals = {};
+                            if ('activity_logs' in userData) updatePayload.activity_logs = [];
+                          }
+                          
+                          const { error } = await supabase.from('user_data').update(updatePayload).eq('user_id', session.user.id);
                           
                           if (error) {
                             alert("Failed to wipe cloud data: " + error.message);
