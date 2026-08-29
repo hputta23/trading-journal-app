@@ -471,10 +471,16 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                         localStorage.removeItem('trading-journal-entries');
                         localStorage.removeItem('trading-journal-activity');
                         
-                        // Delete from Supabase
+                        // Upsert empty data to Supabase (bypasses missing DELETE RLS policy)
                         const { data: { session } } = await supabase.auth.getSession();
                         if (session?.user?.id) {
-                          await supabase.from('user_data').delete().eq('user_id', session.user.id);
+                          await supabase.from('user_data').upsert({
+                            user_id: session.user.id,
+                            trades: {},
+                            journals: {},
+                            activity_logs: [],
+                            updated_at: new Date()
+                          });
                         }
                         
                         window.location.reload();
