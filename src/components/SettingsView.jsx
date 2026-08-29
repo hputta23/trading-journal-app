@@ -470,13 +470,17 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                         // 1. Upsert empty data to Supabase FIRST (before clearing local auth tokens)
                         const { data: { session } } = await supabase.auth.getSession();
                         if (session?.user?.id && session.user.id !== 'demo') {
-                          await supabase.from('user_data').upsert({
-                            user_id: session.user.id,
+                          const { error } = await supabase.from('user_data').update({
                             trades: {},
                             journals: {},
                             activity_logs: [],
                             updated_at: new Date()
-                          });
+                          }).eq('user_id', session.user.id);
+                          
+                          if (error) {
+                            alert("Failed to wipe cloud data: " + error.message);
+                            return; // Stop the wipe process if cloud fails
+                          }
                         }
                         
                         // 2. Clear EVERYTHING from localStorage (this logs out the user)
