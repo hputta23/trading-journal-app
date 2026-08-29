@@ -188,10 +188,19 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
 
   /* ─────────────────────────────────────────────────── */
   return (
-    <div className="fade-in" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-
-      {/* ══ ROW 1 — TWIN HERO CARDS ══ */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: 14 }}>
+    <div className="fade-in" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: 14, minHeight: '100%' }}>
+      {allClosedTrades.length === 0 ? (
+        <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', textAlign: 'center', flex: 1, border: '1px dashed var(--border-card)' }}>
+          <Activity size={48} style={{ color: 'var(--text-secondary)', opacity: 0.3, marginBottom: '20px' }} />
+          <h2 style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-dark)', marginBottom: '12px' }}>Awaiting Data</h2>
+          <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '400px', lineHeight: 1.5, marginBottom: '24px' }}>
+            Your dashboard is currently empty. Start logging your trades or load demo data from the sidebar to see your performance metrics, gamification, and heatmaps come to life.
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* ══ ROW 1 — TWIN HERO CARDS ══ */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: 14 }}>
 
         {/* Gross P&L */}
         <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative' }}>
@@ -635,8 +644,9 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
             </div>
           </div>
         </div>
-      </div>
-
+        </div>
+        </>
+      )}
     </div>
   );
 }
