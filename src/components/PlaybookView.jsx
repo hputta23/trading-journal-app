@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Layers, Plus, Save, Edit2, Trash2, X, Image as ImageIcon } from 'lucide-react';
 import { loadPlaybook, savePlaybook } from '../utils/storage';
+import { generateDemoPlaybooks } from '../utils/demoData';
 
 const emptyPlaybook = { id: '', name: '', marketEnv: '', entryRules: '', exitRules: '', imageUrl: '' };
 
-export default function PlaybookView() {
+export default function PlaybookView({ isDemo }) {
   const [playbooks, setPlaybooks] = useState([]);
   const [editing, setEditing] = useState(null);
 
   useEffect(() => {
-    setPlaybooks(loadPlaybook());
-  }, []);
+    if (isDemo) {
+      setPlaybooks(generateDemoPlaybooks());
+    } else {
+      setPlaybooks(loadPlaybook());
+    }
+  }, [isDemo]);
 
   const handleSave = () => {
     if (!editing.name) return;

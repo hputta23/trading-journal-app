@@ -71,10 +71,12 @@ export const generateDemoTrades = () => {
       tickMultiplier,
       entryPrice: Number(entryPrice.toFixed(2)),
       stopPrice: Number(stopPrice.toFixed(2)),
+      targetPrice: Number((direction === 'Long' ? entryPrice + (riskAmount * 2) : entryPrice - (riskAmount * 2)).toFixed(2)),
       exitPrice: Number(exitPrice.toFixed(2)),
       qty,
       fees,
       strategy: strategies[Math.floor(Math.random() * strategies.length)],
+      tags: ['#demo', isWin ? '#winner' : '#loser', mistake === 'None / Plan Followed' ? '#disciplined' : '#mistake'],
       notes: 'Demo trade auto-generated.',
       mistake,
       imageUrl: '',
@@ -111,6 +113,8 @@ export const generateDemoJournals = (tradesMap) => {
         discipline: Math.floor(Math.random() * 5) + 1,
         mood: ['Focused', 'Calm', 'Tired', 'Anxious', 'Frustrated'][Math.floor(Math.random() * 5)],
         marketConditions: ['Trending', 'Choppy', 'Volatile', 'Slow'][Math.floor(Math.random() * 4)],
+        keyLevels: 'SPY: 545 support\nQQQ: 460 key resistance level\nNVDA: Watch VWAP bounce',
+        watchlist: 'NVDA - Morning momentum\nAAPL - Gap fill play',
         preMarketPlan: '• Watch NVDA for morning breakout\n• Do not overtrade\n• Max 2 stop outs',
         whatWorked: '• Good patience on the first setup\n• Cut losers quickly',
         mistakes: Math.random() > 0.5 ? '• Chased one entry slightly' : '',
@@ -121,4 +125,51 @@ export const generateDemoJournals = (tradesMap) => {
   });
   
   return journals;
+};
+
+export const generateDemoPlaybooks = () => {
+  return [
+    {
+      id: '1',
+      name: 'Breakout Pullback',
+      marketEnv: 'Trending Up, High Relative Volume',
+      entryRules: '1. Wait for strong 5m candle breaking resistance.\n2. Wait for 1-2 candle pullback on lower volume.\n3. Enter as price breaks above previous 1m candle high.',
+      exitRules: '1. Stop loss below the pullback low.\n2. Target 2R or scale out at next major resistance level.',
+      imageUrl: ''
+    },
+    {
+      id: '2',
+      name: 'VWAP Bounce',
+      marketEnv: 'Morning session (9:45am - 11:00am)',
+      entryRules: '1. Stock has strong morning push.\n2. Pulls back slowly to VWAP.\n3. Form a hammer or bullish engulfing on VWAP.',
+      exitRules: '1. Stop loss 1 ATR below VWAP.\n2. Sell 50% at high of day (HOD), trail remainder.',
+      imageUrl: ''
+    }
+  ];
+};
+
+export const generateDemoWeeklyReviews = (tradesMap) => {
+  const reviews = {};
+  
+  const getWeekStart = (dateStr) => {
+    const d = new Date(dateStr);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(d.setDate(diff));
+    return monday.toISOString().split('T')[0];
+  };
+
+  Object.keys(tradesMap).forEach(date => {
+    const weekStart = getWeekStart(date);
+    if (!reviews[weekStart]) {
+      // Create a dummy review for this week
+      reviews[weekStart] = {
+        wentWell: 'Followed my stop losses strictly this week. Managed risk well on choppy days.',
+        mistakes: 'Got chopped up on Wednesday trying to force trades in a tight range.',
+        focus: 'Focus on higher quality setups and being patient for the right entry.'
+      };
+    }
+  });
+
+  return reviews;
 };

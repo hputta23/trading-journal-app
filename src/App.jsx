@@ -560,6 +560,7 @@ export default function App() {
                 <PageWrapper activeTab="weekly">
                   <WeeklyReviewView
                     allTrades={allTrades}
+                    isDemo={isDemo}
                   />
                 </PageWrapper>
               )}
@@ -568,6 +569,7 @@ export default function App() {
                 <PageWrapper activeTab="playbook">
                   <PlaybookView
                     allTrades={allTrades}
+                    isDemo={isDemo}
                   />
                 </PageWrapper>
               )}

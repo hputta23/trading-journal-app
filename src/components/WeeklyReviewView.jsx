@@ -3,6 +3,8 @@ import { BookOpen, Calendar, TrendingUp, Save, Check } from 'lucide-react';
 import { loadWeeklyReviews, saveWeeklyReviews } from '../utils/storage';
 import { formatCurrency, formatPercent } from '../utils/calculations';
 
+import { generateDemoWeeklyReviews } from '../utils/demoData';
+
 // Helper to get Monday of the week for a given date string (YYYY-MM-DD)
 const getWeekStart = (dateStr) => {
   const d = new Date(dateStr);
@@ -20,13 +22,17 @@ const getWeekLabel = (mondayStr) => {
   return `${d1.toLocaleDateString('en-US', options)} - ${d2.toLocaleDateString('en-US', options)}`;
 };
 
-export default function WeeklyReviewView({ allTrades }) {
+export default function WeeklyReviewView({ allTrades, isDemo }) {
   const [reviews, setReviews] = useState({});
   const [saveStatus, setSaveStatus] = useState(null);
 
   useEffect(() => {
-    setReviews(loadWeeklyReviews());
-  }, []);
+    if (isDemo) {
+      setReviews(generateDemoWeeklyReviews(allTrades));
+    } else {
+      setReviews(loadWeeklyReviews());
+    }
+  }, [isDemo, allTrades]);
 
   const handleSave = () => {
     saveWeeklyReviews(reviews);
