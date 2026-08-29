@@ -34,8 +34,16 @@ export const saveJournalEntry = (date, entry) => {
 };
 
 export const emptyJournalEntry = {
-  preMarketPlan: '',
+  // ── Pre-session fields ──
+  preMarketBias: '',         // Bullish / Bearish / Neutral / Cautious
+  spyGapStatus: '',          // Gap Up / Gap Down / Flat
+  keyLevels: '',             // Key S/R levels to watch today
+  watchlist: '',             // Tickers on radar today
+  maxLossForDay: '',         // Hard daily max-loss limit ($)
+  maxTradesForDay: '',       // Max # of trades allowed today
+  preMarketPlan: '',         // Free-form notes / bias / catalysts
   sessionGoals: [],          // [{id, text, achieved: null|true|false}]
+  // ── Post-session fields ──
   mood: 'neutral',
   discipline: 3,
   marketConditions: 'range',

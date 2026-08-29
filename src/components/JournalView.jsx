@@ -95,6 +95,12 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
   const handleSave = () => {
     const sanitized = {
       ...entry,
+      preMarketBias: (entry.preMarketBias || '').trim(),
+      spyGapStatus: (entry.spyGapStatus || '').trim(),
+      keyLevels: (entry.keyLevels || '').trim(),
+      watchlist: (entry.watchlist || '').trim(),
+      maxLossForDay: (entry.maxLossForDay || '').trim(),
+      maxTradesForDay: (entry.maxTradesForDay || '').trim(),
       preMarketPlan: (entry.preMarketPlan || '').trim().replace(/<[^>]*>/g, ''),
       sessionGoals: (entry.sessionGoals || []).map(g => ({ ...g, text: (g.text || '').trim() })).filter(g => g.text),
       postMarketReview: (entry.postMarketReview || '').trim().replace(/<[^>]*>/g, ''),
@@ -223,6 +229,193 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
           maxWidth: 1200,
           margin: '0 auto',
         }}>
+          {/* ════════════════════════════════════════════
+              PRE-SESSION WAR ROOM — Full width at top
+              ════════════════════════════════════════════ */}
+          <div className="glass-panel" style={{ ...panelStyle, padding: '28px', border: '1px solid var(--border-card)', marginBottom: 20 }}>
+            <SectionHeader
+              icon={<ClipboardList size={16} style={{ color: 'var(--text-accent)' }} />}
+              title="Pre-Session War Room"
+              subtitle="Complete this BEFORE the market opens. Revisit after session to tally your discipline."
+            />
+
+            {/* ── Row 1: Market Context ── */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, marginBottom: 20 }}>
+
+              {/* Market Bias */}
+              <div>
+                <FieldLabel>Market Bias</FieldLabel>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {[['Bullish', 'var(--color-profit)'], ['Bearish', 'var(--color-loss)'], ['Neutral', 'var(--text-secondary)'], ['Cautious', 'var(--color-cyan)']].map(([label, col]) => (
+                    <button key={label} onClick={() => updateField('preMarketBias', entry.preMarketBias === label ? '' : label)} style={{
+                      padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                      border: `1.5px solid ${entry.preMarketBias === label ? col : 'var(--border-card)'}`,
+                      background: entry.preMarketBias === label ? `color-mix(in srgb, ${col} 12%, var(--bg-card))` : 'var(--bg-input)',
+                      color: entry.preMarketBias === label ? col : 'var(--text-secondary)',
+                      transition: 'all 0.15s ease', ...fontStyle,
+                    }}>{label}</button>
+                  ))}
+                </div>
+              </div>
+
+              {/* SPY Gap */}
+              <div>
+                <FieldLabel>SPY Gap</FieldLabel>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {[['Gap Up ↑', 'var(--color-profit)'], ['Gap Down ↓', 'var(--color-loss)'], ['Flat →', 'var(--text-secondary)']].map(([label, col]) => (
+                    <button key={label} onClick={() => updateField('spyGapStatus', entry.spyGapStatus === label ? '' : label)} style={{
+                      padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                      border: `1.5px solid ${entry.spyGapStatus === label ? col : 'var(--border-card)'}`,
+                      background: entry.spyGapStatus === label ? `color-mix(in srgb, ${col} 12%, var(--bg-card))` : 'var(--bg-input)',
+                      color: entry.spyGapStatus === label ? col : 'var(--text-secondary)',
+                      transition: 'all 0.15s ease', ...fontStyle,
+                    }}>{label}</button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Max Loss */}
+              <div>
+                <FieldLabel>Daily Max Loss ($)</FieldLabel>
+                <input
+                  type="number" inputMode="decimal"
+                  value={entry.maxLossForDay || ''}
+                  onChange={e => updateField('maxLossForDay', e.target.value)}
+                  placeholder="e.g. 500"
+                  style={{ width: '100%', padding: '10px 14px', fontSize: 14, fontWeight: 600, border: '1px solid var(--border-input)', borderRadius: 10, ...inputStyle, ...monoStyle }}
+                />
+              </div>
+
+              {/* Max Trades */}
+              <div>
+                <FieldLabel>Max Trades Today</FieldLabel>
+                <input
+                  type="number" inputMode="numeric"
+                  value={entry.maxTradesForDay || ''}
+                  onChange={e => updateField('maxTradesForDay', e.target.value)}
+                  placeholder="e.g. 5"
+                  style={{ width: '100%', padding: '10px 14px', fontSize: 14, fontWeight: 600, border: '1px solid var(--border-input)', borderRadius: 10, ...inputStyle, ...monoStyle }}
+                />
+              </div>
+            </div>
+
+            {/* ── Row 2: Key Levels + Watchlist ── */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
+              <div>
+                <FieldLabel>Key S/R Levels to Watch</FieldLabel>
+                <textarea
+                  value={entry.keyLevels || ''}
+                  onChange={e => updateField('keyLevels', e.target.value)}
+                  placeholder={'SPY: 548.50 support / 551 resistance\nQQQ: 465 key level\nNVDA: VWAP watch'}
+                  rows={3}
+                  style={{ width: '100%', padding: '12px 14px', fontSize: 13, fontWeight: 500, lineHeight: 1.6, border: '1px solid var(--border-input)', resize: 'vertical', borderRadius: 10, ...inputStyle, ...fontStyle }}
+                />
+              </div>
+              <div>
+                <FieldLabel>Watchlist / Tickers on Radar</FieldLabel>
+                <textarea
+                  value={entry.watchlist || ''}
+                  onChange={e => updateField('watchlist', e.target.value)}
+                  placeholder={'NVDA — earnings gap play\nAAPL — VWAP bounce setup\nSPY — trend continuation'}
+                  rows={3}
+                  style={{ width: '100%', padding: '12px 14px', fontSize: 13, fontWeight: 500, lineHeight: 1.6, border: '1px solid var(--border-input)', resize: 'vertical', borderRadius: 10, ...inputStyle, ...fontStyle }}
+                />
+              </div>
+            </div>
+
+            {/* ── Row 3: Notes / Thesis / Catalysts ── */}
+            <div style={{ marginBottom: 24 }}>
+              <FieldLabel>Pre-Market Thesis & Catalysts</FieldLabel>
+              <textarea
+                value={entry.preMarketPlan || ''}
+                onChange={e => updateField('preMarketPlan', e.target.value)}
+                placeholder={'Macro: Fed minutes today at 2 PM — expect volatility spike\nSector: Tech leadership strong — look for continuation\nCatalyst: NVDA guidance tonight — don\'t hold overnight\nBias: Wait for first 15-min candle to close before trading'}
+                rows={4}
+                style={{ width: '100%', padding: '14px 16px', fontSize: 13, fontWeight: 500, lineHeight: 1.7, border: '1px solid var(--border-input)', resize: 'vertical', minHeight: 110, borderRadius: 10, ...inputStyle, ...fontStyle }}
+              />
+            </div>
+
+            {/* ── Row 4: Intentions Tracker ── */}
+            <div style={{ borderTop: '1px solid var(--border-card)', paddingTop: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                <Target size={14} style={{ color: 'var(--text-accent)' }} />
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-dark)', textTransform: 'uppercase', letterSpacing: '0.08em', ...fontStyle }}>Session Intentions & Rules</span>
+                <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500, marginLeft: 4 }}>— tick ✅/❌ after the session</span>
+              </div>
+
+              {/* Tally summary */}
+              {(entry.sessionGoals || []).length > 0 && (() => {
+                const goals = entry.sessionGoals || [];
+                const achieved = goals.filter(g => g.achieved === true).length;
+                const missed = goals.filter(g => g.achieved === false).length;
+                const pending = goals.filter(g => g.achieved === null).length;
+                const pct = goals.length ? Math.round((achieved / goals.length) * 100) : 0;
+                return (
+                  <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
+                    {[
+                      [achieved, 'Achieved', 'var(--color-profit)', 'var(--bg-kpi-profit)', 'var(--border-profit)'],
+                      [missed,   'Missed',   'var(--color-loss)',   'var(--bg-kpi-loss)',   'var(--border-loss)'],
+                      [pending,  'Pending',  'var(--text-primary)', 'var(--bg-card)',        'var(--border-card)'],
+                      [`${pct}%`, 'Score', pct >= 70 ? 'var(--color-profit)' : pct >= 40 ? 'var(--text-primary)' : 'var(--color-loss)', pct >= 70 ? 'var(--bg-kpi-profit)' : pct >= 40 ? 'var(--bg-card)' : 'var(--bg-kpi-loss)', pct >= 70 ? 'var(--border-profit)' : pct >= 40 ? 'var(--border-card)' : 'var(--border-loss)'],
+                    ].map(([val, label, color, bg, border]) => (
+                      <div key={label} style={{ flex: 1, minWidth: 70, background: bg, border: `1px solid ${border}`, borderRadius: 10, padding: '10px 12px', textAlign: 'center' }}>
+                        <div style={{ fontSize: 18, fontWeight: 900, color, fontFamily: "'JetBrains Mono', monospace" }}>{val}</div>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>{label}</div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
+                {(entry.sessionGoals || []).length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '16px 0', color: 'var(--text-secondary)', fontSize: 13, opacity: 0.6 }}>
+                    No intentions yet — add your first rule below.
+                  </div>
+                )}
+                {(entry.sessionGoals || []).map((goal) => (
+                  <div key={goal.id} style={{
+                    display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px',
+                    background: goal.achieved === true ? 'var(--bg-kpi-profit)' : goal.achieved === false ? 'var(--bg-kpi-loss)' : 'var(--bg-sidebar)',
+                    border: `1px solid ${goal.achieved === true ? 'var(--border-profit)' : goal.achieved === false ? 'var(--border-loss)' : 'var(--border-card)'}`,
+                    borderRadius: 10, transition: 'all 0.15s ease',
+                  }}>
+                    <span style={{ flex: 1, fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', lineHeight: 1.5 }}>{goal.text}</span>
+                    <button onClick={() => toggleGoal(goal.id, true)} title="Mark achieved"
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', opacity: goal.achieved === true ? 1 : 0.3, transition: 'opacity 0.15s' }}>
+                      <CheckCircle size={17} style={{ color: 'var(--color-profit)' }} />
+                    </button>
+                    <button onClick={() => toggleGoal(goal.id, false)} title="Mark missed"
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', opacity: goal.achieved === false ? 1 : 0.3, transition: 'opacity 0.15s' }}>
+                      <XCircle size={17} style={{ color: 'var(--color-loss)' }} />
+                    </button>
+                    <button onClick={() => removeGoal(goal.id)} title="Remove"
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', opacity: 0.25, transition: 'opacity 0.15s' }}>
+                      <Trash2 size={14} style={{ color: 'var(--text-secondary)' }} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input type="text" value={newGoalText} onChange={e => setNewGoalText(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && addGoal()}
+                  placeholder="e.g.  No FOMO entries · Wait for clean setup · Stop after 3 losses"
+                  style={{ flex: 1, padding: '11px 14px', fontSize: 13, fontWeight: 500, border: '1px solid var(--border-input)', borderRadius: 10, outline: 'none', ...inputStyle, ...fontStyle }}
+                />
+                <button onClick={addGoal} style={{
+                  padding: '11px 18px', borderRadius: 10, border: '1px solid var(--border-active)',
+                  background: 'var(--bg-badge-profit)', color: 'var(--text-accent)',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
+                  fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap', ...fontStyle,
+                }}>
+                  <Plus size={14} /> Add Rule
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* ════ TWO-COLUMN GRID (post-session) ════ */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
             {/* ════ LEFT COLUMN ════ */}
@@ -383,133 +576,12 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                 </div>
               </div>
 
-              {/* ── Pre-Session Intentions Tracker ── */}
-              <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
-                <SectionHeader
-                  icon={<ClipboardList size={16} style={{ color: 'var(--text-accent)' }} />}
-                  title="Pre-Session Intentions"
-                  subtitle="Set your goals & rules before trading. Tally them after the session."
-                />
 
-                {/* Tally summary strip */}
-                {(entry.sessionGoals || []).length > 0 && (() => {
-                  const goals = entry.sessionGoals || [];
-                  const achieved = goals.filter(g => g.achieved === true).length;
-                  const missed   = goals.filter(g => g.achieved === false).length;
-                  const pending  = goals.filter(g => g.achieved === null).length;
-                  const pct = goals.length ? Math.round((achieved / goals.length) * 100) : 0;
-                  return (
-                    <div style={{ display: 'flex', gap: 10, marginBottom: 18, flexWrap: 'wrap' }}>
-                      <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-kpi-profit)', border: '1px solid var(--border-profit)', borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
-                        <div style={{ fontSize: 20, fontWeight: 900, color: 'var(--color-profit)', fontFamily: "'JetBrains Mono', monospace" }}>{achieved}</div>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>Achieved</div>
-                      </div>
-                      <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-kpi-loss)', border: '1px solid var(--border-loss)', borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
-                        <div style={{ fontSize: 20, fontWeight: 900, color: 'var(--color-loss)', fontFamily: "'JetBrains Mono', monospace" }}>{missed}</div>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>Missed</div>
-                      </div>
-                      <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
-                        <div style={{ fontSize: 20, fontWeight: 900, color: 'var(--text-primary)', fontFamily: "'JetBrains Mono', monospace" }}>{pending}</div>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>Pending</div>
-                      </div>
-                      <div style={{ flex: 1, minWidth: 80, background: pct >= 70 ? 'var(--bg-kpi-profit)' : pct >= 40 ? 'var(--bg-card)' : 'var(--bg-kpi-loss)', border: `1px solid ${pct >= 70 ? 'var(--border-profit)' : pct >= 40 ? 'var(--border-card)' : 'var(--border-loss)'}`, borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
-                        <div style={{ fontSize: 20, fontWeight: 900, color: pct >= 70 ? 'var(--color-profit)' : pct >= 40 ? 'var(--text-primary)' : 'var(--color-loss)', fontFamily: "'JetBrains Mono', monospace" }}>{pct}%</div>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>Score</div>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                {/* Goal list */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
-                  {(entry.sessionGoals || []).length === 0 && (
-                    <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-secondary)', fontSize: 13, opacity: 0.7 }}>
-                      No intentions set yet. Add your first one below.
-                    </div>
-                  )}
-                  {(entry.sessionGoals || []).map((goal) => (
-                    <div key={goal.id} style={{
-                      display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px',
-                      background: goal.achieved === true ? 'var(--bg-kpi-profit)' : goal.achieved === false ? 'var(--bg-kpi-loss)' : 'var(--bg-sidebar)',
-                      border: `1px solid ${goal.achieved === true ? 'var(--border-profit)' : goal.achieved === false ? 'var(--border-loss)' : 'var(--border-card)'}`,
-                      borderRadius: 10, transition: 'all 0.15s ease',
-                    }}>
-                      {/* Text */}
-                      <span style={{ flex: 1, fontSize: 14, fontWeight: 500, color: 'var(--text-primary)', lineHeight: 1.5 }}>
-                        {goal.text}
-                      </span>
-                      {/* Toggle buttons */}
-                      <button
-                        onClick={() => toggleGoal(goal.id, true)}
-                        title="Mark achieved"
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', borderRadius: 6, opacity: goal.achieved === true ? 1 : 0.35, transition: 'opacity 0.15s' }}
-                      >
-                        <CheckCircle size={18} style={{ color: 'var(--color-profit)' }} />
-                      </button>
-                      <button
-                        onClick={() => toggleGoal(goal.id, false)}
-                        title="Mark missed"
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', borderRadius: 6, opacity: goal.achieved === false ? 1 : 0.35, transition: 'opacity 0.15s' }}
-                      >
-                        <XCircle size={18} style={{ color: 'var(--color-loss)' }} />
-                      </button>
-                      <button
-                        onClick={() => removeGoal(goal.id)}
-                        title="Remove"
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', borderRadius: 6, opacity: 0.3, transition: 'opacity 0.15s' }}
-                      >
-                        <Trash2 size={15} style={{ color: 'var(--text-secondary)' }} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Add new goal input */}
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <input
-                    type="text"
-                    value={newGoalText}
-                    onChange={e => setNewGoalText(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && addGoal()}
-                    placeholder="e.g. No trades before 9:45 AM · Max 3 stop-outs · VWAP setups only"
-                    style={{
-                      flex: 1,
-                      padding: '12px 16px',
-                      fontSize: 14,
-                      fontWeight: 500,
-                      border: '1px solid var(--border-input)',
-                      borderRadius: 10,
-                      outline: 'none',
-                      ...inputStyle,
-                      ...fontStyle,
-                    }}
-                  />
-                  <button
-                    onClick={addGoal}
-                    style={{
-                      padding: '12px 18px',
-                      borderRadius: 10,
-                      border: '1px solid var(--border-active)',
-                      background: 'var(--bg-badge-profit)',
-                      color: 'var(--text-accent)',
-                      cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', gap: 6,
-                      fontSize: 13, fontWeight: 700,
-                      whiteSpace: 'nowrap',
-                      ...fontStyle,
-                    }}
-                  >
-                    <Plus size={15} /> Add
-                  </button>
-                </div>
-                <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 8, opacity: 0.7 }}>
-                  ✅ Tap the checkmark after trading to tally what you achieved. Review missed items the next morning.
-                </div>
-              </div>
             </div>
 
             {/* ════ RIGHT COLUMN ════ */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
 
               {/* ── Strengths & Weaknesses ── */}
               <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
