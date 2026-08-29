@@ -7,7 +7,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     const val = payload[0].value;
     return (
-      <div className="px-4 py-3 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-lg shadow-xl backdrop-blur-md">
+      <div className="px-4 py-3 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-2xl shadow-xl backdrop-blur-md">
         <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">{label}</p>
         <p className="text-lg font-bold font-mono-data" style={{ color: val >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>
           {formatCurrency(val)}
@@ -276,36 +276,42 @@ export default function AnalyticsView({ allTrades }) {
   }, [closedTrades]);
 
   return (
-    <div className="h-full w-full overflow-y-auto bg-[var(--bg-app)] pb-12">
+    <div className="h-full w-full fade-in overflow-y-auto bg-[var(--bg-app)] pb-16">
       
       {/* ── HEADER ── */}
-      <div className="p-6 md:p-8 border-b border-[var(--border-card)]">
-        <h1 className="text-2xl font-bold text-[var(--text-dark)] flex items-center gap-3 tracking-tight">
-          <Activity className="text-[var(--text-accent)]" />
-          Institutional Analytics
-        </h1>
-        <p className="text-sm text-[var(--text-secondary)] mt-1 font-medium">Advanced performance metrics and equity curve analysis.</p>
+      <div className="p-6 md:p-8 border-b border-[var(--border-card)] bg-[var(--bg-card)]/40 backdrop-blur-sm">
+        <div className="max-w-[1600px] mx-auto flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-[var(--bg-card)] border border-[var(--border-card)] shrink-0 shadow-sm">
+            <Activity className="text-[var(--text-accent)]" size={24} />
+          </div>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-black text-[var(--text-dark)] tracking-tight">
+              Institutional Analytics
+            </h1>
+            <p className="text-sm text-[var(--text-secondary)] mt-1 font-medium">Advanced performance metrics, equity curve trajectory, and trade distributions.</p>
+          </div>
+        </div>
       </div>
 
       <div className="p-6 md:p-8 max-w-[1600px] mx-auto space-y-8">
         
         {!hasData ? (
-          <div className="py-20 text-center flex flex-col items-center justify-center glass-panel">
+          <div className="py-24 text-center flex flex-col items-center justify-center glass-panel rounded-2xl p-8 border border-[var(--border-card)]">
             <BarChart3 size={48} className="text-[var(--text-secondary)] opacity-50 mb-4" />
-            <p className="text-lg font-bold text-[var(--text-secondary)]">Insufficient Data</p>
+            <p className="text-xl font-bold text-[var(--text-secondary)]">Insufficient Data</p>
             <p className="text-sm text-[var(--text-secondary)] mt-2">Log trades to generate equity curves and distributions.</p>
           </div>
         ) : (
           <>
             {/* ── MISTAKE TAX ROW ── */}
             {closedTrades.length < 5 ? (
-              <div className="glass-panel p-8 border" style={{ borderColor: 'color-mix(in srgb, var(--color-loss) 35%, transparent)' }}>
+              <div className="glass-panel p-8 rounded-2xl border" style={{ borderColor: 'color-mix(in srgb, var(--color-loss) 35%, transparent)' }}>
                 <p className="text-center text-[var(--text-secondary)] font-bold">Log at least 5 trades to see where your P&L leaks.</p>
               </div>
             ) : (
-              <div className="glass-panel p-6 md:p-8 border" style={{ borderColor: 'color-mix(in srgb, var(--color-loss) 35%, transparent)' }}>
-                <p className="stat-label mb-2 text-[var(--text-secondary)]">MISTAKE TAX</p>
-                <p className="font-mono-data font-black text-[var(--color-loss)] leading-none" style={{ fontSize: 'clamp(28px, 6vw, 42px)' }}>
+              <div className="glass-panel p-6 md:p-8 rounded-2xl border" style={{ borderColor: 'color-mix(in srgb, var(--color-loss) 35%, transparent)' }}>
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">MISTAKE TAX</p>
+                <p className="font-mono-data font-black text-[var(--color-loss)] leading-none" style={{ fontSize: 'clamp(32px, 6vw, 48px)' }}>
                   {formatCurrency(mistakeTax)}
                 </p>
                 <p className="text-sm mt-3 font-bold text-[var(--text-secondary)]">
@@ -318,19 +324,19 @@ export default function AnalyticsView({ allTrades }) {
                       const widthPct = Math.min((Math.abs(m.totalPnl) / maxMistakePnl) * 100, 100);
                       const isProfit = m.totalPnl >= 0;
                       return (
-                        <div key={m.name} className="flex flex-col gap-1.5">
-                          <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-[var(--text-secondary)]">
+                        <div key={m.name} className="flex flex-col gap-2">
+                          <div className="flex justify-between items-center text-xs md:text-sm font-bold uppercase tracking-wider text-[var(--text-secondary)]">
                             <div className="flex items-center gap-2">
-                              <span className="text-[var(--text-dark)] truncate max-w-[200px] sm:max-w-xs">{m.name}</span>
-                              <span className="opacity-50">({m.count})</span>
+                              <span className="text-[var(--text-dark)] truncate max-w-[200px] sm:max-w-xs md:max-w-md">{m.name}</span>
+                              <span className="opacity-50 font-normal">({m.count})</span>
                             </div>
                             <span className={`font-mono-data ${isProfit ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
                               {formatCurrency(m.totalPnl)}
                             </span>
                           </div>
-                          <div className="h-1.5 w-full bg-[var(--bg-card)] rounded-full overflow-hidden">
+                          <div className="h-2 w-full bg-[var(--bg-card)] rounded-full overflow-hidden">
                             <div 
-                              className="h-full transition-all duration-400 ease-out"
+                              className="h-full transition-all duration-500 ease-out rounded-full"
                               style={{ 
                                 width: `${widthPct}%`, 
                                 backgroundColor: isProfit ? 'var(--color-profit)' : 'var(--color-loss)',
@@ -346,68 +352,68 @@ export default function AnalyticsView({ allTrades }) {
             )}
 
             {/* ── KPI ROW ── */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Net Equity</p>
-                <p className={`text-lg font-black font-mono-data ${currentEquity >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Net Equity</p>
+                <p className={`text-2xl font-black font-mono-data truncate ${currentEquity >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`} title={formatCurrency(currentEquity)}>
                   {formatCurrency(currentEquity)}
                 </p>
               </div>
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Win Rate</p>
-                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Win Rate</p>
+                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
                   {formatPercent(statsSummary.winRate)}
                 </p>
               </div>
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Profit Factor</p>
-                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Profit Factor</p>
+                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
                   {statsSummary.profitFactor === Infinity ? '∞' : statsSummary.profitFactor.toFixed(2)}
                 </p>
               </div>
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Payoff Ratio</p>
-                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Payoff Ratio</p>
+                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
                   {advancedRatios.payoff === Infinity ? '∞' : advancedRatios.payoff !== null ? advancedRatios.payoff.toFixed(2) : '—'}
                 </p>
               </div>
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Sharpe Ratio</p>
-                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Sharpe Ratio</p>
+                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
                   {advancedRatios.sharpe !== null ? advancedRatios.sharpe.toFixed(2) : '—'}
                 </p>
               </div>
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Sortino</p>
-                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Sortino</p>
+                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
                   {advancedRatios.sortino !== null ? advancedRatios.sortino.toFixed(2) : '—'}
                 </p>
               </div>
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Recovery</p>
-                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Recovery</p>
+                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
                   {advancedRatios.recovery !== null ? advancedRatios.recovery.toFixed(2) : '—'}
                 </p>
               </div>
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Max Drawdown</p>
-                <p className="text-lg font-black font-mono-data text-[var(--color-loss)]">
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Max Drawdown</p>
+                <p className="text-2xl font-black font-mono-data text-[var(--color-loss)] truncate" title={formatCurrency(maxHistoricalDrawdown)}>
                   {formatCurrency(maxHistoricalDrawdown)}
                 </p>
               </div>
             </div>
 
             {/* ── EQUITY CURVE CHART ── */}
-            <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)] flex items-center gap-2">
-                  <TrendingUp size={16} className="text-[var(--color-cyan)]" />
+            <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)]">
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)] flex items-center gap-2.5">
+                  <TrendingUp size={18} className="text-[var(--color-cyan)]" />
                   Cumulative Equity Curve
                 </h2>
                 {currentDrawdown < 0 && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 rounded bg-[var(--bg-badge-loss)] border border-[var(--border-loss)]">
-                    <AlertTriangle size={12} className="text-[var(--color-loss)]" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-loss)]">
+                  <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--bg-badge-loss)] border border-[var(--border-loss)]">
+                    <AlertTriangle size={14} className="text-[var(--color-loss)] shrink-0" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-loss)]">
                       In Drawdown: {formatCurrency(currentDrawdown)}
                     </span>
                   </div>
@@ -462,24 +468,24 @@ export default function AnalyticsView({ allTrades }) {
             </div>
 
             {/* ── STREAKS & STATS ROW ── */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Current Streak</p>
-                <p className={`text-lg font-black font-mono-data ${streaks.currentWinStreak > 0 ? 'text-[var(--color-profit)]' : streaks.currentLossStreak > 0 ? 'text-[var(--color-loss)]' : 'text-[var(--text-dark)]'}`}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Current Streak</p>
+                <p className={`text-2xl font-black font-mono-data truncate ${streaks.currentWinStreak > 0 ? 'text-[var(--color-profit)]' : streaks.currentLossStreak > 0 ? 'text-[var(--color-loss)]' : 'text-[var(--text-dark)]'}`}>
                   {streaks.currentWinStreak > 0 ? `${streaks.currentWinStreak} Wins` : streaks.currentLossStreak > 0 ? `${streaks.currentLossStreak} Losses` : '0'}
                 </p>
               </div>
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Max Win Streak</p>
-                <p className="text-lg font-black font-mono-data text-[var(--color-profit)]">{streaks.maxWinStreak} Trades</p>
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Max Win Streak</p>
+                <p className="text-2xl font-black font-mono-data text-[var(--color-profit)] truncate">{streaks.maxWinStreak} Trades</p>
               </div>
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Max Loss Streak</p>
-                <p className="text-lg font-black font-mono-data text-[var(--color-loss)]">{streaks.maxLossStreak} Trades</p>
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Max Loss Streak</p>
+                <p className="text-2xl font-black font-mono-data text-[var(--color-loss)] truncate">{streaks.maxLossStreak} Trades</p>
               </div>
-              <div className="glass-panel p-4 border border-[var(--border-card)]">
-                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">Total Trades</p>
-                <p className="text-lg font-black font-mono-data text-[var(--text-dark)]">{statsSummary.totalTrades}</p>
+              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Total Trades</p>
+                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">{statsSummary.totalTrades}</p>
               </div>
             </div>
 
@@ -487,13 +493,13 @@ export default function AnalyticsView({ allTrades }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               
               {/* Day of Week */}
-              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
-                <div className="flex items-center gap-2 mb-6">
-                  <BarChart3 size={16} className="text-[var(--text-accent)]" />
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Performance by Day</h2>
+              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)] flex flex-col">
+                <div className="flex items-center gap-2.5 mb-6">
+                  <BarChart3 size={18} className="text-[var(--text-accent)]" />
+                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Performance by Day</h2>
                 </div>
                 
-                <div className="w-full h-[250px]">
+                <div className="w-full h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={dayOfWeekData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border-card)" vertical={false} />
@@ -511,9 +517,9 @@ export default function AnalyticsView({ allTrades }) {
                           if (active && payload && payload.length) {
                             const d = payload[0].payload;
                             return (
-                              <div className="px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-card)] rounded shadow-lg backdrop-blur-md">
-                                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">{d.day} ({d.count} Trades)</p>
-                                <p className={`text-sm font-bold font-mono-data ${d.pnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
+                              <div className="px-4 py-3 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl shadow-xl backdrop-blur-md">
+                                <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">{d.day} ({d.count} Trades)</p>
+                                <p className={`text-base font-bold font-mono-data mt-1 ${d.pnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
                                   {formatCurrency(d.pnl)}
                                 </p>
                               </div>
@@ -522,9 +528,9 @@ export default function AnalyticsView({ allTrades }) {
                           return null;
                         }} 
                       />
-                      <Bar dataKey="pnl" radius={[4, 4, 4, 4]} animationDuration={1500} barSize={40}>
+                      <Bar dataKey="pnl" radius={[6, 6, 6, 6]} animationDuration={1500} barSize={44}>
                         {dayOfWeekData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.pnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)'} opacity={0.8} />
+                          <Cell key={`cell-${index}`} fill={entry.pnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)'} opacity={0.85} />
                         ))}
                       </Bar>
                     </BarChart>
@@ -533,42 +539,44 @@ export default function AnalyticsView({ allTrades }) {
               </div>
 
               {/* Monthly P&L Grid */}
-              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
-                <div className="flex items-center gap-2 mb-6">
-                  <Target size={16} className="text-[var(--text-accent)]" />
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Monthly Returns</h2>
-                </div>
-                
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr>
-                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-2 border-b border-[var(--border-card)]">Year</th>
-                        {monthlyPnlGrid.months.map(m => (
-                          <th key={m} className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-2 border-b border-[var(--border-card)] text-right px-1">{m}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="text-[11px] font-bold font-mono-data">
-                      {monthlyPnlGrid.years.map(y => {
-                        let yTotal = 0;
-                        return (
-                          <tr key={y} className="border-b border-[var(--border-card)] last:border-0 hover:bg-white/[0.02]">
-                            <td className="py-2 text-[var(--text-dark)]">{y}</td>
-                            {monthlyPnlGrid.months.map((m, i) => {
-                              const pnl = monthlyPnlGrid.map[y][i];
-                              if (pnl) yTotal += pnl;
-                              return (
-                                <td key={i} className={`py-2 text-right px-1 ${!pnl ? 'text-[var(--text-secondary)] opacity-30' : pnl > 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
-                                  {pnl ? formatCurrency(pnl) : '—'}
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)] flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-2.5 mb-6">
+                    <Target size={18} className="text-[var(--text-accent)]" />
+                    <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Monthly Returns</h2>
+                  </div>
+                  
+                  <div className="overflow-x-auto w-full">
+                    <table className="w-full text-left border-collapse min-w-[560px]">
+                      <thead>
+                        <tr>
+                          <th className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)]">Year</th>
+                          {monthlyPnlGrid.months.map(m => (
+                            <th key={m} className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right px-1.5">{m}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="text-xs md:text-sm font-bold font-mono-data">
+                        {monthlyPnlGrid.years.map(y => {
+                          let yTotal = 0;
+                          return (
+                            <tr key={y} className="border-b border-[var(--border-card)] last:border-0 hover:bg-white/[0.02] transition-colors">
+                              <td className="py-3 text-[var(--text-dark)] font-sans">{y}</td>
+                              {monthlyPnlGrid.months.map((m, i) => {
+                                const pnl = monthlyPnlGrid.map[y][i];
+                                if (pnl) yTotal += pnl;
+                                return (
+                                  <td key={i} className={`py-3 text-right px-1.5 ${!pnl ? 'text-[var(--text-secondary)] opacity-30' : pnl > 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
+                                    {pnl ? formatCurrency(pnl) : '—'}
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -576,47 +584,51 @@ export default function AnalyticsView({ allTrades }) {
             {/* ── TICKER & STRATEGY ROW ── */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Tickers */}
-              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
-                <div className="flex items-center gap-2 mb-6">
-                  <Activity size={16} className="text-[var(--text-accent)]" />
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Edge by Ticker</h2>
+              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)]">
+                <div className="flex items-center gap-2.5 mb-6">
+                  <Activity size={18} className="text-[var(--text-accent)]" />
+                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Edge by Ticker</h2>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2 border-b border-[var(--border-card)] pb-1">Top 5 Best</p>
-                    {tickerPerformance.best.map(t => (
-                      <div key={t.ticker} className="flex justify-between py-1.5 text-xs font-mono-data font-bold">
-                        <span className="text-[var(--text-dark)]">{t.ticker}</span>
-                        <span className="text-[var(--color-profit)]">{formatCurrency(t.pnl)}</span>
-                      </div>
-                    ))}
+                    <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-3 border-b border-[var(--border-card)] pb-2">Top 5 Best</p>
+                    <div className="space-y-1">
+                      {tickerPerformance.best.map(t => (
+                        <div key={t.ticker} className="flex justify-between items-center py-2 text-xs md:text-sm font-mono-data font-bold border-b border-[var(--border-card)]/40 last:border-0">
+                          <span className="text-[var(--text-dark)] font-sans">{t.ticker}</span>
+                          <span className="text-[var(--color-profit)]">{formatCurrency(t.pnl)}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2 border-b border-[var(--border-card)] pb-1">Top 5 Worst</p>
-                    {tickerPerformance.worst.map(t => (
-                      <div key={t.ticker} className="flex justify-between py-1.5 text-xs font-mono-data font-bold">
-                        <span className="text-[var(--text-dark)]">{t.ticker}</span>
-                        <span className="text-[var(--color-loss)]">{formatCurrency(t.pnl)}</span>
-                      </div>
-                    ))}
+                    <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-3 border-b border-[var(--border-card)] pb-2">Top 5 Worst</p>
+                    <div className="space-y-1">
+                      {tickerPerformance.worst.map(t => (
+                        <div key={t.ticker} className="flex justify-between items-center py-2 text-xs md:text-sm font-mono-data font-bold border-b border-[var(--border-card)]/40 last:border-0">
+                          <span className="text-[var(--text-dark)] font-sans">{t.ticker}</span>
+                          <span className="text-[var(--color-loss)]">{formatCurrency(t.pnl)}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
               
               {/* Strategies */}
-              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
-                <div className="flex items-center gap-2 mb-6">
-                  <Target size={16} className="text-[var(--text-accent)]" />
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Edge by Strategy</h2>
+              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)]">
+                <div className="flex items-center gap-2.5 mb-6">
+                  <Target size={18} className="text-[var(--text-accent)]" />
+                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Edge by Strategy</h2>
                 </div>
                 <div className="space-y-2">
                   {strategyPerformance.slice(0, 5).map(s => (
-                    <div key={s.name} className="flex justify-between items-center py-1.5 border-b border-[var(--border-card)] last:border-0">
+                    <div key={s.name} className="flex justify-between items-center py-2.5 border-b border-[var(--border-card)] last:border-0 hover:bg-white/[0.02] transition-colors">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-[var(--text-dark)]">{s.name}</span>
-                        <span className="text-[10px] text-[var(--text-secondary)] font-bold">({s.count}T, {s.winRate.toFixed(0)}% W)</span>
+                        <span className="text-xs md:text-sm font-bold text-[var(--text-dark)]">{s.name}</span>
+                        <span className="text-[11px] text-[var(--text-secondary)] font-bold">({s.count}T, {s.winRate.toFixed(0)}% W)</span>
                       </div>
-                      <span className={`text-xs font-mono-data font-bold ${s.totalPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
+                      <span className={`text-xs md:text-sm font-mono-data font-bold ${s.totalPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
                         {formatCurrency(s.totalPnl)}
                       </span>
                     </div>
@@ -629,13 +641,13 @@ export default function AnalyticsView({ allTrades }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               
               {/* Size Distribution */}
-              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
-                <div className="flex items-center gap-2 mb-6">
-                  <BarChart3 size={16} className="text-[var(--text-accent)]" />
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">P&L Distribution</h2>
+              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)]">
+                <div className="flex items-center gap-2.5 mb-6">
+                  <BarChart3 size={18} className="text-[var(--text-accent)]" />
+                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">P&L Distribution</h2>
                 </div>
                 
-                <div className="w-full h-[250px]">
+                <div className="w-full h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={distributionData} margin={{ top: 10, right: 20, left: 0, bottom: 40 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border-card)" vertical={false} />
@@ -660,18 +672,18 @@ export default function AnalyticsView({ allTrades }) {
                         content={({ active, payload }) => {
                           if (active && payload && payload.length) {
                             return (
-                              <div className="px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-card)] rounded shadow-lg backdrop-blur-md">
-                                <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase">{payload[0].payload.name}</p>
-                                <p className="text-sm font-bold font-mono-data text-[var(--text-dark)]">{payload[0].value} Trades</p>
+                              <div className="px-4 py-3 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl shadow-xl backdrop-blur-md">
+                                <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">{payload[0].payload.name}</p>
+                                <p className="text-base font-bold font-mono-data text-[var(--text-dark)] mt-1">{payload[0].value} Trades</p>
                               </div>
                             );
                           }
                           return null;
                         }} 
                       />
-                      <Bar dataKey="count" radius={[4, 4, 0, 0]} animationDuration={1500}>
+                      <Bar dataKey="count" radius={[6, 6, 0, 0]} animationDuration={1500}>
                         {distributionData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.isProfit ? 'var(--color-profit)' : 'var(--color-loss)'} opacity={0.8} />
+                          <Cell key={`cell-${index}`} fill={entry.isProfit ? 'var(--color-profit)' : 'var(--color-loss)'} opacity={0.85} />
                         ))}
                       </Bar>
                     </BarChart>
@@ -680,13 +692,13 @@ export default function AnalyticsView({ allTrades }) {
               </div>
 
               {/* Advanced Metrics Table */}
-              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
-                <div className="flex items-center gap-2 mb-6">
-                  <Target size={16} className="text-[var(--text-accent)]" />
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Performance Matrix</h2>
+              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)]">
+                <div className="flex items-center gap-2.5 mb-6">
+                  <Target size={18} className="text-[var(--text-accent)]" />
+                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Performance Matrix</h2>
                 </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {[
                     ['Average Winning Trade', formatCurrency(statsSummary.avgWin), 'text-[var(--color-profit)]'],
                     ['Average Losing Trade', formatCurrency(-statsSummary.avgLoss), 'text-[var(--color-loss)]'],
@@ -707,64 +719,66 @@ export default function AnalyticsView({ allTrades }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               
               {/* Session Breakdown */}
-              <div className="glass-panel rounded p-6 border border-[var(--border-card)] flex flex-col">
-                <div className="flex items-center gap-2 mb-6">
-                  <Clock size={16} className="text-[var(--text-accent)]" />
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">Performance by Session</h2>
-                </div>
-                <div className="table-scroll flex-1 -mx-6 px-6 sm:mx-0 sm:px-0">
-                  <table className="w-full text-left border-collapse min-w-[500px]">
-                    <thead>
-                      <tr>
-                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)]">Session</th>
-                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Trades</th>
-                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Win %</th>
-                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Avg R</th>
-                        <th className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Net P&L</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-sm font-bold font-mono-data">
-                      {sessionStats.map(s => (
-                        <tr key={s.name} className="border-b border-[var(--border-card)] last:border-0 hover:bg-white/[0.02] transition-colors">
-                          <td className="py-3 font-sans text-[var(--text-dark)] truncate">{s.name}</td>
-                          <td className="py-3 text-right text-[var(--text-secondary)]">{s.count}</td>
-                          <td className="py-3 text-right text-[var(--text-dark)]">{s.winRate.toFixed(1)}%</td>
-                          <td className="py-3 text-right text-[var(--text-secondary)]">{s.avgR !== null ? `${s.avgR > 0 ? '+' : ''}${s.avgR.toFixed(2)}R` : '—'}</td>
-                          <td className={`py-3 text-right ${s.totalPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>{formatCurrency(s.totalPnl)}</td>
+              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)] flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-2.5 mb-6">
+                    <Clock size={18} className="text-[var(--text-accent)]" />
+                    <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Performance by Session</h2>
+                  </div>
+                  <div className="overflow-x-auto w-full">
+                    <table className="w-full text-left border-collapse min-w-[500px]">
+                      <thead>
+                        <tr>
+                          <th className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)]">Session</th>
+                          <th className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Trades</th>
+                          <th className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Win %</th>
+                          <th className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Avg R</th>
+                          <th className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] pb-3 border-b border-[var(--border-card)] text-right">Net P&L</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="text-sm font-bold font-mono-data">
+                        {sessionStats.map(s => (
+                          <tr key={s.name} className="border-b border-[var(--border-card)] last:border-0 hover:bg-white/[0.02] transition-colors">
+                            <td className="py-3 font-sans text-[var(--text-dark)] truncate">{s.name}</td>
+                            <td className="py-3 text-right text-[var(--text-secondary)]">{s.count}</td>
+                            <td className="py-3 text-right text-[var(--text-dark)]">{s.winRate.toFixed(1)}%</td>
+                            <td className="py-3 text-right text-[var(--text-secondary)]">{s.avgR !== null ? `${s.avgR > 0 ? '+' : ''}${s.avgR.toFixed(2)}R` : '—'}</td>
+                            <td className={`py-3 text-right ${s.totalPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>{formatCurrency(s.totalPnl)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-                <p className="text-[11px] text-[var(--text-secondary)] mt-4 font-bold">Sessions use trade entry time. A consistently negative session is usually worth cutting entirely.</p>
+                <p className="text-xs text-[var(--text-secondary)] mt-6 font-medium">Sessions use trade entry time. A consistently negative session is usually worth cutting entirely.</p>
               </div>
 
               {/* R-Multiple Distribution */}
-              <div className="glass-panel rounded p-6 border border-[var(--border-card)]">
-                <div className="flex items-center gap-2 mb-6">
-                  <Target size={16} className="text-[var(--text-accent)]" />
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--text-dark)]">R-Multiple Distribution</h2>
+              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)] flex flex-col">
+                <div className="flex items-center gap-2.5 mb-6">
+                  <Target size={18} className="text-[var(--text-accent)]" />
+                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">R-Multiple Distribution</h2>
                 </div>
                 
                 {rDistributionData.stats.rCount > 0 ? (
                   <>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 pb-6 border-b border-[var(--border-card)]">
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Expectancy</p>
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-1">Expectancy</p>
                         <p className={`text-base font-bold font-mono-data ${rDistributionData.stats.expectancy >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
                           {rDistributionData.stats.expectancy > 0 ? '+' : ''}{rDistributionData.stats.expectancy.toFixed(2)}R
                         </p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Avg Winner</p>
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-1">Avg Winner</p>
                         <p className="text-base font-bold font-mono-data text-[var(--color-profit)]">+{rDistributionData.stats.avgWinR.toFixed(2)}R</p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Avg Loser</p>
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-1">Avg Loser</p>
                         <p className="text-base font-bold font-mono-data text-[var(--color-loss)]">{rDistributionData.stats.avgLossR.toFixed(2)}R</p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Has Stops</p>
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-1">Has Stops</p>
                         <p className="text-base font-bold font-mono-data text-[var(--text-dark)]">
                           {((rDistributionData.stats.rCount / closedTrades.length) * 100).toFixed(0)}%
                         </p>
@@ -772,13 +786,13 @@ export default function AnalyticsView({ allTrades }) {
                     </div>
                     
                     {(rDistributionData.stats.totalLossCount > 0 && (rDistributionData.stats.badLossCount / rDistributionData.stats.totalLossCount) > 0.20) && (
-                      <div className="mb-6 flex items-center gap-2 p-3 rounded bg-[var(--bg-badge-loss)] border border-[var(--border-loss)] text-[var(--color-loss)] text-xs font-bold">
-                        <AlertTriangle size={14} className="shrink-0" />
+                      <div className="mb-6 flex items-center gap-3 p-4 rounded-xl bg-[var(--bg-badge-loss)] border border-[var(--border-loss)] text-[var(--color-loss)] text-xs font-bold">
+                        <AlertTriangle size={16} className="shrink-0" />
                         <p>{rDistributionData.stats.badLossCount} losses exceeded their planned stop. Cross-reference the "Ignored Stop Loss" tag.</p>
                       </div>
                     )}
                     
-                    <div className="w-full h-[220px] sm:h-[250px]">
+                    <div className="w-full h-[300px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={rDistributionData.bins} margin={{ top: 10, right: 20, left: 0, bottom: 40 }}>
                           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-card)" vertical={false} />
@@ -803,18 +817,18 @@ export default function AnalyticsView({ allTrades }) {
                             content={({ active, payload }) => {
                               if (active && payload && payload.length) {
                                 return (
-                                  <div className="px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-card)] rounded shadow-lg backdrop-blur-md">
-                                    <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">{payload[0].payload.name}</p>
-                                    <p className="text-sm font-bold font-mono-data text-[var(--text-dark)]">{payload[0].value} Trades</p>
+                                  <div className="px-4 py-3 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl shadow-xl backdrop-blur-md">
+                                    <p className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">{payload[0].payload.name}</p>
+                                    <p className="text-base font-bold font-mono-data text-[var(--text-dark)] mt-1">{payload[0].value} Trades</p>
                                   </div>
                                 );
                               }
                               return null;
                             }} 
                           />
-                          <Bar dataKey="count" radius={[4, 4, 0, 0]} animationDuration={1500}>
+                          <Bar dataKey="count" radius={[6, 6, 0, 0]} animationDuration={1500}>
                             {rDistributionData.bins.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.isProfit ? 'var(--color-profit)' : 'var(--color-loss)'} opacity={0.8} />
+                              <Cell key={`cell-${index}`} fill={entry.isProfit ? 'var(--color-profit)' : 'var(--color-loss)'} opacity={0.85} />
                             ))}
                           </Bar>
                         </BarChart>
@@ -822,8 +836,8 @@ export default function AnalyticsView({ allTrades }) {
                     </div>
                   </>
                 ) : (
-                  <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
-                    <Target size={32} className="text-[var(--text-secondary)] opacity-50 mb-3" />
+                  <div className="flex-1 flex flex-col items-center justify-center text-center py-16">
+                    <Target size={36} className="text-[var(--text-secondary)] opacity-50 mb-3" />
                     <p className="text-sm font-bold text-[var(--text-secondary)]">Add stop prices to your trades<br/>to unlock risk-adjusted stats.</p>
                   </div>
                 )}
