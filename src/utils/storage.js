@@ -37,6 +37,26 @@ export const saveSettings = (settings) => {
   storage.setItem(SETTINGS_KEY, settings);
 };
 
+export const loadPlaybook = () => {
+  const storage = getStorage();
+  return storage.getItem('trading-journal-playbook') || [];
+};
+
+export const savePlaybook = (playbook) => {
+  const storage = getStorage();
+  storage.setItem('trading-journal-playbook', playbook);
+};
+
+export const loadWeeklyReviews = () => {
+  const storage = getStorage();
+  return storage.getItem('trading-journal-weekly-reviews') || {};
+};
+
+export const saveWeeklyReviews = (reviews) => {
+  const storage = getStorage();
+  storage.setItem('trading-journal-weekly-reviews', reviews);
+};
+
 export const getDateKey = (date) => {
   if (!date) {
     const now = new Date();

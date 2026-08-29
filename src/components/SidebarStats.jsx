@@ -21,6 +21,7 @@ export default function SidebarStats({
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={16} /> },
         { id: 'journal', label: 'Daily Journal', icon: <BookOpen size={16} /> },
+        { id: 'weekly', label: 'Weekly Review', icon: <BookOpen size={16} /> },
         { id: 'calendar', label: 'Calendar', icon: <Calendar size={16} /> },
         { id: 'capital', label: 'Capital & Targets', icon: <Target size={16} /> },
       ]
@@ -30,6 +31,7 @@ export default function SidebarStats({
       items: [
         { id: 'trades', label: 'Trade Log', icon: <TrendingUp size={16} /> },
         { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={16} /> },
+        { id: 'playbook', label: 'Trading Playbook', icon: <Layers size={16} /> },
       ]
     },
     {

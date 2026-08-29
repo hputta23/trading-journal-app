@@ -11,7 +11,8 @@ import TradesView from './components/TradesView';
 import AnalyticsView from './components/AnalyticsView';
 import CalendarView from './components/CalendarView';
 import EntryForm from './components/EntryForm';
-
+import WeeklyReviewView from './components/WeeklyReviewView';
+import PlaybookView from './components/PlaybookView';
 import { loadTrades, saveTrades, loadSettings, saveSettings, getDateKey } from './utils/storage';
 import { calcDailyStats } from './utils/calculations';
 import { loadActivityLogs, saveActivityLogs, logActivity } from './utils/logger';
@@ -551,6 +552,22 @@ export default function App() {
                     todayTrades={todayTrades}
                     onEditTrade={handleEditTrade}
                     onSelectDate={setCurrentDate}
+                  />
+                </PageWrapper>
+              )}
+
+              {activeTab === 'weekly' && (
+                <PageWrapper activeTab="weekly">
+                  <WeeklyReviewView
+                    allTrades={allTrades}
+                  />
+                </PageWrapper>
+              )}
+
+              {activeTab === 'playbook' && (
+                <PageWrapper activeTab="playbook">
+                  <PlaybookView
+                    allTrades={allTrades}
                   />
                 </PageWrapper>
               )}
