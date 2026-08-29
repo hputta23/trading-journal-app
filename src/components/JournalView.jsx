@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ClipboardList } from 'lucide-react';
 import { MOODS, MARKET_CONDITIONS, GRADES, loadJournalEntries, saveJournalEntry, emptyJournalEntry } from '../utils/journal';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 import { toast } from 'react-hot-toast';
@@ -56,6 +56,7 @@ const FieldLabel = ({ children, color }) => (
 
 export default function JournalView({ currentDate, todayTrades, onEditTrade, onSelectDate }) {
   const [entry, setEntry] = useState({ ...emptyJournalEntry });
+  const [newGoalText, setNewGoalText] = useState('');
 
   useEffect(() => {
     const entries = loadJournalEntries();
@@ -71,10 +72,31 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
     setEntry(prev => ({ ...prev, [field]: value }));
   };
 
+  /* ── Goal helpers ── */
+  const addGoal = () => {
+    const text = newGoalText.trim();
+    if (!text) return;
+    const goal = { id: Date.now(), text, achieved: null };
+    setEntry(prev => ({ ...prev, sessionGoals: [...(prev.sessionGoals || []), goal] }));
+    setNewGoalText('');
+  };
+
+  const toggleGoal = (id, value) => {
+    setEntry(prev => ({
+      ...prev,
+      sessionGoals: (prev.sessionGoals || []).map(g => g.id === id ? { ...g, achieved: g.achieved === value ? null : value } : g),
+    }));
+  };
+
+  const removeGoal = (id) => {
+    setEntry(prev => ({ ...prev, sessionGoals: (prev.sessionGoals || []).filter(g => g.id !== id) }));
+  };
+
   const handleSave = () => {
     const sanitized = {
       ...entry,
       preMarketPlan: (entry.preMarketPlan || '').trim().replace(/<[^>]*>/g, ''),
+      sessionGoals: (entry.sessionGoals || []).map(g => ({ ...g, text: (g.text || '').trim() })).filter(g => g.text),
       postMarketReview: (entry.postMarketReview || '').trim().replace(/<[^>]*>/g, ''),
       lessonsLearned: (entry.lessonsLearned || '').trim().replace(/<[^>]*>/g, ''),
       mistakes: (entry.mistakes || '').trim().replace(/<[^>]*>/g, ''),
@@ -361,31 +383,128 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                 </div>
               </div>
 
-              {/* ── Pre-Market Strategy & Plan ── */}
+              {/* ── Pre-Session Intentions Tracker ── */}
               <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
                 <SectionHeader
-                  icon={<Target size={16} style={{ color: 'var(--text-accent)' }} />}
-                  title="Pre-Market Strategy"
-                  subtitle="Define your game plan before the bell"
+                  icon={<ClipboardList size={16} style={{ color: 'var(--text-accent)' }} />}
+                  title="Pre-Session Intentions"
+                  subtitle="Set your goals & rules before trading. Tally them after the session."
                 />
 
-                <FieldLabel>Strategy & Plan Checklist</FieldLabel>
-                <textarea
-                  value={entry.preMarketPlan || ''}
-                  onChange={e => updateField('preMarketPlan', e.target.value)}
-                  placeholder="• Focus on VWAP bounces on NVDA&#10;• Maximum 3 stop outs for the session&#10;• No FOMO trades before 10:00 AM&#10;• Watch SPY for market direction"
-                  rows={6}
-                  style={{
-                    width: '100%',
-                    padding: '16px 18px',
-                    fontSize: 14, fontWeight: 500,
-                    lineHeight: 1.7,
-                    border: '1px solid var(--border-input)',
-                    resize: 'vertical',
-                    minHeight: 140,
-                    ...inputStyle,
-                  }}
-                />
+                {/* Tally summary strip */}
+                {(entry.sessionGoals || []).length > 0 && (() => {
+                  const goals = entry.sessionGoals || [];
+                  const achieved = goals.filter(g => g.achieved === true).length;
+                  const missed   = goals.filter(g => g.achieved === false).length;
+                  const pending  = goals.filter(g => g.achieved === null).length;
+                  const pct = goals.length ? Math.round((achieved / goals.length) * 100) : 0;
+                  return (
+                    <div style={{ display: 'flex', gap: 10, marginBottom: 18, flexWrap: 'wrap' }}>
+                      <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-kpi-profit)', border: '1px solid var(--border-profit)', borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
+                        <div style={{ fontSize: 20, fontWeight: 900, color: 'var(--color-profit)', fontFamily: "'JetBrains Mono', monospace" }}>{achieved}</div>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>Achieved</div>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-kpi-loss)', border: '1px solid var(--border-loss)', borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
+                        <div style={{ fontSize: 20, fontWeight: 900, color: 'var(--color-loss)', fontFamily: "'JetBrains Mono', monospace" }}>{missed}</div>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>Missed</div>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 80, background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
+                        <div style={{ fontSize: 20, fontWeight: 900, color: 'var(--text-primary)', fontFamily: "'JetBrains Mono', monospace" }}>{pending}</div>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>Pending</div>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 80, background: pct >= 70 ? 'var(--bg-kpi-profit)' : pct >= 40 ? 'var(--bg-card)' : 'var(--bg-kpi-loss)', border: `1px solid ${pct >= 70 ? 'var(--border-profit)' : pct >= 40 ? 'var(--border-card)' : 'var(--border-loss)'}`, borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
+                        <div style={{ fontSize: 20, fontWeight: 900, color: pct >= 70 ? 'var(--color-profit)' : pct >= 40 ? 'var(--text-primary)' : 'var(--color-loss)', fontFamily: "'JetBrains Mono', monospace" }}>{pct}%</div>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>Score</div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Goal list */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+                  {(entry.sessionGoals || []).length === 0 && (
+                    <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-secondary)', fontSize: 13, opacity: 0.7 }}>
+                      No intentions set yet. Add your first one below.
+                    </div>
+                  )}
+                  {(entry.sessionGoals || []).map((goal) => (
+                    <div key={goal.id} style={{
+                      display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px',
+                      background: goal.achieved === true ? 'var(--bg-kpi-profit)' : goal.achieved === false ? 'var(--bg-kpi-loss)' : 'var(--bg-sidebar)',
+                      border: `1px solid ${goal.achieved === true ? 'var(--border-profit)' : goal.achieved === false ? 'var(--border-loss)' : 'var(--border-card)'}`,
+                      borderRadius: 10, transition: 'all 0.15s ease',
+                    }}>
+                      {/* Text */}
+                      <span style={{ flex: 1, fontSize: 14, fontWeight: 500, color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                        {goal.text}
+                      </span>
+                      {/* Toggle buttons */}
+                      <button
+                        onClick={() => toggleGoal(goal.id, true)}
+                        title="Mark achieved"
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', borderRadius: 6, opacity: goal.achieved === true ? 1 : 0.35, transition: 'opacity 0.15s' }}
+                      >
+                        <CheckCircle size={18} style={{ color: 'var(--color-profit)' }} />
+                      </button>
+                      <button
+                        onClick={() => toggleGoal(goal.id, false)}
+                        title="Mark missed"
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', borderRadius: 6, opacity: goal.achieved === false ? 1 : 0.35, transition: 'opacity 0.15s' }}
+                      >
+                        <XCircle size={18} style={{ color: 'var(--color-loss)' }} />
+                      </button>
+                      <button
+                        onClick={() => removeGoal(goal.id)}
+                        title="Remove"
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', borderRadius: 6, opacity: 0.3, transition: 'opacity 0.15s' }}
+                      >
+                        <Trash2 size={15} style={{ color: 'var(--text-secondary)' }} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add new goal input */}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <input
+                    type="text"
+                    value={newGoalText}
+                    onChange={e => setNewGoalText(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && addGoal()}
+                    placeholder="e.g. No trades before 9:45 AM · Max 3 stop-outs · VWAP setups only"
+                    style={{
+                      flex: 1,
+                      padding: '12px 16px',
+                      fontSize: 14,
+                      fontWeight: 500,
+                      border: '1px solid var(--border-input)',
+                      borderRadius: 10,
+                      outline: 'none',
+                      ...inputStyle,
+                      ...fontStyle,
+                    }}
+                  />
+                  <button
+                    onClick={addGoal}
+                    style={{
+                      padding: '12px 18px',
+                      borderRadius: 10,
+                      border: '1px solid var(--border-active)',
+                      background: 'var(--bg-badge-profit)',
+                      color: 'var(--text-accent)',
+                      cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: 6,
+                      fontSize: 13, fontWeight: 700,
+                      whiteSpace: 'nowrap',
+                      ...fontStyle,
+                    }}
+                  >
+                    <Plus size={15} /> Add
+                  </button>
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 8, opacity: 0.7 }}>
+                  ✅ Tap the checkmark after trading to tally what you achieved. Review missed items the next morning.
+                </div>
               </div>
             </div>
 

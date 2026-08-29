@@ -35,6 +35,7 @@ export const saveJournalEntry = (date, entry) => {
 
 export const emptyJournalEntry = {
   preMarketPlan: '',
+  sessionGoals: [],          // [{id, text, achieved: null|true|false}]
   mood: 'neutral',
   discipline: 3,
   marketConditions: 'range',
