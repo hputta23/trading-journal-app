@@ -18,6 +18,29 @@ import { LayoutDashboard, FileText, TrendingUp, BarChart3, Calendar, Settings, R
 import { supabase } from './utils/supabaseClient';
 import AuthView from './components/AuthView';
 import ResetPasswordView from './components/ResetPasswordView';
+import { Toaster, toast } from 'react-hot-toast';
+import { AnimatePresence, motion } from 'framer-motion';
+
+const pageVariants = {
+  initial: { opacity: 0, y: 15 },
+  in: { opacity: 1, y: 0 },
+  out: { opacity: 0, y: -15 }
+};
+const pageTransition = { type: 'tween', ease: 'anticipate', duration: 0.25 };
+
+const PageWrapper = ({ children, activeTab }) => (
+  <motion.div
+    key={activeTab}
+    initial="initial"
+    animate="in"
+    exit="out"
+    variants={pageVariants}
+    transition={pageTransition}
+    className="h-full w-full"
+  >
+    {children}
+  </motion.div>
+);
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -308,6 +331,7 @@ export default function App() {
       isEdit ? 'TRADE_EDITED' : 'TRADE_ADDED', 
       `${isEdit ? 'Updated' : 'Entered'} ${trade.direction} trade on ${trade.ticker} for ${dateKey}`
     );
+    toast.success(`${isEdit ? 'Trade Updated' : 'Trade Logged Successfully'}`);
   }, [allTrades, currentDate, persistTrades]);
 
   const handleDeleteTrade = useCallback((id) => {
@@ -334,6 +358,7 @@ export default function App() {
     setSettings(s); 
     saveSettings(s); 
     logActivity('SETTINGS_CHANGED', 'Updated application settings');
+    toast.success('Settings Saved');
   }, []);
 
   const handleToggleTheme = useCallback(() => {
@@ -475,64 +500,78 @@ export default function App() {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {activeTab === 'dashboard' && (
-            <DashboardView
-              allTrades={allTrades}
-              onSubmitTrade={handleSubmitTrade}
-              onEditTrade={handleEditTrade}
-              onDeleteTrade={handleDeleteTrade}
-              editingTrade={editingTrade}
-              onCancelEdit={() => setEditingTrade(null)}
-              onSelectDate={handleSelectDateFromHeatmap}
-              onNavigateTab={handleTabChange}
-            />
-          )}
+            <AnimatePresence mode="wait" initial={false}>
+              {activeTab === 'dashboard' && (
+                <PageWrapper activeTab="dashboard">
+                  <DashboardView
+                    allTrades={allTrades}
+                    onSubmitTrade={handleSubmitTrade}
+                    onEditTrade={handleEditTrade}
+                    onDeleteTrade={handleDeleteTrade}
+                    editingTrade={editingTrade}
+                    onCancelEdit={() => setEditingTrade(null)}
+                    onSelectDate={handleSelectDateFromHeatmap}
+                    onNavigateTab={handleTabChange}
+                  />
+                </PageWrapper>
+              )}
 
-          {activeTab === 'journal' && (
-            <JournalView
-              currentDate={currentDate}
-              todayTrades={todayTrades}
-              onEditTrade={handleEditTrade}
-              onSelectDate={setCurrentDate}
-            />
-          )}
+              {activeTab === 'journal' && (
+                <PageWrapper activeTab="journal">
+                  <JournalView
+                    currentDate={currentDate}
+                    todayTrades={todayTrades}
+                    onEditTrade={handleEditTrade}
+                    onSelectDate={setCurrentDate}
+                  />
+                </PageWrapper>
+              )}
 
-          {activeTab === 'trades' && (
-            <TradesView
-              allTrades={allTrades}
-              onSubmitTrade={handleSubmitTrade}
-              onEditTrade={handleEditTrade}
-              onDeleteTrade={handleDeleteTrade}
-              editingTrade={editingTrade}
-              onCancelEdit={() => setEditingTrade(null)}
-              quickEntry={settings.quickEntry}
-              currentDate={currentDate}
-            />
-          )}
+              {activeTab === 'trades' && (
+                <PageWrapper activeTab="trades">
+                  <TradesView
+                    allTrades={allTrades}
+                    onSubmitTrade={handleSubmitTrade}
+                    onEditTrade={handleEditTrade}
+                    onDeleteTrade={handleDeleteTrade}
+                    editingTrade={editingTrade}
+                    onCancelEdit={() => setEditingTrade(null)}
+                    quickEntry={settings.quickEntry}
+                    currentDate={currentDate}
+                  />
+                </PageWrapper>
+              )}
 
-          {activeTab === 'analytics' && (
-            <AnalyticsView
-              allTrades={allTrades}
-            />
-          )}
+              {activeTab === 'analytics' && (
+                <PageWrapper activeTab="analytics">
+                  <AnalyticsView
+                    allTrades={allTrades}
+                  />
+                </PageWrapper>
+              )}
 
-          {activeTab === 'calendar' && (
-            <CalendarView
-              allTrades={allTrades}
-              allJournals={allJournals}
-              onSelectDate={setCurrentDate}
-              onNavigateTab={handleTabChange}
-            />
-          )}
+              {activeTab === 'calendar' && (
+                <PageWrapper activeTab="calendar">
+                  <CalendarView
+                    allTrades={allTrades}
+                    allJournals={allJournals}
+                    onSelectDate={setCurrentDate}
+                    onNavigateTab={handleTabChange}
+                  />
+                </PageWrapper>
+              )}
 
-          {activeTab === 'settings' && (
-            <SettingsView
-              settings={settings}
-              onSave={handleSaveSettings}
-              userEmail={session.user.email}
-              allTrades={allTrades}
-            />
-            )}
+              {activeTab === 'settings' && (
+                <PageWrapper activeTab="settings">
+                  <SettingsView
+                    settings={settings}
+                    onSave={handleSaveSettings}
+                    userEmail={session.user.email}
+                    allTrades={allTrades}
+                  />
+                </PageWrapper>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
@@ -613,6 +652,21 @@ export default function App() {
           </div>
         </div>
       )}
+      <Toaster 
+        position="top-right" 
+        toastOptions={{
+          style: {
+            background: 'var(--bg-card)',
+            color: 'var(--text-primary)',
+            border: '1px solid var(--border-card)',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            fontFamily: "'Inter', sans-serif"
+          },
+          success: { iconTheme: { primary: 'var(--color-profit)', secondary: 'var(--bg-card)' } },
+          error: { iconTheme: { primary: 'var(--color-loss)', secondary: 'var(--bg-card)' } }
+        }} 
+      />
     </div>
   );
 }

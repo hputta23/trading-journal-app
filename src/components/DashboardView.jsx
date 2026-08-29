@@ -605,7 +605,12 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
                 <Layers size={12} style={{ color: 'var(--text-accent)' }} />
                 <span className="stat-label" style={{ fontSize: 10, color: 'var(--text-dark)' }}>Recent Trades</span>
               </div>
-              {recentTrades.map(t => (
+              {recentTrades.length === 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 0', opacity: 0.6 }}>
+                  <Layers size={24} style={{ color: 'var(--text-secondary)', marginBottom: 8 }} />
+                  <p className="stat-sub">No recent trades</p>
+                </div>
+              ) : recentTrades.map(t => (
                 <div key={t.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 7px', borderRadius: 10, background: 'var(--bg-input)', marginBottom: 5 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, minWidth: 0 }}>
                     <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-accent)', flexShrink: 0 }}>{t.ticker}</span>

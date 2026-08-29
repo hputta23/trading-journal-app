@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { MOODS, MARKET_CONDITIONS, GRADES, loadJournalEntries, saveJournalEntry, emptyJournalEntry } from '../utils/journal';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
+import { toast } from 'react-hot-toast';
 
 const fontStyle = { fontFamily: "'Inter', sans-serif" };
 const monoStyle = { fontFamily: "'JetBrains Mono', monospace" };
@@ -55,7 +56,6 @@ const FieldLabel = ({ children, color }) => (
 
 export default function JournalView({ currentDate, todayTrades, onEditTrade, onSelectDate }) {
   const [entry, setEntry] = useState({ ...emptyJournalEntry });
-  const [saveStatus, setSaveStatus] = useState(null);
 
   useEffect(() => {
     const entries = loadJournalEntries();
@@ -81,8 +81,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
       whatWorked: (entry.whatWorked || '').trim().replace(/<[^>]*>/g, ''),
     };
     saveJournalEntry(currentDate, sanitized);
-    setSaveStatus('success');
-    setTimeout(() => setSaveStatus(null), 3000);
+    toast.success('Journal Saved');
   };
 
   const todayStats = calcDailyStats(todayTrades);
@@ -178,7 +177,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
             fontSize: 12, fontWeight: 700,
             textTransform: 'uppercase', letterSpacing: '0.1em',
             cursor: 'pointer',
-            background: saveStatus === 'success' ? 'var(--color-profit)' : 'var(--border-active)',
+            background: 'var(--border-active)',
             color: 'var(--bg-app)',
             border: 'none', borderRadius: 10,
             transition: 'all 0.2s ease',
@@ -187,7 +186,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
           }}
         >
           <Save size={14} />
-          {saveStatus === 'success' ? 'SAVED ✓' : 'SAVE JOURNAL'}
+          SAVE JOURNAL
         </button>
       </div>
 

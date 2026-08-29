@@ -1,22 +1,37 @@
 import { useState } from 'react';
-
+import { supabase } from '../utils/supabaseClient';
 
 export default function AuthView({ onLoadDemo, onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const handleAuth = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    // Hardcoded universal login
-    if (email === 'hpredz' && password === 'sunnysonu369') {
-      onLogin({ user: { id: 'universal-user', email: 'hpredz' } });
-    } else {
-      setError('Invalid username or password.');
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) throw error;
+        setError('Check your email for the confirmation link.');
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        // The App component listens for auth state changes, so it will handle onLogin automatically
+      }
+    } catch (error) {
+      setError(error.message || 'Authentication failed');
+    } finally {
       setLoading(false);
     }
   };
@@ -32,12 +47,12 @@ export default function AuthView({ onLoadDemo, onLogin }) {
             TradeOS
           </h1>
           <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
-            Sign in to your account
+            {isSignUp ? 'Create a new account' : 'Sign in to your account'}
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-3 rounded-lg text-xs font-bold border" style={{ background: 'rgba(255, 59, 92, 0.1)', color: 'var(--color-loss)', borderColor: 'rgba(255, 59, 92, 0.2)' }}>
+          <div className="mb-6 p-3 rounded-lg text-xs font-bold border" style={{ background: error.includes('Check your email') ? 'rgba(0, 230, 118, 0.1)' : 'rgba(255, 59, 92, 0.1)', color: error.includes('Check your email') ? 'var(--color-profit)' : 'var(--color-loss)', borderColor: error.includes('Check your email') ? 'rgba(0, 230, 118, 0.2)' : 'rgba(255, 59, 92, 0.2)' }}>
             {error}
           </div>
         )}
@@ -48,13 +63,13 @@ export default function AuthView({ onLoadDemo, onLogin }) {
               Email
             </label>
             <input
-              type="text"
+              type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 rounded-lg text-sm font-semibold outline-none transition-all focus:ring-1 focus:ring-[var(--border-active)]"
               style={{ background: 'var(--bg-input)', border: '1px solid var(--border-input)', color: 'var(--text-primary)' }}
-              placeholder="Username"
+              placeholder="you@example.com"
             />
           </div>
 
@@ -87,15 +102,24 @@ export default function AuthView({ onLoadDemo, onLogin }) {
               opacity: loading ? 0.7 : 1
             }}
           >
-            {loading ? 'Processing...' : 'Sign In'}
+            {loading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Sign In')}
           </button>
         </form>
+
+        <div className="mt-4 text-center">
+          <button 
+            onClick={() => { setIsSignUp(!isSignUp); setError(null); }} 
+            className="text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-accent)] transition-colors cursor-pointer"
+          >
+            {isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
+          </button>
+        </div>
 
         {onLoadDemo && (
           <div className="mt-6 text-center border-t border-[var(--border-card)] pt-6">
             <button
               onClick={onLoadDemo}
-              className="text-xs font-bold uppercase tracking-wider transition-all px-4 py-2 rounded border border-[var(--border-active)] text-[var(--text-accent)] hover:bg-[var(--border-active)] hover:text-[var(--bg-app)]"
+              className="text-xs font-bold uppercase tracking-wider transition-all px-4 py-2 rounded border border-[var(--border-active)] text-[var(--text-accent)] hover:bg-[var(--border-active)] hover:text-[var(--bg-app)] cursor-pointer"
             >
               Or view Demo Dashboard
             </button>
