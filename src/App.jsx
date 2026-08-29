@@ -409,7 +409,7 @@ export default function App() {
   }
 
   if (!session) {
-    return <AuthView onLoadDemo={handleLoadDemo} onLogin={handleLogin} />;
+    return <AuthView onLoadDemo={handleLoadDemo} />;
   }
 
   const handleLogoutClick = async () => {
