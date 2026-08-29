@@ -681,6 +681,7 @@ td, th {
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     padding: 0;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
   }
 
   .mobile-tab-bar button {

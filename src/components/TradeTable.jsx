@@ -96,11 +96,11 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
                   </div>
                 ) : (
                   <>
-                    <button onClick={() => onEdit(trade)} className="p-1.5 glass-panel cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-cyan)]" style={{ borderRadius: 10 }}>
-                      <Pencil size={14} />
+                    <button onClick={() => onEdit(trade)} className="p-3 glass-panel cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-cyan)]" style={{ borderRadius: 10 }}>
+                      <Pencil size={16} />
                     </button>
-                    <button onClick={() => setConfirmingDelete(trade.id)} className="p-1.5 glass-panel cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-loss)]" style={{ borderRadius: 10 }}>
-                      <Trash2 size={14} />
+                    <button onClick={() => setConfirmingDelete(trade.id)} className="p-3 glass-panel cursor-pointer text-[var(--text-secondary)] hover:text-[var(--color-loss)]" style={{ borderRadius: 10 }}>
+                      <Trash2 size={16} />
                     </button>
                   </>
                 )}
