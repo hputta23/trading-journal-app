@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import {
   Calendar, TrendingUp, Info, Activity, DollarSign,
   Percent, Layers, Award, Receipt, ArrowUpRight,
-  ArrowDownRight, ChevronRight, Zap, Trophy
+  ArrowDownRight, ChevronRight, Zap, Trophy, Target
 } from 'lucide-react';
 import { AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { formatCurrency, formatPercent, formatNumber, calcDailyStats } from '../utils/calculations';
@@ -30,7 +30,7 @@ const StatCard = ({ icon, label, value, sub, color, bg, border, tip }) => (
   </div>
 );
 
-export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }) {
+export default function DashboardView({ allTrades, onSelectDate, onNavigateTab, settings = {} }) {
   const [hoveredData, setHoveredData] = useState(null);
   const [heatmapTooltip, setHeatmapTooltip] = useState({ visible: false, x: 0, y: 0, data: null });
 
@@ -46,6 +46,14 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
   }, [allTrades]);
 
   const stats = useMemo(() => calcDailyStats(allClosedTrades), [allClosedTrades]);
+
+  const currentMonthPnl = useMemo(() => {
+    const now = new Date();
+    const currentMonthPrefix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    return allClosedTrades
+      .filter(t => t.date.startsWith(currentMonthPrefix))
+      .reduce((s, t) => s + t.netPnl, 0);
+  }, [allClosedTrades]);
 
   /* ── Tax ── */
   const afterTaxPnl = stats.totalNetPnl > 0 ? stats.totalNetPnl * (1 - TAX_RATE) : stats.totalNetPnl;
@@ -255,6 +263,64 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab }
             ))}
           </div>
         </div>
+
+        {/* Monthly Target Progress */}
+        {(() => {
+          const monthlyTarget = parseFloat(settings.monthlyTarget) || 0;
+          const monthlyProgressPct = monthlyTarget > 0 ? Math.max(0, Math.min(100, (currentMonthPnl / monthlyTarget) * 100)) : 0;
+          const targetColor = monthlyTarget > 0 ? 'var(--color-cyan)' : 'var(--text-secondary)';
+          const isTargetSet = monthlyTarget > 0;
+          
+          return (
+            <div className="glass-panel" style={{ padding: '20px 22px', position: 'relative', border: `1px solid ${isTargetSet ? 'var(--border-kpi-cyan)' : 'var(--border-card)'}` }}>
+              <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: 'inherit', background: `radial-gradient(ellipse at top right, ${isTargetSet ? 'color-mix(in srgb, var(--color-cyan) 6%, transparent)' : 'transparent'} 0%, transparent 70%)` }} />
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: isTargetSet ? 'var(--color-cyan)' : 'var(--border-card)', borderTopLeftRadius: 'inherit', borderTopRightRadius: 'inherit' }} />
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
+                <div style={{ minWidth: 0 }}>
+                  <div className="stat-label" style={{ marginBottom: 6 }}>
+                    Monthly Target <Tip text="Set this in the Capital & Targets tab." />
+                  </div>
+                  <div className="stat-value" style={{ fontSize: 'clamp(18px, 3vw, 26px)', color: isTargetSet ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                    {isTargetSet ? `$${monthlyTarget.toLocaleString()}` : 'Not Set'}
+                  </div>
+                </div>
+                
+                {/* Progress Ring */}
+                {isTargetSet ? (
+                  <div style={{ position: 'relative', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="44" height="44" viewBox="0 0 36 36" style={{ position: 'absolute' }}>
+                      <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--bg-kpi-cyan)" strokeWidth="4" />
+                      <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--color-cyan)" strokeWidth="4" strokeDasharray={`${monthlyProgressPct}, 100`} strokeLinecap="round" />
+                    </svg>
+                    <Target size={16} style={{ color: 'var(--color-cyan)' }} />
+                  </div>
+                ) : (
+                  <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Target size={18} style={{ color: 'var(--text-secondary)' }} />
+                  </div>
+                )}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, paddingTop: 10, borderTop: isTargetSet ? '1px solid var(--border-kpi-cyan)' : '1px solid var(--border-card)', flexWrap: 'wrap' }}>
+                {isTargetSet ? (
+                  <>
+                    <div>
+                      <div className="stat-label" style={{ marginBottom: 3 }}>Current</div>
+                      <div className="stat-value" style={{ fontSize: 13, color: currentMonthPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>
+                        {currentMonthPnl >= 0 ? '+' : '−'}{absStr(currentMonthPnl)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="stat-label" style={{ marginBottom: 3 }}>Progress</div>
+                      <div className="stat-value" style={{ fontSize: 13, color: 'var(--color-cyan)' }}>{Math.round(monthlyProgressPct)}%</div>
+                    </div>
+                  </>
+                ) : (
+                  <span className="stat-sub">Configure in settings</span>
+                )}
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* ══ ROW 2 — KPI RIBBON ══ */}

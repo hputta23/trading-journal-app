@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pencil, Trash2, Check, X, Image as ImageIcon } from 'lucide-react';
-import { formatCurrency, formatNumber } from '../utils/calculations';
+import { formatCurrency, formatNumber, calcRR } from '../utils/calculations';
 
 const EmptyTable = () => (
   <div className="border flex flex-col items-center justify-center py-24 gap-5 glass-panel animate-fade-in" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-card)', borderRadius: 12 }}>
@@ -113,10 +113,10 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
       {/* ── DESKTOP TABLE VIEW (>= md) ── */}
       <div className="hidden md:block border overflow-hidden glass-panel" style={{ borderColor: 'var(--border-card)', background: 'var(--bg-card)', borderRadius: 16 }}>
         <div className="overflow-x-auto">
-          <table className="w-full" style={{ minWidth: '1050px' }}>
+          <table className="w-full" style={{ minWidth: '1150px' }}>
             <thead>
               <tr className="bg-[var(--bg-sidebar)] border-b" style={{ borderColor: 'var(--border-card)' }}>
-                {['#', 'TIME', 'TICKER', 'DIR', 'ASSET', 'ENTRY', 'EXIT', 'QTY', 'GROSS', 'FEES', 'NET', 'STRATEGY', 'IMG', 'STATUS', ''].map((h) => (
+                {['#', 'TIME', 'TICKER', 'DIR', 'ASSET', 'ENTRY', 'EXIT', 'QTY', 'R:R', 'NET', 'STRATEGY', 'TAGS', 'IMG', 'STATUS', ''].map((h) => (
                   <th key={h} className="px-5 py-4 text-left font-bold uppercase whitespace-nowrap" style={{ color: 'var(--text-secondary)', fontSize: '10px', letterSpacing: '0.08em', fontFamily: "'Inter', sans-serif" }}>
                     {h}
                   </th>
@@ -124,7 +124,9 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
               </tr>
             </thead>
             <tbody>
-              {trades.map((trade, idx) => (
+              {trades.map((trade, idx) => {
+                const rr = trade.stopPrice ? calcRR(trade.entryPrice, trade.stopPrice, trade.isOpen ? trade.targetPrice : (trade.exitPrice || trade.targetPrice), trade.direction) : null;
+                return (
                 <tr key={trade.id} className="transition-all duration-150 border-b hover:!bg-[var(--accent-glow)]" style={{ background: getRowBg(trade, idx), borderColor: 'rgba(255, 255, 255, 0.02)', borderRadius: 8 }}>
                   <td className="px-5 py-4 text-xs font-semibold text-[var(--text-secondary)] font-mono-data">{idx + 1}</td>
                   <td className="px-5 py-4 text-xs whitespace-nowrap font-mono-data font-semibold text-[var(--text-primary)]">{trade.time}</td>
@@ -146,11 +148,7 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
                   <td className="px-5 py-4 text-xs font-mono-data font-bold text-[var(--text-secondary)]">{formatNumber(trade.qty)}</td>
                   
                   <td className="px-5 py-4 text-xs font-mono-data font-bold whitespace-nowrap">
-                    {trade.isOpen ? <span className="badge-open" style={{ borderRadius: 8 }}>OPEN</span> : trade.grossPnl >= 0 ? <span className="badge-profit" style={{ borderRadius: 8 }}>{formatCurrency(trade.grossPnl)}</span> : <span className="badge-loss" style={{ borderRadius: 8 }}>{formatCurrency(trade.grossPnl)}</span>}
-                  </td>
-
-                  <td className="px-5 py-4 text-xs font-mono-data font-semibold">
-                    <span className="badge-cyan" style={{ borderRadius: 8 }}>${(trade.fees || 0).toFixed(2)}</span>
+                    {rr ? <span className="text-[var(--text-primary)]">1 : {rr}</span> : <span className="text-[var(--text-secondary)]">—</span>}
                   </td>
 
                   <td className="px-5 py-4 text-xs font-mono-data font-bold whitespace-nowrap">
@@ -159,6 +157,20 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
 
                   <td className="px-5 py-4 text-xs font-semibold text-[var(--text-primary)] truncate max-w-[100px]">{trade.strategy}</td>
                   
+                  <td className="px-5 py-4 text-xs whitespace-nowrap">
+                    {trade.tags && trade.tags.length > 0 ? (
+                      <div className="flex gap-1 flex-wrap max-w-[150px]">
+                        {trade.tags.map(t => (
+                          <span key={t} className="text-[9px] font-bold uppercase tracking-wider bg-[var(--bg-input)] text-[var(--text-secondary)] px-1.5 py-0.5 rounded border border-[var(--border-input)]">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-[var(--border-card)]">—</span>
+                    )}
+                  </td>
+
                   <td className="px-5 py-4 text-xs whitespace-nowrap">
                     {trade.imageUrl ? (
                       <a href={trade.imageUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--text-secondary)] hover:text-[var(--text-accent)] transition-colors">
@@ -192,7 +204,8 @@ export default function TradeTable({ trades, onEdit, onDelete }) {
                     )}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

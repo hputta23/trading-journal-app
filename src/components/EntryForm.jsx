@@ -97,6 +97,7 @@ const emptyForm = {
   tickMultiplier: '',
   entryPrice: '',
   stopPrice: '',
+  targetPrice: '',
   exitPrice: '',
   qty: '',
   entryTime: '',
@@ -106,6 +107,7 @@ const emptyForm = {
   notes: '',
   mistake: 'None / Plan Followed',
   imageUrl: '',
+  tags: [],
   advancedExecution: false,
   entryLegs: [{ price: '', qty: '' }],
   exitLegs: [{ price: '', qty: '' }]
@@ -128,6 +130,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
         tickMultiplier: editingTrade.tickMultiplier || '',
         entryPrice: editingTrade.entryPrice || '',
         stopPrice: editingTrade.stopPrice !== undefined && editingTrade.stopPrice !== null ? editingTrade.stopPrice : '',
+        targetPrice: editingTrade.targetPrice !== undefined && editingTrade.targetPrice !== null ? editingTrade.targetPrice : '',
         exitPrice: editingTrade.exitPrice || '',
         qty: editingTrade.qty || '',
         entryTime: editingTrade.time || '',
@@ -136,6 +139,8 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
         netPnlOverride: editingTrade.netPnlOverride !== undefined && editingTrade.netPnlOverride !== null ? editingTrade.netPnlOverride : '',
         notes: editingTrade.notes || '',
         mistake: editingTrade.mistake || 'None / Plan Followed',
+        imageUrl: editingTrade.imageUrl || '',
+        tags: editingTrade.tags || [],
         advancedExecution: false,
         entryLegs: [{ price: editingTrade.entryPrice || '', qty: editingTrade.qty || '' }],
         exitLegs: [{ price: editingTrade.exitPrice || '', qty: editingTrade.qty || '' }],
@@ -144,6 +149,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
       setForm(prev => ({ ...prev, date: currentDate }));
       setStep(0);
     }
+
   }, [editingTrade, currentDate]);
 
   const getNowTime = () => {
@@ -237,6 +243,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
       tickMultiplier: form.assetClass === 'Future' ? Number(form.tickMultiplier) || 1 : 1,
       entryPrice: Number(form.entryPrice),
       stopPrice: form.stopPrice === '' ? null : Number(form.stopPrice),
+      targetPrice: form.targetPrice === '' ? null : Number(form.targetPrice),
       exitPrice: form.exitPrice ? Number(form.exitPrice) : null,
       qty: Number(form.qty),
       fees: Number(form.fees) || 0,
@@ -244,6 +251,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
       notes: form.notes,
       mistake: form.mistake || 'None / Plan Followed',
       imageUrl: form.imageUrl || '',
+      tags: form.tags || [],
       grossPnl,
       netPnl,
       netPnlOverride: form.netPnlOverride !== '' && form.netPnlOverride !== undefined && form.netPnlOverride !== null ? Number(form.netPnlOverride) : null,
@@ -559,7 +567,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           </div>
 
           {!form.advancedExecution ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
               <div>
                 <FieldLabel>Entry Price ($)</FieldLabel>
                 <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} autoFocus />
@@ -570,6 +578,10 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                 {validateStop(form.entryPrice, form.stopPrice, form.direction) && <div className="text-[10px] mt-1 font-bold" style={{color: 'var(--color-loss)'}}>{validateStop(form.entryPrice, form.stopPrice, form.direction)}</div>}
               </div>
               <div>
+                <FieldLabel optional>Target Price</FieldLabel>
+                <input type="number" step="any" value={form.targetPrice} onChange={e => update('targetPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} />
+              </div>
+              <div>
                 <FieldLabel optional>Exit Price ($)</FieldLabel>
                 <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} />
               </div>
@@ -577,7 +589,9 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                 <FieldLabel>Shares / Qty</FieldLabel>
                 <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} />
               </div>
-              {renderRiskReadout()}
+              <div className="lg:col-span-5">
+                {renderRiskReadout()}
+              </div>
             </div>
           ) : (
             <div className="space-y-4 p-5 border border-[var(--border-active)] bg-[var(--bg-sidebar)] shadow-md">
@@ -684,6 +698,10 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               <input value={form.imageUrl} onChange={e => update('imageUrl', e.target.value)} placeholder="https://imgur.com/..." className="w-full px-4 py-4 text-[13px] border font-bold" style={whiteInputStyle} />
             </div>
             <div>
+              <FieldLabel optional>Tags (comma separated)</FieldLabel>
+              <input type="text" value={form.tags ? form.tags.join(', ') : ''} onChange={e => update('tags', e.target.value.split(',').map(t => t.trim()))} placeholder="e.g. fomo, perfect-setup" className="w-full px-4 py-4 text-[13px] border font-bold" style={whiteInputStyle} />
+            </div>
+            <div className="sm:col-span-2 lg:col-span-4">
               <FieldLabel optional>Notes / reflections</FieldLabel>
               <input value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Session notes..." className="w-full px-4 py-4 text-[13px] border font-bold" style={whiteInputStyle} />
             </div>

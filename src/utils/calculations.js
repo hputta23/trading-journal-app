@@ -23,6 +23,26 @@ export const calcNetPnl = (grossPnl, fees) => {
   return grossPnl - Number(fees || 0);
 };
 
+export const calcRR = (entry, stop, exit, direction) => {
+  if (!entry || !stop || !exit) return null;
+  const e = Number(entry);
+  const s = Number(stop);
+  const x = Number(exit);
+  if (e === s) return null;
+  
+  let risk, profit;
+  if (direction === 'Long') {
+    risk = e - s;
+    profit = x - e;
+  } else {
+    risk = s - e;
+    profit = e - x;
+  }
+  
+  if (risk <= 0) return null; // Invalid stop
+  return (profit / risk).toFixed(2);
+};
+
 export const calcDailyStats = (trades) => {
   const closedTrades = trades.filter(t => !t.isOpen && t.netPnl !== null);
   if (closedTrades.length === 0) {

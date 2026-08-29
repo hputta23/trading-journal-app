@@ -532,6 +532,7 @@ export default function App() {
                 <PageWrapper activeTab="dashboard">
                   <DashboardView
                     allTrades={allTrades}
+                    settings={settings}
                     onSubmitTrade={handleSubmitTrade}
                     onEditTrade={handleEditTrade}
                     onDeleteTrade={handleDeleteTrade}
