@@ -225,15 +225,27 @@ export default function App() {
     };
 
     document.addEventListener('visibilitychange', handleVisibility);
-    window.addEventListener('journal_updated', handleJournalUpdate);
-    window.addEventListener('activity_log_updated', handleLogUpdate);
+    window.addEventListener('trading-journal-updated', handleJournalUpdate);
+    window.addEventListener('trading-journal-log-updated', handleLogUpdate);
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibility);
-      window.removeEventListener('journal_updated', handleJournalUpdate);
-      window.removeEventListener('activity_log_updated', handleLogUpdate);
+      window.removeEventListener('trading-journal-updated', handleJournalUpdate);
+      window.removeEventListener('trading-journal-log-updated', handleLogUpdate);
     };
-  }, [session, fetchCloudData]);
+  }, [session, isDemo]);
+
+  const handleSaveJournal = (date, updatedData) => {
+    const updated = { ...allJournals };
+    updated[date] = updatedData;
+    setAllJournals(updated);
+    
+    // In demo mode, don't write to local storage
+    if (isDemo) return;
+    
+    localStorage.setItem('trading-journal-entries', JSON.stringify(updated));
+    window.dispatchEvent(new Event('trading-journal-updated'));
+  };
 
   // Sync to Cloud whenever trades or journals change
   const initialMount = useRef(true);
