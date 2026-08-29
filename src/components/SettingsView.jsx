@@ -467,13 +467,9 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                   <button
                     onClick={async () => {
                       if (window.confirm('Are you absolutely sure? This will PERMANENTLY delete all trades and journals from both this device and your cloud account.')) {
-                        localStorage.removeItem('trading-journal-trades');
-                        localStorage.removeItem('trading-journal-entries');
-                        localStorage.removeItem('trading-journal-activity');
-                        
-                        // Upsert empty data to Supabase (bypasses missing DELETE RLS policy)
+                        // 1. Upsert empty data to Supabase FIRST (before clearing local auth tokens)
                         const { data: { session } } = await supabase.auth.getSession();
-                        if (session?.user?.id) {
+                        if (session?.user?.id && session.user.id !== 'demo') {
                           await supabase.from('user_data').upsert({
                             user_id: session.user.id,
                             trades: {},
@@ -483,7 +479,11 @@ export default function SettingsView({ settings, onSave, userEmail, allTrades })
                           });
                         }
                         
-                        window.location.reload();
+                        // 2. Clear EVERYTHING from localStorage (this logs out the user)
+                        localStorage.clear();
+                        
+                        // 3. Reload the page (will redirect to login)
+                        window.location.href = '/';
                       }
                     }}
                     style={{
