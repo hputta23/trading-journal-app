@@ -44,7 +44,7 @@ const StepIndicator = ({ currentStep }) => {
         <div key={s} className="flex items-center gap-0.5">
           <div className="flex items-center gap-2">
             <div
-              className="flex items-center justify-center w-8 h-8 text-sm font-bold shrink-0"
+              className="flex items-center justify-center w-9 h-9 rounded-lg text-sm font-bold shrink-0"
               style={{
                 background: i <= currentStep ? 'var(--border-active)' : 'var(--bg-sidebar)',
                 color: i <= currentStep ? 'var(--bg-app)' : 'var(--text-secondary)',
@@ -72,7 +72,7 @@ const NowButton = ({ onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="px-5 text-sm border-y border-r cursor-pointer hover:bg-[var(--border-active)] hover:text-[var(--bg-app)] transition-all shrink-0 flex items-center justify-center gap-2 bg-[var(--bg-sidebar)] text-[var(--text-accent)] border-[var(--border-card)] font-bold"
+    className="px-5 py-4 text-sm border-y border-r cursor-pointer hover:bg-[var(--border-active)] hover:text-[var(--bg-app)] transition-all shrink-0 flex items-center justify-center gap-2 bg-[var(--bg-sidebar)] text-[var(--text-accent)] border-[var(--border-card)] font-bold"
     style={{ ...fontStyle, borderTopRightRadius: 10, borderBottomRightRadius: 10 }}
     title="Stamp current time"
   >
@@ -82,7 +82,7 @@ const NowButton = ({ onClick }) => (
 );
 
 const FieldLabel = ({ children, optional }) => (
-  <label className="block text-[10px] mb-1.5 uppercase tracking-wider font-medium text-[var(--text-secondary)]" style={labelStyle}>
+  <label className="block text-[11px] mb-2 uppercase tracking-wider font-medium text-[var(--text-secondary)]" style={labelStyle}>
     {children}
     {optional && <span className="text-[var(--text-secondary)]/50 lowercase font-normal"> (optional)</span>}
   </label>
@@ -368,71 +368,71 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-4">
           <div>
             <FieldLabel>Ticker</FieldLabel>
-            <input value={form.ticker} onChange={e => update('ticker', e.target.value.toUpperCase())} placeholder="AAPL" className="w-full px-4 py-4 text-base border uppercase font-bold" style={whiteInputStyle} />
+            <input value={form.ticker} onChange={e => update('ticker', e.target.value.toUpperCase())} placeholder="AAPL" className="w-full px-4 py-3 text-sm border uppercase font-bold" style={whiteInputStyle} />
           </div>
           <div>
             <FieldLabel>Asset</FieldLabel>
-            <select value={form.assetClass} onChange={e => update('assetClass', e.target.value)} className="w-full px-4 py-4 text-base border cursor-pointer font-bold" style={inputStyle}>
+            <select value={form.assetClass} onChange={e => update('assetClass', e.target.value)} className="w-full px-4 py-3 text-sm border cursor-pointer font-bold" style={inputStyle}>
               {ASSET_CLASSES.map(a => <option key={a} value={a}>{a.toUpperCase()}</option>)}
             </select>
           </div>
           <div>
             <FieldLabel>Direction</FieldLabel>
-            <select value={form.direction} onChange={e => update('direction', e.target.value)} className="w-full px-4 py-4 text-base border cursor-pointer font-bold" style={inputStyle}>
+            <select value={form.direction} onChange={e => update('direction', e.target.value)} className="w-full px-4 py-3 text-sm border cursor-pointer font-bold" style={inputStyle}>
               {['Long', 'Short'].map(d => <option key={d} value={d}>{d.toUpperCase()}</option>)}
             </select>
           </div>
           <div>
             <FieldLabel>Strategy</FieldLabel>
-            <input value={form.strategy} onChange={e => update('strategy', e.target.value)} placeholder="BREAKOUT" className="w-full px-4 py-4 text-base border font-bold" style={whiteInputStyle} />
+            <input value={form.strategy} onChange={e => update('strategy', e.target.value)} placeholder="BREAKOUT" className="w-full px-4 py-3 text-sm border font-bold" style={whiteInputStyle} />
           </div>
           <div>
             <FieldLabel>Entry $</FieldLabel>
-            <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
+            <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           <div>
             <FieldLabel optional>Stop Price</FieldLabel>
-            <input type="number" step="any" value={form.stopPrice} onChange={e => update('stopPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={{...whiteInputStyle, borderColor: validateStop(form.entryPrice, form.stopPrice, form.direction) ? 'var(--color-loss)' : whiteInputStyle.borderColor}} />
+            <input type="number" step="any" value={form.stopPrice} onChange={e => update('stopPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-3 text-sm border font-bold font-mono-data" style={{...whiteInputStyle, borderColor: validateStop(form.entryPrice, form.stopPrice, form.direction) ? 'var(--color-loss)' : whiteInputStyle.borderColor}} />
             {validateStop(form.entryPrice, form.stopPrice, form.direction) && <div className="text-[10px] mt-1 font-bold" style={{color: 'var(--color-loss)'}}>{validateStop(form.entryPrice, form.stopPrice, form.direction)}</div>}
           </div>
           <div>
             <FieldLabel optional>Exit $</FieldLabel>
-            <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
+            <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           <div>
             <FieldLabel>Qty</FieldLabel>
-            <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
+            <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           {renderRiskReadout()}
           <div>
             <FieldLabel>Fees</FieldLabel>
-            <input type="number" step="any" value={form.fees} onChange={e => update('fees', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
+            <input type="number" step="any" value={form.fees} onChange={e => update('fees', e.target.value)} placeholder="0.00" className="w-full px-4 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           <div>
             <FieldLabel optional>Net P&L Override</FieldLabel>
-            <input type="number" step="any" value={form.netPnlOverride} onChange={e => update('netPnlOverride', e.target.value)} placeholder="Auto" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
+            <input type="number" step="any" value={form.netPnlOverride} onChange={e => update('netPnlOverride', e.target.value)} placeholder="Auto" className="w-full px-4 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           {form.assetClass === 'Future' && (
             <div>
               <FieldLabel>Multiplier</FieldLabel>
-              <input type="number" step="any" value={form.tickMultiplier} onChange={e => update('tickMultiplier', e.target.value)} placeholder="50" className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
+              <input type="number" step="any" value={form.tickMultiplier} onChange={e => update('tickMultiplier', e.target.value)} placeholder="50" className="w-full px-4 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
             </div>
           )}
           <div>
             <FieldLabel>Trade Date</FieldLabel>
-            <input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="w-full px-4 py-4 text-base border font-bold font-mono-data" style={whiteInputStyle} />
+            <input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="w-full px-4 py-3 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
           </div>
           <div>
             <FieldLabel>Entry Time</FieldLabel>
             <div className="flex">
-              <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="09:30:00" className="flex-1 min-w-0 px-4 py-4 text-base border-y border-l font-bold font-mono-data" style={{ ...whiteInputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
+              <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="09:30:00" className="flex-1 min-w-0 px-4 py-3 text-sm border-y border-l font-bold font-mono-data" style={{ ...whiteInputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
               <NowButton onClick={() => update('entryTime', getNowTime())} />
             </div>
           </div>
           <div>
             <FieldLabel optional>Exit Time</FieldLabel>
             <div className="flex">
-              <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="15:45:00" className="flex-1 min-w-0 px-4 py-4 text-base border-y border-l font-bold font-mono-data" style={{ ...whiteInputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
+              <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="15:45:00" className="flex-1 min-w-0 px-4 py-3 text-sm border-y border-l font-bold font-mono-data" style={{ ...whiteInputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
               <NowButton onClick={() => update('exitTime', getNowTime())} />
             </div>
           </div>
@@ -441,7 +441,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             <select
               value={form.mistake}
               onChange={e => update('mistake', e.target.value)}
-              className="w-full px-4 py-4 text-base border cursor-pointer font-bold focus:ring-1 focus:ring-[var(--border-active)] outline-none"
+              className="w-full px-4 py-3 text-sm border cursor-pointer font-bold focus:ring-1 focus:ring-[var(--border-active)] outline-none"
               style={{ ...inputStyle, textOverflow: 'ellipsis' }}
             >
               {MISTAKES.map(m => <option key={m} value={m}>{m}</option>)}
@@ -449,11 +449,11 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           </div>
           <div className="col-span-1 sm:col-span-2 lg:col-span-2">
             <FieldLabel optional>Image URL</FieldLabel>
-            <input value={form.imageUrl} onChange={e => update('imageUrl', e.target.value)} placeholder="https://imgur.com/..." className="w-full px-4 py-4 text-base border font-bold" style={whiteInputStyle} />
+            <input value={form.imageUrl} onChange={e => update('imageUrl', e.target.value)} placeholder="https://imgur.com/..." className="w-full px-4 py-3 text-sm border font-bold" style={whiteInputStyle} />
           </div>
           <div className="col-span-1 sm:col-span-2 lg:col-span-4">
             <FieldLabel optional>Notes</FieldLabel>
-            <input value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Add any session notes here..." className="w-full px-4 py-4 text-base border font-bold" style={whiteInputStyle} />
+            <input value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Add any session notes here..." className="w-full px-4 py-3 text-sm border font-bold" style={whiteInputStyle} />
           </div>
         </div>
         {renderPnlPreview()}
@@ -473,27 +473,27 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
       {/* Step 1 — WHAT */}
       {step === 0 && (
         <div className="space-y-4 fade-in">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-end">
             <div>
               <FieldLabel>Ticker symbol</FieldLabel>
               <input 
                 value={form.ticker} 
                 onChange={e => update('ticker', e.target.value.toUpperCase())} 
                 placeholder="E.G. AAPL" 
-                className="w-full px-4 py-4 text-sm border uppercase font-bold" 
+                className="w-full px-4 py-4 text-[13px] border uppercase font-bold" 
                 style={whiteInputStyle} 
                 autoFocus 
               />
             </div>
             <div>
               <FieldLabel>Asset Class</FieldLabel>
-              <select value={form.assetClass} onChange={e => update('assetClass', e.target.value)} className="w-full px-4 py-4 text-sm border cursor-pointer font-bold" style={inputStyle}>
+              <select value={form.assetClass} onChange={e => update('assetClass', e.target.value)} className="w-full px-4 py-4 text-[13px] border cursor-pointer font-bold" style={inputStyle}>
                 {ASSET_CLASSES.map(a => <option key={a} value={a}>{a.toUpperCase()}</option>)}
               </select>
             </div>
             <div>
               <FieldLabel>Direction</FieldLabel>
-              <select value={form.direction} onChange={e => update('direction', e.target.value)} className="w-full px-4 py-4 text-sm border cursor-pointer font-bold" style={inputStyle}>
+              <select value={form.direction} onChange={e => update('direction', e.target.value)} className="w-full px-4 py-4 text-[13px] border cursor-pointer font-bold" style={inputStyle}>
                 {['Long', 'Short'].map(d => <option key={d} value={d}>{d.toUpperCase()}</option>)}
               </select>
             </div>
@@ -503,7 +503,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                 value={form.strategy} 
                 onChange={e => update('strategy', e.target.value)} 
                 placeholder="E.G. BREAKOUT" 
-                className="w-full px-4 py-4 text-sm border font-bold" 
+                className="w-full px-4 py-4 text-[13px] border font-bold" 
                 style={whiteInputStyle} 
               />
             </div>
@@ -512,7 +512,7 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           {form.assetClass === 'Future' && (
             <div className="fade-in max-w-xs">
               <FieldLabel>Tick Multiplier</FieldLabel>
-              <input type="number" value={form.tickMultiplier} onChange={e => update('tickMultiplier', e.target.value)} placeholder="e.g. 50" className="w-full px-4 py-4 text-sm border font-bold" style={whiteInputStyle} />
+              <input type="number" value={form.tickMultiplier} onChange={e => update('tickMultiplier', e.target.value)} placeholder="e.g. 50" className="w-full px-4 py-4 text-[13px] border font-bold" style={whiteInputStyle} />
             </div>
           )}
 
@@ -559,23 +559,23 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
           </div>
 
           {!form.advancedExecution ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               <div>
                 <FieldLabel>Entry Price ($)</FieldLabel>
-                <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} autoFocus />
+                <input type="number" step="any" value={form.entryPrice} onChange={e => update('entryPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} autoFocus />
               </div>
               <div>
                 <FieldLabel optional>Stop Price</FieldLabel>
-                <input type="number" step="any" value={form.stopPrice} onChange={e => update('stopPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={{...whiteInputStyle, borderColor: validateStop(form.entryPrice, form.stopPrice, form.direction) ? 'var(--color-loss)' : whiteInputStyle.borderColor}} />
+                <input type="number" step="any" value={form.stopPrice} onChange={e => update('stopPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-[13px] border font-bold font-mono-data" style={{...whiteInputStyle, borderColor: validateStop(form.entryPrice, form.stopPrice, form.direction) ? 'var(--color-loss)' : whiteInputStyle.borderColor}} />
                 {validateStop(form.entryPrice, form.stopPrice, form.direction) && <div className="text-[10px] mt-1 font-bold" style={{color: 'var(--color-loss)'}}>{validateStop(form.entryPrice, form.stopPrice, form.direction)}</div>}
               </div>
               <div>
                 <FieldLabel optional>Exit Price ($)</FieldLabel>
-                <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+                <input type="number" step="any" value={form.exitPrice} onChange={e => update('exitPrice', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} />
               </div>
               <div>
                 <FieldLabel>Shares / Qty</FieldLabel>
-                <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+                <input type="number" value={form.qty} onChange={e => update('qty', e.target.value)} placeholder="100" className="w-full px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} />
               </div>
               {renderRiskReadout()}
             </div>
@@ -594,8 +594,8 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                   <div className="space-y-3 flex-1">
                     {form.entryLegs.map((leg, i) => (
                       <div key={`entry-${i}`} className="flex items-center gap-3">
-                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('entryLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
-                        <input type="number" value={leg.qty} onChange={e => handleLegChange('entryLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('entryLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} />
+                        <input type="number" value={leg.qty} onChange={e => handleLegChange('entryLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} />
                         <button type="button" onClick={() => removeLeg('entryLegs', i)} className="px-4 flex items-center justify-center text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] transition-colors bg-[var(--bg-app)]">
                           <X size={16} />
                         </button>
@@ -625,8 +625,8 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
                   <div className="space-y-3 flex-1">
                     {form.exitLegs.map((leg, i) => (
                       <div key={`exit-${i}`} className="flex items-center gap-3">
-                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('exitLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
-                        <input type="number" value={leg.qty} onChange={e => handleLegChange('exitLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+                        <input type="number" step="any" value={leg.price} onChange={e => handleLegChange('exitLegs', i, 'price', e.target.value)} placeholder="Price ($)" className="w-1/2 px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} />
+                        <input type="number" value={leg.qty} onChange={e => handleLegChange('exitLegs', i, 'qty', e.target.value)} placeholder="Shares/Qty" className="w-1/2 px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} />
                         <button type="button" onClick={() => removeLeg('exitLegs', i)} className="px-4 flex items-center justify-center text-[var(--text-secondary)] border border-transparent hover:border-[var(--color-loss)] hover:text-[var(--color-loss)] transition-colors bg-[var(--bg-app)]">
                           <X size={16} />
                         </button>
@@ -643,49 +643,49 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div>
               <FieldLabel>Trade Date</FieldLabel>
-              <input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={inputStyle} />
+              <input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="w-full px-4 py-4 text-[13px] border font-bold font-mono-data" style={inputStyle} />
             </div>
             <div>
               <FieldLabel>Entry Time</FieldLabel>
               <div className="flex">
-                <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-4 py-4 text-sm border-y border-l font-bold font-mono-data" style={{ ...inputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
+                <input value={form.entryTime} onChange={e => update('entryTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-4 py-4 text-[13px] border-y border-l font-bold font-mono-data" style={{ ...inputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
                 <NowButton onClick={() => update('entryTime', getNowTime())} />
               </div>
             </div>
             <div>
               <FieldLabel>Exit Time</FieldLabel>
               <div className="flex">
-                <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-4 py-4 text-sm border-y border-l font-bold font-mono-data" style={{ ...inputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
+                <input value={form.exitTime} onChange={e => update('exitTime', e.target.value)} placeholder="HH:MM:SS" className="flex-1 min-w-0 px-4 py-4 text-[13px] border-y border-l font-bold font-mono-data" style={{ ...inputStyle, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} />
                 <NowButton onClick={() => update('exitTime', getNowTime())} />
               </div>
             </div>
             <div>
               <FieldLabel>Rule / Mistake</FieldLabel>
-              <select value={form.mistake} onChange={e => update('mistake', e.target.value)} className="w-full px-4 py-4 text-sm border cursor-pointer font-bold font-mono-data" style={inputStyle}>
+              <select value={form.mistake} onChange={e => update('mistake', e.target.value)} className="w-full px-4 py-4 text-[13px] border cursor-pointer font-bold font-mono-data" style={inputStyle}>
                 {MISTAKES.map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
               </select>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div>
               <FieldLabel>Fees accrued</FieldLabel>
-              <input type="number" step="any" value={form.fees} onChange={e => update('fees', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+              <input type="number" step="any" value={form.fees} onChange={e => update('fees', e.target.value)} placeholder="0.00" className="w-full px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} />
             </div>
             <div>
               <FieldLabel optional>Net P&L Override</FieldLabel>
-              <input type="number" step="any" value={form.netPnlOverride} onChange={e => update('netPnlOverride', e.target.value)} placeholder="Auto" className="w-full px-4 py-4 text-sm border font-bold font-mono-data" style={whiteInputStyle} />
+              <input type="number" step="any" value={form.netPnlOverride} onChange={e => update('netPnlOverride', e.target.value)} placeholder="Auto" className="w-full px-4 py-4 text-[13px] border font-bold font-mono-data" style={whiteInputStyle} />
             </div>
             <div>
               <FieldLabel optional>Image URL</FieldLabel>
-              <input value={form.imageUrl} onChange={e => update('imageUrl', e.target.value)} placeholder="https://imgur.com/..." className="w-full px-4 py-4 text-sm border font-bold" style={whiteInputStyle} />
+              <input value={form.imageUrl} onChange={e => update('imageUrl', e.target.value)} placeholder="https://imgur.com/..." className="w-full px-4 py-4 text-[13px] border font-bold" style={whiteInputStyle} />
             </div>
             <div>
               <FieldLabel optional>Notes / reflections</FieldLabel>
-              <input value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Session notes..." className="w-full px-4 py-4 text-sm border font-bold" style={whiteInputStyle} />
+              <input value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Session notes..." className="w-full px-4 py-4 text-[13px] border font-bold" style={whiteInputStyle} />
             </div>
           </div>
 
