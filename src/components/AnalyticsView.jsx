@@ -18,6 +18,32 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
+/* ─────────────────────────────────────────────────
+   Summary stat card — mirrors Dashboard's style
+   ───────────────────────────────────────────────── */
+const SummaryCard = ({ icon, label, value, valueColor, sub }) => (
+  <div
+    style={{
+      background: 'var(--bg-card)',
+      border: '1px solid var(--border-card)',
+      borderRadius: 16,
+      padding: '22px 24px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 8,
+    }}
+  >
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+      {icon}
+      <span>{label}</span>
+    </div>
+    <div style={{ fontSize: 22, fontWeight: 900, color: valueColor || 'var(--text-primary)', fontFamily: "'JetBrains Mono', monospace", lineHeight: 1.2 }}>
+      {value}
+    </div>
+    {sub && <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>{sub}</div>}
+  </div>
+);
+
 export default function AnalyticsView({ allTrades }) {
   const closedTrades = useMemo(() => {
     const list = [];
@@ -276,27 +302,24 @@ export default function AnalyticsView({ allTrades }) {
   }, [closedTrades]);
 
   return (
-    <div className="h-full w-full fade-in overflow-y-auto bg-[var(--bg-app)] pb-16">
-      
-      {/* ── HEADER ── */}
-      <div className="p-6 md:p-8 border-b border-[var(--border-card)] bg-[var(--bg-card)]/40 backdrop-blur-sm">
-        <div className="max-w-[1600px] mx-auto flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-[var(--bg-card)] border border-[var(--border-card)] shrink-0 shadow-sm">
-            <Activity className="text-[var(--text-accent)]" size={24} />
+    <div className="h-full w-full fade-in overflow-y-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '28px 24px 48px', display: 'flex', flexDirection: 'column', gap: 28 }}>
+
+        {/* ══════════════════════════════════════════════
+            PAGE HEADER
+            ══════════════════════════════════════════════ */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ width: 48, height: 48, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-card)', border: '1px solid var(--border-active)', flexShrink: 0 }}>
+            <Activity size={24} style={{ color: 'var(--text-accent)' }} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-black text-[var(--text-dark)] tracking-tight">
-              Institutional Analytics
-            </h1>
-            <p className="text-sm text-[var(--text-secondary)] mt-1 font-medium">Advanced performance metrics, equity curve trajectory, and trade distributions.</p>
+            <h1 style={{ fontSize: 26, fontWeight: 900, color: 'var(--text-dark)', letterSpacing: '-0.02em', margin: 0, lineHeight: 1.2 }}>Institutional Analytics</h1>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '4px 0 0', fontWeight: 500 }}>Advanced performance metrics, equity curve trajectory, and trade distributions.</p>
           </div>
         </div>
-      </div>
-
-      <div className="p-6 md:p-8 max-w-[1600px] mx-auto space-y-8">
         
         {!hasData ? (
-          <div className="py-24 text-center flex flex-col items-center justify-center glass-panel rounded-2xl p-8 border border-[var(--border-card)]">
+          <div className="glass-panel" style={{ padding: '64px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 16 }}>
             <BarChart3 size={48} className="text-[var(--text-secondary)] opacity-50 mb-4" />
             <p className="text-xl font-bold text-[var(--text-secondary)]">Insufficient Data</p>
             <p className="text-sm text-[var(--text-secondary)] mt-2">Log trades to generate equity curves and distributions.</p>
@@ -305,11 +328,11 @@ export default function AnalyticsView({ allTrades }) {
           <>
             {/* ── MISTAKE TAX ROW ── */}
             {closedTrades.length < 5 ? (
-              <div className="glass-panel p-8 rounded-2xl border" style={{ borderColor: 'color-mix(in srgb, var(--color-loss) 35%, transparent)' }}>
+              <div className="glass-panel" style={{ borderRadius: 16, padding: '24px', borderColor: 'color-mix(in srgb, var(--color-loss) 35%, transparent)' }}>
                 <p className="text-center text-[var(--text-secondary)] font-bold">Log at least 5 trades to see where your P&L leaks.</p>
               </div>
             ) : (
-              <div className="glass-panel p-6 md:p-8 rounded-2xl border" style={{ borderColor: 'color-mix(in srgb, var(--color-loss) 35%, transparent)' }}>
+              <div className="glass-panel" style={{ borderRadius: 16, padding: '24px', borderColor: 'color-mix(in srgb, var(--color-loss) 35%, transparent)' }}>
                 <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">MISTAKE TAX</p>
                 <p className="font-mono-data font-black text-[var(--color-loss)] leading-none" style={{ fontSize: 'clamp(32px, 6vw, 48px)' }}>
                   {formatCurrency(mistakeTax)}
@@ -352,64 +375,24 @@ export default function AnalyticsView({ allTrades }) {
             )}
 
             {/* ── KPI ROW ── */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Net Equity</p>
-                <p className={`text-2xl font-black font-mono-data truncate ${currentEquity >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`} title={formatCurrency(currentEquity)}>
-                  {formatCurrency(currentEquity)}
-                </p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Win Rate</p>
-                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
-                  {formatPercent(statsSummary.winRate)}
-                </p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Profit Factor</p>
-                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
-                  {statsSummary.profitFactor === Infinity ? '∞' : statsSummary.profitFactor.toFixed(2)}
-                </p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Payoff Ratio</p>
-                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
-                  {advancedRatios.payoff === Infinity ? '∞' : advancedRatios.payoff !== null ? advancedRatios.payoff.toFixed(2) : '—'}
-                </p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Sharpe Ratio</p>
-                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
-                  {advancedRatios.sharpe !== null ? advancedRatios.sharpe.toFixed(2) : '—'}
-                </p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Sortino</p>
-                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
-                  {advancedRatios.sortino !== null ? advancedRatios.sortino.toFixed(2) : '—'}
-                </p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Recovery</p>
-                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">
-                  {advancedRatios.recovery !== null ? advancedRatios.recovery.toFixed(2) : '—'}
-                </p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Max Drawdown</p>
-                <p className="text-2xl font-black font-mono-data text-[var(--color-loss)] truncate" title={formatCurrency(maxHistoricalDrawdown)}>
-                  {formatCurrency(maxHistoricalDrawdown)}
-                </p>
-              </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+              <SummaryCard label="Net Equity" value={formatCurrency(currentEquity)} valueColor={currentEquity >= 0 ? 'var(--color-profit)' : 'var(--color-loss)'} icon={<Activity size={14} />} />
+              <SummaryCard label="Win Rate" value={formatPercent(statsSummary.winRate)} icon={<Target size={14} />} />
+              <SummaryCard label="Profit Factor" value={statsSummary.profitFactor === Infinity ? '∞' : statsSummary.profitFactor.toFixed(2)} icon={<TrendingUp size={14} />} />
+              <SummaryCard label="Payoff Ratio" value={advancedRatios.payoff === Infinity ? '∞' : advancedRatios.payoff !== null ? advancedRatios.payoff.toFixed(2) : '—'} icon={<TrendingUp size={14} />} />
+              <SummaryCard label="Sharpe Ratio" value={advancedRatios.sharpe !== null ? advancedRatios.sharpe.toFixed(2) : '—'} icon={<Activity size={14} />} />
+              <SummaryCard label="Sortino" value={advancedRatios.sortino !== null ? advancedRatios.sortino.toFixed(2) : '—'} icon={<Activity size={14} />} />
+              <SummaryCard label="Recovery" value={advancedRatios.recovery !== null ? advancedRatios.recovery.toFixed(2) : '—'} icon={<Target size={14} />} />
+              <SummaryCard label="Max Drawdown" value={formatCurrency(maxHistoricalDrawdown)} valueColor="var(--color-loss)" icon={<AlertTriangle size={14} />} />
             </div>
 
             {/* ── EQUITY CURVE CHART ── */}
-            <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)]">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)] flex items-center gap-2.5">
+            <div className="glass-panel" style={{ borderRadius: 16, padding: '24px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 24 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-dark)', letterSpacing: '-0.01em' }}>
                   <TrendingUp size={18} className="text-[var(--color-cyan)]" />
                   Cumulative Equity Curve
-                </h2>
+                </span></div>
                 {currentDrawdown < 0 && (
                   <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--bg-badge-loss)] border border-[var(--border-loss)]">
                     <AlertTriangle size={14} className="text-[var(--color-loss)] shrink-0" />
@@ -468,35 +451,21 @@ export default function AnalyticsView({ allTrades }) {
             </div>
 
             {/* ── STREAKS & STATS ROW ── */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Current Streak</p>
-                <p className={`text-2xl font-black font-mono-data truncate ${streaks.currentWinStreak > 0 ? 'text-[var(--color-profit)]' : streaks.currentLossStreak > 0 ? 'text-[var(--color-loss)]' : 'text-[var(--text-dark)]'}`}>
-                  {streaks.currentWinStreak > 0 ? `${streaks.currentWinStreak} Wins` : streaks.currentLossStreak > 0 ? `${streaks.currentLossStreak} Losses` : '0'}
-                </p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Max Win Streak</p>
-                <p className="text-2xl font-black font-mono-data text-[var(--color-profit)] truncate">{streaks.maxWinStreak} Trades</p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Max Loss Streak</p>
-                <p className="text-2xl font-black font-mono-data text-[var(--color-loss)] truncate">{streaks.maxLossStreak} Trades</p>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl border border-[var(--border-card)] flex flex-col justify-between">
-                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Total Trades</p>
-                <p className="text-2xl font-black font-mono-data text-[var(--text-dark)] truncate">{statsSummary.totalTrades}</p>
-              </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+              <SummaryCard label="Current Streak" value={streaks.currentWinStreak > 0 ? `${streaks.currentWinStreak} Wins` : streaks.currentLossStreak > 0 ? `${streaks.currentLossStreak} Losses` : '0'} valueColor={streaks.currentWinStreak > 0 ? 'var(--color-profit)' : streaks.currentLossStreak > 0 ? 'var(--color-loss)' : 'var(--text-dark)'} icon={<Activity size={14} />} />
+              <SummaryCard label="Max Win Streak" value={`${streaks.maxWinStreak} Trades`} valueColor="var(--color-profit)" icon={<TrendingUp size={14} />} />
+              <SummaryCard label="Max Loss Streak" value={`${streaks.maxLossStreak} Trades`} valueColor="var(--color-loss)" icon={<TrendingUp size={14} style={{ transform: 'scaleY(-1)' }}/>} />
+              <SummaryCard label="Total Trades" value={statsSummary.totalTrades} icon={<Target size={14} />} />
             </div>
 
             {/* ── DAY OF WEEK & MONTHLY P&L ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: 20 }}>
               
               {/* Day of Week */}
-              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)] flex flex-col">
-                <div className="flex items-center gap-2.5 mb-6">
+              <div className="glass-panel" style={{ borderRadius: 16, padding: '24px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
                   <BarChart3 size={18} className="text-[var(--text-accent)]" />
-                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Performance by Day</h2>
+                  <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-dark)', letterSpacing: '-0.01em' }}>Performance by Day</span>
                 </div>
                 
                 <div className="w-full h-[300px]">
@@ -539,11 +508,11 @@ export default function AnalyticsView({ allTrades }) {
               </div>
 
               {/* Monthly P&L Grid */}
-              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)] flex flex-col justify-between">
+              <div className="glass-panel" style={{ borderRadius: 16, padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
-                  <div className="flex items-center gap-2.5 mb-6">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
                     <Target size={18} className="text-[var(--text-accent)]" />
-                    <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Monthly Returns</h2>
+                    <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-dark)', letterSpacing: '-0.01em' }}>Monthly Returns</span>
                   </div>
                   
                   <div className="overflow-x-auto w-full">
@@ -582,12 +551,12 @@ export default function AnalyticsView({ allTrades }) {
             </div>
 
             {/* ── TICKER & STRATEGY ROW ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: 20 }}>
               {/* Tickers */}
-              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)]">
-                <div className="flex items-center gap-2.5 mb-6">
+              <div className="glass-panel" style={{ borderRadius: 16, padding: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
                   <Activity size={18} className="text-[var(--text-accent)]" />
-                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Edge by Ticker</h2>
+                  <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-dark)', letterSpacing: '-0.01em' }}>Edge by Ticker</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
@@ -616,10 +585,10 @@ export default function AnalyticsView({ allTrades }) {
               </div>
               
               {/* Strategies */}
-              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)]">
-                <div className="flex items-center gap-2.5 mb-6">
+              <div className="glass-panel" style={{ borderRadius: 16, padding: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
                   <Target size={18} className="text-[var(--text-accent)]" />
-                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Edge by Strategy</h2>
+                  <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-dark)', letterSpacing: '-0.01em' }}>Edge by Strategy</span>
                 </div>
                 <div className="space-y-2">
                   {strategyPerformance.slice(0, 5).map(s => (
@@ -638,13 +607,13 @@ export default function AnalyticsView({ allTrades }) {
             </div>
 
             {/* ── DISTRIBUTIONS ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: 20 }}>
               
               {/* Size Distribution */}
-              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)]">
-                <div className="flex items-center gap-2.5 mb-6">
+              <div className="glass-panel" style={{ borderRadius: 16, padding: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
                   <BarChart3 size={18} className="text-[var(--text-accent)]" />
-                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">P&L Distribution</h2>
+                  <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-dark)', letterSpacing: '-0.01em' }}>P&L Distribution</span>
                 </div>
                 
                 <div className="w-full h-[300px]">
@@ -692,10 +661,10 @@ export default function AnalyticsView({ allTrades }) {
               </div>
 
               {/* Advanced Metrics Table */}
-              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)]">
-                <div className="flex items-center gap-2.5 mb-6">
+              <div className="glass-panel" style={{ borderRadius: 16, padding: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
                   <Target size={18} className="text-[var(--text-accent)]" />
-                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Performance Matrix</h2>
+                  <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-dark)', letterSpacing: '-0.01em' }}>Performance Matrix</span>
                 </div>
                 
                 <div className="space-y-3">
@@ -716,14 +685,14 @@ export default function AnalyticsView({ allTrades }) {
             </div>
 
             {/* ── SESSION BREAKDOWN & R-MULTIPLE ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: 20 }}>
               
               {/* Session Breakdown */}
-              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)] flex flex-col justify-between">
+              <div className="glass-panel" style={{ borderRadius: 16, padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
-                  <div className="flex items-center gap-2.5 mb-6">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
                     <Clock size={18} className="text-[var(--text-accent)]" />
-                    <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">Performance by Session</h2>
+                    <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-dark)', letterSpacing: '-0.01em' }}>Performance by Session</span>
                   </div>
                   <div className="overflow-x-auto w-full">
                     <table className="w-full text-left border-collapse min-w-[500px]">
@@ -754,10 +723,10 @@ export default function AnalyticsView({ allTrades }) {
               </div>
 
               {/* R-Multiple Distribution */}
-              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-[var(--border-card)] flex flex-col">
-                <div className="flex items-center gap-2.5 mb-6">
+              <div className="glass-panel" style={{ borderRadius: 16, padding: '24px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
                   <Target size={18} className="text-[var(--text-accent)]" />
-                  <h2 className="text-base font-bold uppercase tracking-wider text-[var(--text-dark)]">R-Multiple Distribution</h2>
+                  <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-dark)', letterSpacing: '-0.01em' }}>R-Multiple Distribution</span>
                 </div>
                 
                 {rDistributionData.stats.rCount > 0 ? (
