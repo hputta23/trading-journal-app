@@ -423,8 +423,14 @@ export default function App() {
   return (
     <div className="flex flex-col h-[100dvh] w-screen overflow-hidden" style={{ background: 'var(--bg-app)' }}>
       {isDemo && (
-        <div className="bg-[var(--bg-badge-loss)] text-[var(--color-loss)] text-[10px] font-bold uppercase tracking-widest text-center py-1 border-b border-[var(--border-loss)]">
-          Demo Mode — Data will not be saved
+        <div className="bg-[var(--bg-badge-loss)] text-[var(--color-loss)] text-[11px] font-bold uppercase tracking-widest flex items-center justify-center gap-4 py-1.5 border-b border-[var(--border-loss)] shadow-sm relative z-50">
+          <span>🧪 Playground Mode — Data will not be saved</span>
+          <button 
+            onClick={() => window.location.reload()}
+            className="bg-[var(--color-loss)] text-white px-3 py-0.5 rounded cursor-pointer hover:opacity-80 transition-opacity"
+          >
+            EXIT
+          </button>
         </div>
       )}
       
