@@ -3,6 +3,8 @@ import Header from './components/Header';
 import SidebarStats from './components/SidebarStats';
 import SettingsView from './components/SettingsView';
 import CapitalView from './components/CapitalView';
+import CommandPalette from './components/CommandPalette';
+import RiskSizerModal from './components/RiskSizerModal';
 import DashboardView from './components/DashboardView';
 import JournalView from './components/JournalView';
 import TradesView from './components/TradesView';
@@ -57,6 +59,8 @@ export default function App() {
   const [syncStatus, setSyncStatus] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showGlobalTradeModal, setShowGlobalTradeModal] = useState(false);
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [showRiskSizer, setShowRiskSizer] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
 
   const handleLoadDemo = useCallback(() => {
@@ -675,6 +679,20 @@ export default function App() {
           </div>
         </div>
       )}
+      
+      <CommandPalette 
+        isOpen={showCommandPalette}
+        onClose={() => setShowCommandPalette(false)}
+        onNavigate={handleTabChange}
+        onOpenNewTrade={() => { setEditingTrade(null); setShowGlobalTradeModal(true); setMobileMenuOpen(false); }}
+        onOpenRiskSizer={() => setShowRiskSizer(true)}
+      />
+
+      <RiskSizerModal
+        isOpen={showRiskSizer}
+        onClose={() => setShowRiskSizer(false)}
+      />
+
       <Toaster 
         position="top-right" 
         toastOptions={{
