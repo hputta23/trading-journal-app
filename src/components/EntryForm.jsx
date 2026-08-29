@@ -521,8 +521,15 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               type="button"
               onClick={() => setStep(1)}
               disabled={!canAdvanceStep1}
-              className="px-6 py-3.5 text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-[var(--border-active)] disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
-              style={{ background: 'var(--border-active)', color: 'var(--bg-app)', borderRadius: 10, ...fontStyle }}
+              className="px-6 py-3.5 text-xs font-bold uppercase tracking-widest transition-all duration-200 cursor-pointer"
+              style={{ 
+                background: canAdvanceStep1 ? 'var(--border-active)' : 'var(--bg-sidebar)', 
+                color: canAdvanceStep1 ? 'var(--bg-app)' : 'var(--text-secondary)',
+                border: canAdvanceStep1 ? '1px solid var(--border-active)' : '1px solid var(--border-card)',
+                borderRadius: 10,
+                opacity: canAdvanceStep1 ? 1 : 0.6,
+                ...fontStyle 
+              }}
             >
               Next: HOW [02/03]
             </button>
@@ -696,8 +703,15 @@ export default function EntryForm({ onSubmit, editingTrade, onCancelEdit, quickE
               type="button"
               onClick={() => setStep(2)}
               disabled={!canAdvanceStep2}
-              className="px-6 py-3.5 text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-[var(--border-active)] disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
-              style={{ background: 'var(--border-active)', color: 'var(--bg-app)', borderRadius: 10, ...fontStyle }}
+              className="px-6 py-3.5 text-xs font-bold uppercase tracking-widest transition-all duration-200 cursor-pointer"
+              style={{ 
+                background: canAdvanceStep2 ? 'var(--border-active)' : 'var(--bg-sidebar)', 
+                color: canAdvanceStep2 ? 'var(--bg-app)' : 'var(--text-secondary)',
+                border: canAdvanceStep2 ? '1px solid var(--border-active)' : '1px solid var(--border-card)',
+                borderRadius: 10,
+                opacity: canAdvanceStep2 ? 1 : 0.6,
+                ...fontStyle 
+              }}
             >
               Next: Confirm [03/03]
             </button>

@@ -92,12 +92,21 @@ export const generateDemoTrades = () => {
 
 export const generateDemoJournals = (tradesMap) => {
   const journals = {};
-  const dates = Object.keys(tradesMap);
+  const dates = Object.keys(tradesMap).sort((a, b) => new Date(a) - new Date(b));
   
+  let currentBalance = 100000; // Starting capital
+
   dates.forEach(date => {
+    // Add up netPnl for the day to update balance
+    const dailyNetPnl = tradesMap[date].reduce((sum, t) => sum + (t.netPnl || 0), 0);
+    currentBalance += dailyNetPnl;
+
     // Generate a journal for about 70% of traded days
-    if (Math.random() > 0.3) {
-      journals[date] = {
+    const hasJournal = Math.random() > 0.3;
+    
+    journals[date] = {
+      accountBalance: currentBalance, // Populate capital tracking
+      ...(hasJournal ? {
         grade: ['A+', 'A', 'B', 'C', 'D', 'F'][Math.floor(Math.random() * 6)],
         discipline: Math.floor(Math.random() * 5) + 1,
         mood: ['Focused', 'Calm', 'Tired', 'Anxious', 'Frustrated'][Math.floor(Math.random() * 5)],
@@ -107,8 +116,8 @@ export const generateDemoJournals = (tradesMap) => {
         mistakes: Math.random() > 0.5 ? '• Chased one entry slightly' : '',
         postMarketReview: 'Overall a decent session. Followed my plan for the most part.',
         lessonsLearned: 'Patience pays off. Let the setups come to you.'
-      };
-    }
+      } : {})
+    };
   });
   
   return journals;
