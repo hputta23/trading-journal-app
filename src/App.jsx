@@ -299,10 +299,10 @@ export default function App() {
   // Apply theme to document element
   useEffect(() => {
     if (!session) {
-      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.setAttribute('data-theme', 'light');
       return;
     }
-    const currentTheme = settings.theme || 'dark';
+    const currentTheme = settings.theme || 'light';
     document.documentElement.setAttribute('data-theme', currentTheme);
   }, [settings.theme, session]);
 
@@ -383,7 +383,7 @@ export default function App() {
 
   const handleToggleTheme = useCallback(() => {
     const cycle = { dark: 'light', light: 'monochrome', monochrome: 'dark' };
-    const nextTheme = cycle[settings.theme] || 'dark';
+    const nextTheme = cycle[settings.theme] || 'light';
     const updated = { ...settings, theme: nextTheme };
     setSettings(updated);
     saveSettings(updated);

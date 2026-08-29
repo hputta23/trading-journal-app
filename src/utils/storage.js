@@ -29,7 +29,7 @@ export const saveTrades = (trades) => {
 export const loadSettings = () => {
   const storage = getStorage();
   const data = storage.getItem(SETTINGS_KEY);
-  return data || { googleSheetId: '', quickEntry: false, theme: 'dark' };
+  return data || { googleSheetId: '', quickEntry: false, theme: 'light' };
 };
 
 export const saveSettings = (settings) => {
