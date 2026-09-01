@@ -26,7 +26,7 @@ export const logActivity = (actionType, description) => {
   saveActivityLogs(updatedLogs);
   
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new Event('activity_log_updated'));
+    window.dispatchEvent(new Event('trading-journal-log-updated'));
   }
   
   return updatedLogs;
@@ -35,6 +35,6 @@ export const logActivity = (actionType, description) => {
 export const clearActivityLogs = () => {
   saveActivityLogs([]);
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new Event('activity_log_updated'));
+    window.dispatchEvent(new Event('trading-journal-log-updated'));
   }
 };
