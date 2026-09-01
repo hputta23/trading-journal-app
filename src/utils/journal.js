@@ -28,7 +28,7 @@ export const saveJournalEntry = (date, entry) => {
   saveJournalEntries(entries);
   logActivity('JOURNAL_UPDATED', `Updated daily journal for ${date}`);
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new Event('journal_updated'));
+    window.dispatchEvent(new Event('trading-journal-updated'));
   }
   return entries;
 };
