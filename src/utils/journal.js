@@ -44,15 +44,24 @@ export const emptyJournalEntry = {
   maxTradesForDay: '',       // Max # of trades allowed today
   preMarketPlan: '',         // Free-form notes / bias / catalysts
   sessionGoals: [],          // [{id, text, achieved: null|true|false}]
+  tags: [],                  // Daily tags (e.g., #fomc, #choppy)
+  checklist: {               // Pre-market checklist
+    checkedNews: false,
+    reviewedPlaybook: false,
+    setHardStop: false,
+    mentalClear: false,
+  },
   // ── Post-session fields ──
   mood: 'neutral',
   discipline: 3,
+  tiltScore: 1,              // Tilt scale 1-10 (1=Calm, 10=Full Tilt)
   marketConditions: 'range',
   postMarketReview: '',
   lessonsLearned: '',
   mistakes: '',
   whatWorked: '',
   grade: '',
+  imageUrl: '',              // Chart of the day image URL
 };
 
 export const MOODS = [

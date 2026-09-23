@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ClipboardList } from 'lucide-react';
+import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ClipboardList, Image, Hash, CheckSquare, Thermometer, BarChart2 } from 'lucide-react';
 import { MOODS, MARKET_CONDITIONS, GRADES, loadJournalEntries, saveJournalEntry, emptyJournalEntry } from '../utils/journal';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 import { toast } from 'react-hot-toast';
@@ -57,6 +57,22 @@ const FieldLabel = ({ children, color }) => (
 export default function JournalView({ currentDate, todayTrades, onEditTrade, onSelectDate }) {
   const [entry, setEntry] = useState({ ...emptyJournalEntry });
   const [newGoalText, setNewGoalText] = useState('');
+  const [tagInputText, setTagInputText] = useState('');
+
+  const handleAddTag = (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const val = tagInputText.trim().replace(/^#/, '');
+      if (val && !(entry.tags || []).includes(val)) {
+        updateField('tags', [...(entry.tags || []), val]);
+      }
+      setTagInputText('');
+    }
+  };
+
+  const removeTag = (tag) => {
+    updateField('tags', (entry.tags || []).filter(t => t !== tag));
+  };
 
   useEffect(() => {
     const entries = loadJournalEntries();
@@ -108,6 +124,10 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
       lessonsLearned: (entry.lessonsLearned || '').trim().replace(/<[^>]*>/g, ''),
       mistakes: (entry.mistakes || '').trim().replace(/<[^>]*>/g, ''),
       whatWorked: (entry.whatWorked || '').trim().replace(/<[^>]*>/g, ''),
+      imageUrl: (entry.imageUrl || '').trim(),
+      tags: entry.tags || [],
+      checklist: entry.checklist || { checkedNews: false, reviewedPlaybook: false, setHardStop: false, mentalClear: false },
+      tiltScore: parseInt(entry.tiltScore) || 1,
     };
     saveJournalEntry(currentDate, sanitized);
     toast.success('Journal Saved');
@@ -254,6 +274,25 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
               onFocus={e => e.target.style.borderBottom = '2px solid var(--border-active)'}
               onBlur={e => e.target.style.borderBottom = '2px solid var(--border-card)'}
             />
+            
+            {/* Daily Tags */}
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginTop: 16 }}>
+              <Hash size={16} style={{ color: 'var(--text-secondary)' }} />
+              {(entry.tags || []).map(tag => (
+                <div key={tag} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-input)', padding: '4px 10px', borderRadius: 8, border: '1px solid var(--border-input)', fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
+                  #{tag}
+                  <XCircle size={12} className="cursor-pointer hover:text-[var(--color-loss)] transition-colors" onClick={() => removeTag(tag)} />
+                </div>
+              ))}
+              <input
+                type="text"
+                placeholder="Add tag (e.g. #fomc) and press Enter"
+                value={tagInputText}
+                onChange={e => setTagInputText(e.target.value)}
+                onKeyDown={handleAddTag}
+                style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-primary)', fontSize: 13, minWidth: 200, ...fontStyle }}
+              />
+            </div>
           </div>
 
           {/* ════════════════════════════════════════════
@@ -350,16 +389,45 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
               </div>
             </div>
 
-            {/* ── Row 3: Notes / Thesis / Catalysts ── */}
-            <div style={{ marginBottom: 24 }}>
-              <FieldLabel>Pre-Market Thesis & Catalysts</FieldLabel>
-              <textarea
-                value={entry.preMarketPlan || ''}
-                onChange={e => updateField('preMarketPlan', e.target.value)}
-                placeholder={'Macro: Fed minutes today at 2 PM — expect volatility spike\nSector: Tech leadership strong — look for continuation\nCatalyst: NVDA guidance tonight — don\'t hold overnight\nBias: Wait for first 15-min candle to close before trading'}
-                rows={4}
-                style={{ width: '100%', padding: '14px 16px', fontSize: 13, fontWeight: 500, lineHeight: 1.7, border: '1px solid var(--border-input)', resize: 'vertical', minHeight: 110, borderRadius: 10, ...inputStyle, ...fontStyle }}
-              />
+            {/* ── Row 3: Notes / Thesis / Catalysts & Checklist ── */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 14, marginBottom: 24 }}>
+              <div>
+                <FieldLabel>Pre-Market Thesis & Catalysts</FieldLabel>
+                <textarea
+                  value={entry.preMarketPlan || ''}
+                  onChange={e => updateField('preMarketPlan', e.target.value)}
+                  placeholder={'Macro: Fed minutes today at 2 PM — expect volatility spike\nSector: Tech leadership strong — look for continuation\nCatalyst: NVDA guidance tonight — don\'t hold overnight\nBias: Wait for first 15-min candle to close before trading'}
+                  rows={4}
+                  style={{ width: '100%', padding: '14px 16px', fontSize: 13, fontWeight: 500, lineHeight: 1.7, border: '1px solid var(--border-input)', resize: 'vertical', minHeight: 110, borderRadius: 10, ...inputStyle, ...fontStyle }}
+                />
+              </div>
+              <div>
+                <FieldLabel>Daily Pre-Flight Checklist</FieldLabel>
+                <div style={{ background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 10, padding: '12px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {[
+                    { key: 'checkedNews', label: 'Checked Econ/News' },
+                    { key: 'reviewedPlaybook', label: 'Reviewed Playbook' },
+                    { key: 'setHardStop', label: 'Hard Stop in Broker' },
+                    { key: 'mentalClear', label: 'Mentally Clear & Ready' }
+                  ].map(item => {
+                    const isChecked = entry.checklist?.[item.key];
+                    return (
+                      <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600, color: isChecked ? 'var(--text-secondary)' : 'var(--text-primary)', textDecoration: isChecked ? 'line-through' : 'none' }}>
+                        <div onClick={() => {
+                          const cl = entry.checklist || { checkedNews: false, reviewedPlaybook: false, setHardStop: false, mentalClear: false };
+                          updateField('checklist', { ...cl, [item.key]: !cl[item.key] });
+                        }}>
+                          {isChecked ? <CheckSquare size={16} style={{ color: 'var(--color-profit)' }} /> : <div style={{ width: 16, height: 16, borderRadius: 4, border: '2px solid var(--border-active)' }} />}
+                        </div>
+                        <span onClick={() => {
+                          const cl = entry.checklist || { checkedNews: false, reviewedPlaybook: false, setHardStop: false, mentalClear: false };
+                          updateField('checklist', { ...cl, [item.key]: !cl[item.key] });
+                        }}>{item.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
             {/* ── Row 4: Intentions Tracker ── */}
@@ -556,6 +624,30 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                   </div>
                 </div>
 
+                {/* Tilt Score */}
+                <div style={{ marginBottom: 28 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <FieldLabel>Emotional Tilt Score</FieldLabel>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--text-secondary)' }}>
+                      {entry.tiltScore} / 10
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <Thermometer size={16} style={{ color: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--text-secondary)' }} />
+                    <input 
+                      type="range" min="1" max="10" 
+                      value={entry.tiltScore || 1} 
+                      onChange={e => updateField('tiltScore', parseInt(e.target.value))} 
+                      style={{ flex: 1, accentColor: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--color-cyan)', cursor: 'pointer' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-secondary)', marginTop: 4, fontWeight: 600 }}>
+                    <span>Flow State</span>
+                    <span>Frustrated</span>
+                    <span>Full Tilt</span>
+                  </div>
+                </div>
+
                 {/* Mood & Market Conditions */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div>
@@ -714,6 +806,35 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                     }}
                   />
                 </div>
+              </div>
+
+              {/* ── Chart of the Day ── */}
+              <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
+                <SectionHeader
+                  icon={<Image size={16} style={{ color: 'var(--text-accent)' }} />}
+                  title="Chart of the Day"
+                  subtitle="Paste a screenshot URL of your best/worst setup"
+                />
+                <input
+                  type="text"
+                  placeholder="Paste Image URL (e.g. from TradingView or Imgur)"
+                  value={entry.imageUrl || ''}
+                  onChange={e => updateField('imageUrl', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    fontSize: 13,
+                    border: '1px solid var(--border-input)',
+                    borderRadius: 10,
+                    marginBottom: 16,
+                    ...inputStyle,
+                  }}
+                />
+                {(entry.imageUrl || '').trim() && (
+                  <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-card)', background: 'var(--bg-input)' }}>
+                    <img src={entry.imageUrl} alt="Chart of the Day" style={{ width: '100%', display: 'block', objectFit: 'contain' }} onError={(e) => e.target.style.display = 'none'} />
+                  </div>
+                )}
               </div>
 
               {/* ── Session Executed Trades ── */}
