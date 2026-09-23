@@ -95,6 +95,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
   const handleSave = () => {
     const sanitized = {
       ...entry,
+      title: (entry.title || '').trim(),
       preMarketBias: (entry.preMarketBias || '').trim(),
       spyGapStatus: (entry.spyGapStatus || '').trim(),
       keyLevels: (entry.keyLevels || '').trim(),
@@ -229,6 +230,32 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
           maxWidth: 1200,
           margin: '0 auto',
         }}>
+          {/* ── Daily Summary Title ── */}
+          <div style={{ marginBottom: 24 }}>
+            <input
+              type="text"
+              placeholder="Give this day a title... (e.g. Big NVDA Earnings Miss, Choppy Range Day)"
+              value={entry.title || ''}
+              onChange={e => updateField('title', e.target.value)}
+              style={{
+                width: '100%',
+                fontSize: 28,
+                fontWeight: 800,
+                color: 'var(--text-dark)',
+                background: 'transparent',
+                border: 'none',
+                outline: 'none',
+                padding: '8px 0',
+                borderBottom: '2px solid var(--border-card)',
+                transition: 'border-color 0.2s',
+                letterSpacing: '-0.02em',
+                ...fontStyle
+              }}
+              onFocus={e => e.target.style.borderBottom = '2px solid var(--border-active)'}
+              onBlur={e => e.target.style.borderBottom = '2px solid var(--border-card)'}
+            />
+          </div>
+
           {/* ════════════════════════════════════════════
               PRE-SESSION WAR ROOM — Full width at top
               ════════════════════════════════════════════ */}

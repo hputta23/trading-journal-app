@@ -34,6 +34,7 @@ export const saveJournalEntry = (date, entry) => {
 };
 
 export const emptyJournalEntry = {
+  title: '',                 // Summary title for the day
   // ── Pre-session fields ──
   preMarketBias: '',         // Bullish / Bearish / Neutral / Cautious
   spyGapStatus: '',          // Gap Up / Gap Down / Flat
