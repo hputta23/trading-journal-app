@@ -58,6 +58,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
   const [entry, setEntry] = useState({ ...emptyJournalEntry });
   const [newGoalText, setNewGoalText] = useState('');
   const [tagInputText, setTagInputText] = useState('');
+  const [lightboxIndex, setLightboxIndex] = useState(null);
   const fileInputRef = useRef(null);
   const pasteBoxRef = useRef(null);
 
@@ -814,7 +815,10 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                       style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '50%', width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 2 }}>
                       <XCircle size={14} />
                     </button>
-                    <img src={src} alt={`Chart ${idx + 1}`} style={{ width: '100%', display: 'block', objectFit: 'contain' }} onError={(e) => e.target.style.display = 'none'} />
+                    <img src={src} alt={`Chart ${idx + 1}`}
+                      onClick={() => setLightboxIndex(idx)}
+                      style={{ width: '100%', display: 'block', objectFit: 'contain', cursor: 'zoom-in' }}
+                      onError={(e) => e.target.style.display = 'none'} />
                   </div>
                 ))}
               </div>
@@ -823,6 +827,63 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
 
         </div>
       </div>
+
+      {/* ── Lightbox Modal ── */}
+      {lightboxIndex !== null && images[lightboxIndex] && (
+        <div
+          onClick={() => setLightboxIndex(null)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setLightboxIndex(null);
+            if (e.key === 'ArrowRight' && lightboxIndex < images.length - 1) setLightboxIndex(lightboxIndex + 1);
+            if (e.key === 'ArrowLeft' && lightboxIndex > 0) setLightboxIndex(lightboxIndex - 1);
+          }}
+          tabIndex={0}
+          ref={el => el && el.focus()}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'zoom-out', outline: 'none',
+          }}
+        >
+          {/* Close button */}
+          <button onClick={() => setLightboxIndex(null)}
+            style={{ position: 'absolute', top: 20, right: 20, background: 'rgba(255,255,255,0.15)', color: '#fff', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 20 }}>
+            ✕
+          </button>
+
+          {/* Prev arrow */}
+          {lightboxIndex > 0 && (
+            <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }}
+              style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', color: '#fff', border: 'none', borderRadius: '50%', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 20 }}>
+              <ChevronLeft size={24} />
+            </button>
+          )}
+
+          {/* Next arrow */}
+          {lightboxIndex < images.length - 1 && (
+            <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }}
+              style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', color: '#fff', border: 'none', borderRadius: '50%', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 20 }}>
+              <ChevronRight size={24} />
+            </button>
+          )}
+
+          {/* Image */}
+          <img
+            src={images[lightboxIndex]}
+            alt={`Chart ${lightboxIndex + 1}`}
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', borderRadius: 10, cursor: 'default' }}
+          />
+
+          {/* Counter */}
+          {images.length > 1 && (
+            <div style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.7)', fontSize: 13, fontWeight: 600, ...fontStyle }}>
+              {lightboxIndex + 1} / {images.length}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
