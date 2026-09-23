@@ -61,7 +61,7 @@ export const emptyJournalEntry = {
   mistakes: '',
   whatWorked: '',
   grade: '',
-  imageUrl: '',              // Chart of the day image URL
+  images: [],               // Array of base64/URL strings for Charts of Day
 };
 
 export const MOODS = [

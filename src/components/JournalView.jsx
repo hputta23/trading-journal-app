@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ClipboardList, Image, Hash, CheckSquare, Thermometer, BarChart2 } from 'lucide-react';
+import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ClipboardList, Image, Hash, CheckSquare, Thermometer, Upload } from 'lucide-react';
 import { MOODS, MARKET_CONDITIONS, GRADES, loadJournalEntries, saveJournalEntry, emptyJournalEntry } from '../utils/journal';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 import { toast } from 'react-hot-toast';
@@ -58,7 +58,10 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
   const [entry, setEntry] = useState({ ...emptyJournalEntry });
   const [newGoalText, setNewGoalText] = useState('');
   const [tagInputText, setTagInputText] = useState('');
+  const fileInputRef = useRef(null);
+  const pasteBoxRef = useRef(null);
 
+  /* ── Tag helpers ── */
   const handleAddTag = (e) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
@@ -74,8 +77,24 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
     updateField('tags', (entry.tags || []).filter(t => t !== tag));
   };
 
-  const fileInputRef = useRef(null);
-  const pasteBoxRef = useRef(null);
+  /* ── Image helpers (multi-image) ── */
+  const getImages = () => {
+    // Backward compat: old entries have imageUrl string, new ones have images array
+    if (entry.images && entry.images.length > 0) return entry.images;
+    if (entry.imageUrl && entry.imageUrl.trim()) return [entry.imageUrl.trim()];
+    return [];
+  };
+
+  const addImage = (base64OrUrl) => {
+    const current = getImages();
+    setEntry(prev => ({ ...prev, images: [...current, base64OrUrl], imageUrl: '' }));
+  };
+
+  const removeImage = (index) => {
+    const current = getImages();
+    const updated = current.filter((_, i) => i !== index);
+    setEntry(prev => ({ ...prev, images: updated, imageUrl: '' }));
+  };
 
   const processImageFile = (file) => {
     const reader = new FileReader();
@@ -95,8 +114,8 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
         const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
-        updateField('imageUrl', compressedBase64);
-        toast.success('Image pasted successfully!');
+        addImage(compressedBase64);
+        toast.success('Image added!');
       };
       img.src = event.target.result;
     };
@@ -104,11 +123,13 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
   };
 
   const handleFileSelect = (e) => {
-    const file = e.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      processImageFile(file);
+    const files = e.target.files;
+    if (!files) return;
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].type.startsWith('image/')) {
+        processImageFile(files[i]);
+      }
     }
-    // Reset so user can re-select the same file
     e.target.value = '';
   };
 
@@ -120,11 +141,8 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
         e.preventDefault();
         const file = items[i].getAsFile();
         if (file) processImageFile(file);
-        // Clear the contentEditable div so it doesn't show pasted content
         if (pasteBoxRef.current) {
-          setTimeout(() => {
-            if (pasteBoxRef.current) pasteBoxRef.current.innerHTML = '';
-          }, 0);
+          setTimeout(() => { if (pasteBoxRef.current) pasteBoxRef.current.innerHTML = ''; }, 0);
         }
         return;
       }
@@ -166,6 +184,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
   };
 
   const handleSave = () => {
+    const currentImages = getImages();
     const sanitized = {
       ...entry,
       title: (entry.title || '').trim(),
@@ -181,7 +200,8 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
       lessonsLearned: (entry.lessonsLearned || '').trim().replace(/<[^>]*>/g, ''),
       mistakes: (entry.mistakes || '').trim().replace(/<[^>]*>/g, ''),
       whatWorked: (entry.whatWorked || '').trim().replace(/<[^>]*>/g, ''),
-      imageUrl: (entry.imageUrl || '').trim(),
+      images: currentImages,
+      imageUrl: '',  // Migrate old field away
       tags: entry.tags || [],
       checklist: entry.checklist || { checkedNews: false, reviewedPlaybook: false, setHardStop: false, mentalClear: false },
       tiltScore: parseInt(entry.tiltScore) || 1,
@@ -207,6 +227,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
     return 'NOT RATED';
   };
 
+  const images = getImages();
 
   return (
     <div className="h-full w-full fade-in" style={fontStyle}>
@@ -226,15 +247,10 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-dark)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               Daily Journal
             </div>
-            
-            {/* Date Navigation Controls */}
             <div className="flex items-center gap-1 ml-2">
-              <button 
+              <button
                 onClick={() => {
                   if (!onSelectDate) return;
-                  const d = new Date(currentDate);
-                  // handle timezone offsets correctly by using setUTCDate if currentDate is YYYY-MM-DD
-                  // actually simpler: parse the string, subtract 1 day
                   const [y, m, day] = currentDate.split('-');
                   const dateObj = new Date(y, m - 1, day);
                   dateObj.setDate(dateObj.getDate() - 1);
@@ -245,21 +261,13 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
               >
                 <ChevronLeft size={16} />
               </button>
-              <input 
+              <input
                 type="date"
                 value={currentDate}
                 onChange={(e) => onSelectDate && onSelectDate(e.target.value)}
-                style={{ 
-                  fontSize: 12, 
-                  color: 'var(--text-secondary)', 
-                  background: 'transparent',
-                  border: 'none',
-                  outline: 'none',
-                  cursor: 'pointer',
-                  ...monoStyle 
-                }}
+                style={{ fontSize: 12, color: 'var(--text-secondary)', background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer', ...monoStyle }}
               />
-              <button 
+              <button
                 onClick={() => {
                   if (!onSelectDate) return;
                   const [y, m, day] = currentDate.split('-');
@@ -303,11 +311,11 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
         background: 'var(--bg-app)',
         height: 'calc(100% - 64px)',
       }}>
-        <div style={{
-          maxWidth: 1200,
-          margin: '0 auto',
-        }}>
-          {/* ── Daily Summary Title ── */}
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+
+          {/* ═══════════════════════════════════════════════
+              SECTION 1: TITLE + TAGS + PERFORMANCE STRIP
+              ═══════════════════════════════════════════════ */}
           <div style={{ marginBottom: 24 }}>
             <input
               type="text"
@@ -315,25 +323,17 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
               value={entry.title || ''}
               onChange={e => updateField('title', e.target.value)}
               style={{
-                width: '100%',
-                fontSize: 28,
-                fontWeight: 800,
-                color: 'var(--text-dark)',
-                background: 'transparent',
-                border: 'none',
-                outline: 'none',
-                padding: '8px 0',
+                width: '100%', fontSize: 28, fontWeight: 800,
+                color: 'var(--text-dark)', background: 'transparent',
+                border: 'none', outline: 'none', padding: '8px 0',
                 borderBottom: '2px solid var(--border-card)',
-                transition: 'border-color 0.2s',
-                letterSpacing: '-0.02em',
-                ...fontStyle
+                transition: 'border-color 0.2s', letterSpacing: '-0.02em', ...fontStyle
               }}
               onFocus={e => e.target.style.borderBottom = '2px solid var(--border-active)'}
               onBlur={e => e.target.style.borderBottom = '2px solid var(--border-card)'}
             />
-            
-            {/* Daily Tags */}
-            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginTop: 16 }}>
+            {/* Tags */}
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
               <Hash size={16} style={{ color: 'var(--text-secondary)' }} />
               {(entry.tags || []).map(tag => (
                 <div key={tag} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-input)', padding: '4px 10px', borderRadius: 8, border: '1px solid var(--border-input)', fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -341,126 +341,92 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                   <XCircle size={12} className="cursor-pointer hover:text-[var(--color-loss)] transition-colors" onClick={() => removeTag(tag)} />
                 </div>
               ))}
-              <input
-                type="text"
-                placeholder="Add tag (e.g. #fomc) and press Enter"
-                value={tagInputText}
-                onChange={e => setTagInputText(e.target.value)}
-                onKeyDown={handleAddTag}
-                style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-primary)', fontSize: 13, minWidth: 200, ...fontStyle }}
+              <input type="text" placeholder="Add tag and press Enter" value={tagInputText} onChange={e => setTagInputText(e.target.value)} onKeyDown={handleAddTag}
+                style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-primary)', fontSize: 13, minWidth: 160, ...fontStyle }}
               />
             </div>
           </div>
 
-          {/* ════════════════════════════════════════════
-              PRE-SESSION WAR ROOM — Full width at top
-              ════════════════════════════════════════════ */}
+          {/* Quick Stats Strip */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 24 }}>
+            {[
+              { label: 'NET P&L', value: formatCurrency(todayStats.totalNetPnl), color: todayStats.totalNetPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', cls: todayStats.totalNetPnl >= 0 ? 'kpi-container-profit' : 'kpi-container-loss' },
+              { label: 'WIN RATE', value: formatPercent(todayStats.winRate), color: 'var(--color-cyan)', cls: 'kpi-container-cyan' },
+              { label: 'TRADES', value: formatNumber(todayStats.totalTrades), color: 'var(--text-primary)', cls: 'kpi-container-slate' },
+              { label: 'PROFIT FACTOR', value: todayStats.profitFactor === Infinity ? '∞' : todayStats.profitFactor.toFixed(2), color: todayStats.profitFactor >= 1 ? 'var(--color-profit)' : 'var(--color-loss)', cls: todayStats.profitFactor >= 1 ? 'kpi-container-profit' : 'kpi-container-loss' },
+            ].map(item => (
+              <div key={item.label} className={item.cls} style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-secondary)', ...fontStyle }}>{item.label}</span>
+                <span style={{ fontSize: 22, fontWeight: 800, color: item.color, ...monoStyle, lineHeight: 1 }}>{item.value}</span>
+              </div>
+            ))}
+          </div>
+
+
+          {/* ═══════════════════════════════════════════════
+              SECTION 2: PRE-SESSION WAR ROOM
+              ═══════════════════════════════════════════════ */}
           <div className="glass-panel" style={{ ...panelStyle, padding: '28px', border: '1px solid var(--border-card)', marginBottom: 20 }}>
             <SectionHeader
               icon={<ClipboardList size={16} style={{ color: 'var(--text-accent)' }} />}
               title="Pre-Session War Room"
-              subtitle="Complete this BEFORE the market opens. Revisit after session to tally your discipline."
+              subtitle="Complete this BEFORE the market opens"
             />
 
-            {/* ── Row 1: Market Context ── */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, marginBottom: 20 }}>
-
-              {/* Market Bias */}
+            {/* Row 1: Market Context + Checklist */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 240px', gap: 20, marginBottom: 20 }}>
               <div>
-                <FieldLabel>Market Bias</FieldLabel>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {[['Bullish', 'var(--color-profit)'], ['Bearish', 'var(--color-loss)'], ['Neutral', 'var(--text-secondary)'], ['Cautious', 'var(--color-cyan)']].map(([label, col]) => (
-                    <button key={label} onClick={() => updateField('preMarketBias', entry.preMarketBias === label ? '' : label)} style={{
-                      padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                      border: `1.5px solid ${entry.preMarketBias === label ? col : 'var(--border-card)'}`,
-                      background: entry.preMarketBias === label ? `color-mix(in srgb, ${col} 12%, var(--bg-card))` : 'var(--bg-input)',
-                      color: entry.preMarketBias === label ? col : 'var(--text-secondary)',
-                      transition: 'all 0.15s ease', ...fontStyle,
-                    }}>{label}</button>
-                  ))}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14, marginBottom: 16 }}>
+                  {/* Market Bias */}
+                  <div>
+                    <FieldLabel>Market Bias</FieldLabel>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {[['Bullish', 'var(--color-profit)'], ['Bearish', 'var(--color-loss)'], ['Neutral', 'var(--text-secondary)'], ['Cautious', 'var(--color-cyan)']].map(([label, col]) => (
+                        <button key={label} onClick={() => updateField('preMarketBias', entry.preMarketBias === label ? '' : label)} style={{
+                          padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                          border: `1.5px solid ${entry.preMarketBias === label ? col : 'var(--border-card)'}`,
+                          background: entry.preMarketBias === label ? `color-mix(in srgb, ${col} 12%, var(--bg-card))` : 'var(--bg-input)',
+                          color: entry.preMarketBias === label ? col : 'var(--text-secondary)',
+                          transition: 'all 0.15s ease', ...fontStyle,
+                        }}>{label}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* SPY Gap */}
+                  <div>
+                    <FieldLabel>SPY Gap</FieldLabel>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {[['Gap Up ↑', 'var(--color-profit)'], ['Gap Down ↓', 'var(--color-loss)'], ['Flat →', 'var(--text-secondary)']].map(([label, col]) => (
+                        <button key={label} onClick={() => updateField('spyGapStatus', entry.spyGapStatus === label ? '' : label)} style={{
+                          padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                          border: `1.5px solid ${entry.spyGapStatus === label ? col : 'var(--border-card)'}`,
+                          background: entry.spyGapStatus === label ? `color-mix(in srgb, ${col} 12%, var(--bg-card))` : 'var(--bg-input)',
+                          color: entry.spyGapStatus === label ? col : 'var(--text-secondary)',
+                          transition: 'all 0.15s ease', ...fontStyle,
+                        }}>{label}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                  <div>
+                    <FieldLabel>Daily Max Loss ($)</FieldLabel>
+                    <input type="number" inputMode="decimal" value={entry.maxLossForDay || ''} onChange={e => updateField('maxLossForDay', e.target.value)} placeholder="e.g. 500"
+                      style={{ width: '100%', padding: '10px 14px', fontSize: 14, fontWeight: 600, border: '1px solid var(--border-input)', borderRadius: 10, ...inputStyle, ...monoStyle }}
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel>Max Trades Today</FieldLabel>
+                    <input type="number" inputMode="numeric" value={entry.maxTradesForDay || ''} onChange={e => updateField('maxTradesForDay', e.target.value)} placeholder="e.g. 5"
+                      style={{ width: '100%', padding: '10px 14px', fontSize: 14, fontWeight: 600, border: '1px solid var(--border-input)', borderRadius: 10, ...inputStyle, ...monoStyle }}
+                    />
+                  </div>
                 </div>
               </div>
-
-              {/* SPY Gap */}
+              {/* Checklist */}
               <div>
-                <FieldLabel>SPY Gap</FieldLabel>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {[['Gap Up ↑', 'var(--color-profit)'], ['Gap Down ↓', 'var(--color-loss)'], ['Flat →', 'var(--text-secondary)']].map(([label, col]) => (
-                    <button key={label} onClick={() => updateField('spyGapStatus', entry.spyGapStatus === label ? '' : label)} style={{
-                      padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                      border: `1.5px solid ${entry.spyGapStatus === label ? col : 'var(--border-card)'}`,
-                      background: entry.spyGapStatus === label ? `color-mix(in srgb, ${col} 12%, var(--bg-card))` : 'var(--bg-input)',
-                      color: entry.spyGapStatus === label ? col : 'var(--text-secondary)',
-                      transition: 'all 0.15s ease', ...fontStyle,
-                    }}>{label}</button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Max Loss */}
-              <div>
-                <FieldLabel>Daily Max Loss ($)</FieldLabel>
-                <input
-                  type="number" inputMode="decimal"
-                  value={entry.maxLossForDay || ''}
-                  onChange={e => updateField('maxLossForDay', e.target.value)}
-                  placeholder="e.g. 500"
-                  style={{ width: '100%', padding: '10px 14px', fontSize: 14, fontWeight: 600, border: '1px solid var(--border-input)', borderRadius: 10, ...inputStyle, ...monoStyle }}
-                />
-              </div>
-
-              {/* Max Trades */}
-              <div>
-                <FieldLabel>Max Trades Today</FieldLabel>
-                <input
-                  type="number" inputMode="numeric"
-                  value={entry.maxTradesForDay || ''}
-                  onChange={e => updateField('maxTradesForDay', e.target.value)}
-                  placeholder="e.g. 5"
-                  style={{ width: '100%', padding: '10px 14px', fontSize: 14, fontWeight: 600, border: '1px solid var(--border-input)', borderRadius: 10, ...inputStyle, ...monoStyle }}
-                />
-              </div>
-            </div>
-
-            {/* ── Row 2: Key Levels + Watchlist ── */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
-              <div>
-                <FieldLabel>Key S/R Levels to Watch</FieldLabel>
-                <textarea
-                  value={entry.keyLevels || ''}
-                  onChange={e => updateField('keyLevels', e.target.value)}
-                  placeholder={'SPY: 548.50 support / 551 resistance\nQQQ: 465 key level\nNVDA: VWAP watch'}
-                  rows={3}
-                  style={{ width: '100%', padding: '12px 14px', fontSize: 13, fontWeight: 500, lineHeight: 1.6, border: '1px solid var(--border-input)', resize: 'vertical', borderRadius: 10, ...inputStyle, ...fontStyle }}
-                />
-              </div>
-              <div>
-                <FieldLabel>Watchlist / Tickers on Radar</FieldLabel>
-                <textarea
-                  value={entry.watchlist || ''}
-                  onChange={e => updateField('watchlist', e.target.value)}
-                  placeholder={'NVDA — earnings gap play\nAAPL — VWAP bounce setup\nSPY — trend continuation'}
-                  rows={3}
-                  style={{ width: '100%', padding: '12px 14px', fontSize: 13, fontWeight: 500, lineHeight: 1.6, border: '1px solid var(--border-input)', resize: 'vertical', borderRadius: 10, ...inputStyle, ...fontStyle }}
-                />
-              </div>
-            </div>
-
-            {/* ── Row 3: Notes / Thesis / Catalysts & Checklist ── */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 14, marginBottom: 24 }}>
-              <div>
-                <FieldLabel>Pre-Market Thesis & Catalysts</FieldLabel>
-                <textarea
-                  value={entry.preMarketPlan || ''}
-                  onChange={e => updateField('preMarketPlan', e.target.value)}
-                  placeholder={'Macro: Fed minutes today at 2 PM — expect volatility spike\nSector: Tech leadership strong — look for continuation\nCatalyst: NVDA guidance tonight — don\'t hold overnight\nBias: Wait for first 15-min candle to close before trading'}
-                  rows={4}
-                  style={{ width: '100%', padding: '14px 16px', fontSize: 13, fontWeight: 500, lineHeight: 1.7, border: '1px solid var(--border-input)', resize: 'vertical', minHeight: 110, borderRadius: 10, ...inputStyle, ...fontStyle }}
-                />
-              </div>
-              <div>
-                <FieldLabel>Daily Pre-Flight Checklist</FieldLabel>
-                <div style={{ background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 10, padding: '12px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <FieldLabel>Pre-Flight Checklist</FieldLabel>
+                <div style={{ background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 10, padding: '14px', display: 'flex', flexDirection: 'column', gap: 12, height: 'calc(100% - 28px)' }}>
                   {[
                     { key: 'checkedNews', label: 'Checked Econ/News' },
                     { key: 'reviewedPlaybook', label: 'Reviewed Playbook' },
@@ -469,17 +435,12 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                   ].map(item => {
                     const isChecked = entry.checklist?.[item.key];
                     return (
-                      <label key={item.key} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600, color: isChecked ? 'var(--text-secondary)' : 'var(--text-primary)', textDecoration: isChecked ? 'line-through' : 'none' }}>
-                        <div onClick={() => {
-                          const cl = entry.checklist || { checkedNews: false, reviewedPlaybook: false, setHardStop: false, mentalClear: false };
-                          updateField('checklist', { ...cl, [item.key]: !cl[item.key] });
-                        }}>
-                          {isChecked ? <CheckSquare size={16} style={{ color: 'var(--color-profit)' }} /> : <div style={{ width: 16, height: 16, borderRadius: 4, border: '2px solid var(--border-active)' }} />}
-                        </div>
-                        <span onClick={() => {
-                          const cl = entry.checklist || { checkedNews: false, reviewedPlaybook: false, setHardStop: false, mentalClear: false };
-                          updateField('checklist', { ...cl, [item.key]: !cl[item.key] });
-                        }}>{item.label}</span>
+                      <label key={item.key} onClick={() => {
+                        const cl = entry.checklist || { checkedNews: false, reviewedPlaybook: false, setHardStop: false, mentalClear: false };
+                        updateField('checklist', { ...cl, [item.key]: !cl[item.key] });
+                      }} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600, color: isChecked ? 'var(--text-secondary)' : 'var(--text-primary)', textDecoration: isChecked ? 'line-through' : 'none' }}>
+                        {isChecked ? <CheckSquare size={16} style={{ color: 'var(--color-profit)' }} /> : <div style={{ width: 16, height: 16, borderRadius: 4, border: '2px solid var(--border-active)' }} />}
+                        <span>{item.label}</span>
                       </label>
                     );
                   })}
@@ -487,7 +448,34 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
               </div>
             </div>
 
-            {/* ── Row 4: Intentions Tracker ── */}
+            {/* Row 2: Key Levels + Watchlist */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
+              <div>
+                <FieldLabel>Key S/R Levels</FieldLabel>
+                <textarea value={entry.keyLevels || ''} onChange={e => updateField('keyLevels', e.target.value)}
+                  placeholder={'SPY: 548.50 support / 551 resistance\nQQQ: 465 key level\nNVDA: VWAP watch'} rows={3}
+                  style={{ width: '100%', padding: '12px 14px', fontSize: 13, fontWeight: 500, lineHeight: 1.6, border: '1px solid var(--border-input)', resize: 'vertical', borderRadius: 10, ...inputStyle, ...fontStyle }}
+                />
+              </div>
+              <div>
+                <FieldLabel>Watchlist / Tickers on Radar</FieldLabel>
+                <textarea value={entry.watchlist || ''} onChange={e => updateField('watchlist', e.target.value)}
+                  placeholder={'NVDA — earnings gap play\nAAPL — VWAP bounce setup\nSPY — trend continuation'} rows={3}
+                  style={{ width: '100%', padding: '12px 14px', fontSize: 13, fontWeight: 500, lineHeight: 1.6, border: '1px solid var(--border-input)', resize: 'vertical', borderRadius: 10, ...inputStyle, ...fontStyle }}
+                />
+              </div>
+            </div>
+
+            {/* Row 3: Pre-Market Thesis */}
+            <div style={{ marginBottom: 24 }}>
+              <FieldLabel>Pre-Market Thesis & Catalysts</FieldLabel>
+              <textarea value={entry.preMarketPlan || ''} onChange={e => updateField('preMarketPlan', e.target.value)}
+                placeholder={'Macro: Fed minutes today at 2 PM — expect volatility spike\nSector: Tech leadership strong — look for continuation\nCatalyst: NVDA guidance tonight — don\'t hold overnight'} rows={3}
+                style={{ width: '100%', padding: '14px 16px', fontSize: 13, fontWeight: 500, lineHeight: 1.7, border: '1px solid var(--border-input)', resize: 'vertical', minHeight: 90, borderRadius: 10, ...inputStyle, ...fontStyle }}
+              />
+            </div>
+
+            {/* Row 4: Session Intentions */}
             <div style={{ borderTop: '1px solid var(--border-card)', paddingTop: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
                 <Target size={14} style={{ color: 'var(--text-accent)' }} />
@@ -495,7 +483,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                 <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500, marginLeft: 4 }}>— tick ✅/❌ after the session</span>
               </div>
 
-              {/* Tally summary */}
+              {/* Tally */}
               {(entry.sessionGoals || []).length > 0 && (() => {
                 const goals = entry.sessionGoals || [];
                 const achieved = goals.filter(g => g.achieved === true).length;
@@ -511,7 +499,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                       [`${pct}%`, 'Score', pct >= 70 ? 'var(--color-profit)' : pct >= 40 ? 'var(--text-primary)' : 'var(--color-loss)', pct >= 70 ? 'var(--bg-kpi-profit)' : pct >= 40 ? 'var(--bg-card)' : 'var(--bg-kpi-loss)', pct >= 70 ? 'var(--border-profit)' : pct >= 40 ? 'var(--border-card)' : 'var(--border-loss)'],
                     ].map(([val, label, color, bg, border]) => (
                       <div key={label} style={{ flex: 1, minWidth: 70, background: bg, border: `1px solid ${border}`, borderRadius: 10, padding: '10px 12px', textAlign: 'center' }}>
-                        <div style={{ fontSize: 18, fontWeight: 900, color, fontFamily: "'JetBrains Mono', monospace" }}>{val}</div>
+                        <div style={{ fontSize: 18, fontWeight: 900, color, ...monoStyle }}>{val}</div>
                         <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 2 }}>{label}</div>
                       </div>
                     ))}
@@ -568,415 +556,197 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
           </div>
 
 
-          {/* ════ SESSION DATA ROW ════ */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5" style={{ marginBottom: 20 }}>
-            <div className="lg:col-span-1" style={{ display: 'flex', flexDirection: 'column' }}>
-              {/* ── Session Performance Metrics ── */}
-              <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
-                <SectionHeader
-                  icon={<TrendingUp size={16} style={{ color: 'var(--text-accent)' }} />}
-                  title="Session Performance"
-                  subtitle="Session trading results at a glance"
-                />
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-                  {[
-                    { label: 'NET P&L', value: formatCurrency(todayStats.totalNetPnl), color: todayStats.totalNetPnl >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', cls: todayStats.totalNetPnl >= 0 ? 'kpi-container-profit' : 'kpi-container-loss' },
-                    { label: 'WIN RATE', value: formatPercent(todayStats.winRate), color: 'var(--color-cyan)', cls: 'kpi-container-cyan' },
-                    { label: 'TRADES', value: formatNumber(todayStats.totalTrades), color: 'var(--text-primary)', cls: 'kpi-container-slate' },
-                    { label: 'PROFIT FACTOR', value: todayStats.profitFactor === Infinity ? '∞' : todayStats.profitFactor.toFixed(2), color: todayStats.profitFactor >= 1 ? 'var(--color-profit)' : 'var(--color-loss)', cls: todayStats.profitFactor >= 1 ? 'kpi-container-profit' : 'kpi-container-loss' },
-                  ].map(item => (
-                    <div key={item.label} className={item.cls} style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-secondary)', ...fontStyle }}>
-                        {item.label}
-                      </span>
-                      <span style={{ fontSize: 20, fontWeight: 800, color: item.color, ...monoStyle, lineHeight: 1 }}>
-                        {item.value}
-                      </span>
-                    </div>
-                  ))}
+          {/* ═══════════════════════════════════════════════
+              SECTION 3: SESSION TRADES TABLE
+              ═══════════════════════════════════════════════ */}
+          <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)', marginBottom: 20 }}>
+            <SectionHeader
+              icon={<Award size={16} style={{ color: 'var(--text-accent)' }} />}
+              title={`Session Trades (${todayTrades.length})`}
+              subtitle="Trades executed during this session"
+            />
+            <div style={{
+              maxHeight: 350, overflowY: 'auto',
+              border: '1px solid var(--border-card)', background: 'var(--bg-input)', borderRadius: 10, padding: 4,
+            }}>
+              {todayTrades.length === 0 ? (
+                <div style={{ height: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  <Frown size={24} style={{ color: 'var(--text-secondary)', opacity: 0.4 }} />
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>No trades yet for this day</p>
                 </div>
-              </div>
-
-
-            </div>
-            <div className="lg:col-span-2" style={{ display: 'flex', flexDirection: 'column' }}>
-              {/* ── Session Executed Trades ── */}
-              <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)', flex: 1 }}>
-                <SectionHeader
-                  icon={<Award size={16} style={{ color: 'var(--text-accent)' }} />}
-                  title={`Session Trades (${todayTrades.length})`}
-                  subtitle="Trades executed during this session"
-                />
-
-                <div style={{
-                  minHeight: 200,
-                  maxHeight: 400,
-                  overflowY: 'auto',
-                  border: '1px solid var(--border-card)',
-                  background: 'var(--bg-input)',
-                  borderRadius: 10,
-                  padding: 4,
-                }}>
-                  {todayTrades.length === 0 ? (
-                    <div style={{ height: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-                      <Frown size={28} style={{ color: 'var(--text-secondary)', opacity: 0.5 }} />
-                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600, textAlign: 'center' }}>
-                        No trades yet for this day
-                      </p>
-                    </div>
-                  ) : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                      <thead>
-                        <tr style={{ borderBottom: '1px solid var(--border-card)' }}>
-                          {['Time', 'Ticker', 'Dir', 'Net P&L', 'Mistake', ''].map((head, hi) => (
-                            <th key={hi} style={{
-                              padding: '12px 14px',
-                              fontSize: 10, fontWeight: 700,
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.12em',
-                              color: 'var(--text-secondary)',
-                              textAlign: 'left',
-                              whiteSpace: 'nowrap',
-                              ...fontStyle,
-                            }}>
-                              {head}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {todayTrades.map((t) => (
-                          <tr
-                            key={t.id}
-                            style={{
-                              borderBottom: '1px solid var(--border-card)',
-                              background: t.isOpen ? 'var(--accent-glow)' : t.netPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)',
-                              transition: 'background 0.15s ease',
-                            }}
-                          >
-                            <td style={{ padding: '12px 14px', fontSize: 12, color: 'var(--text-primary)', whiteSpace: 'nowrap', ...monoStyle, fontWeight: 600 }}>
-                              {t.time}
-                            </td>
-                            <td style={{ padding: '12px 14px' }}>
-                              <a
-                                href={`https://www.tradingview.com/chart/?symbol=${t.ticker}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                  color: 'var(--text-accent)',
-                                  fontWeight: 800, fontSize: 13,
-                                  textDecoration: 'none',
-                                  display: 'flex', alignItems: 'center', gap: 4,
-                                  whiteSpace: 'nowrap',
-                                  ...monoStyle,
-                                }}
-                              >
-                                {t.ticker}
-                                <ExternalLink size={10} style={{ opacity: 0.5 }} />
-                              </a>
-                            </td>
-                            <td style={{
-                              padding: '12px 14px',
-                              fontWeight: 700, fontSize: 12,
-                              color: t.direction === 'Long' ? 'var(--color-profit)' : 'var(--color-loss)',
-                              whiteSpace: 'nowrap',
-                            }}>
-                              {t.direction === 'Long' ? 'LONG' : 'SHORT'}
-                            </td>
-                            <td style={{ padding: '12px 14px' }}>
-                              {t.isOpen ? (
-                                <span className="badge-open" style={{ fontSize: 10, padding: '4px 10px' }}>OPEN</span>
-                              ) : t.netPnl >= 0 ? (
-                                <span className="badge-profit" style={{ fontSize: 10, padding: '4px 10px' }}>{formatCurrency(t.netPnl)}</span>
-                              ) : (
-                                <span className="badge-loss" style={{ fontSize: 10, padding: '4px 10px' }}>{formatCurrency(t.netPnl)}</span>
-                              )}
-                            </td>
-                            <td style={{
-                              padding: '12px 14px',
-                              fontSize: 11, color: 'var(--color-loss)',
-                              maxWidth: 120,
-                              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                              fontWeight: 600,
-                            }} title={t.mistake || 'None'}>
-                              {t.mistake && t.mistake !== 'None' ? t.mistake.split('/')[0] : '—'}
-                            </td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                              <button
-                                onClick={() => onEditTrade(t)}
-                                style={{
-                                  padding: '6px 14px',
-                                  fontSize: 10, fontWeight: 700,
-                                  textTransform: 'uppercase',
-                                  letterSpacing: '0.05em',
-                                  border: '1px solid var(--border-card)',
-                                  color: 'var(--text-secondary)',
-                                  background: 'var(--bg-sidebar)',
-                                  cursor: 'pointer',
-                                  borderRadius: 10,
-                                  transition: 'all 0.15s ease',
-                                  ...fontStyle,
-                                }}
-                              >
-                                Edit
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-                </div>
-              </div>
-
+              ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border-card)' }}>
+                      {['Time', 'Ticker', 'Dir', 'Net P&L', 'Mistake', ''].map((head, hi) => (
+                        <th key={hi} style={{ padding: '10px 14px', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-secondary)', textAlign: 'left', whiteSpace: 'nowrap', ...fontStyle }}>{head}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {todayTrades.map((t) => (
+                      <tr key={t.id} style={{ borderBottom: '1px solid var(--border-card)', background: t.isOpen ? 'var(--accent-glow)' : t.netPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)', transition: 'background 0.15s ease' }}>
+                        <td style={{ padding: '10px 14px', fontSize: 12, color: 'var(--text-primary)', whiteSpace: 'nowrap', ...monoStyle, fontWeight: 600 }}>{t.time}</td>
+                        <td style={{ padding: '10px 14px' }}>
+                          <a href={`https://www.tradingview.com/chart/?symbol=${t.ticker}`} target="_blank" rel="noopener noreferrer"
+                            style={{ color: 'var(--text-accent)', fontWeight: 800, fontSize: 13, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap', ...monoStyle }}>
+                            {t.ticker}<ExternalLink size={10} style={{ opacity: 0.5 }} />
+                          </a>
+                        </td>
+                        <td style={{ padding: '10px 14px', fontWeight: 700, fontSize: 12, color: t.direction === 'Long' ? 'var(--color-profit)' : 'var(--color-loss)', whiteSpace: 'nowrap' }}>{t.direction === 'Long' ? 'LONG' : 'SHORT'}</td>
+                        <td style={{ padding: '10px 14px' }}>
+                          {t.isOpen ? <span className="badge-open" style={{ fontSize: 10, padding: '4px 10px' }}>OPEN</span>
+                            : t.netPnl >= 0 ? <span className="badge-profit" style={{ fontSize: 10, padding: '4px 10px' }}>{formatCurrency(t.netPnl)}</span>
+                            : <span className="badge-loss" style={{ fontSize: 10, padding: '4px 10px' }}>{formatCurrency(t.netPnl)}</span>}
+                        </td>
+                        <td style={{ padding: '10px 14px', fontSize: 11, color: 'var(--color-loss)', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }} title={t.mistake || 'None'}>
+                          {t.mistake && t.mistake !== 'None' ? t.mistake.split('/')[0] : '—'}
+                        </td>
+                        <td style={{ padding: '10px 14px', textAlign: 'right' }}>
+                          <button onClick={() => onEditTrade(t)} style={{ padding: '6px 14px', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', border: '1px solid var(--border-card)', color: 'var(--text-secondary)', background: 'var(--bg-sidebar)', cursor: 'pointer', borderRadius: 10, transition: 'all 0.15s ease', ...fontStyle }}>Edit</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
 
-          {/* ════ TWO-COLUMN GRID (post-session) ════ */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
-            {/* ════ LEFT COLUMN ════ */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* ═══════════════════════════════════════════════
+              SECTION 4: POST-SESSION REVIEW (2 columns)
+              ═══════════════════════════════════════════════ */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5" style={{ marginBottom: 20 }}>
 
-              {/* ── Session Overview (Grade, Discipline, Mood, Market) ── */}
-              <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
-                <SectionHeader
-                  icon={<Activity size={16} style={{ color: 'var(--text-accent)' }} />}
-                  title="Session Overview"
-                  subtitle="Rate your execution quality and mindset"
-                />
+            {/* LEFT: Execution Quality */}
+            <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
+              <SectionHeader
+                icon={<Activity size={16} style={{ color: 'var(--text-accent)' }} />}
+                title="Execution Quality"
+                subtitle="Rate your performance and mindset"
+              />
 
-                {/* Grade Selector */}
-                <div style={{ marginBottom: 28 }}>
-                  <FieldLabel>Daily Execution Grade</FieldLabel>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                    {GRADES.map((g) => {
-                      const isSelected = entry.grade === g;
-                      let activeBg = 'var(--color-cyan)';
-                      if (g.startsWith('C')) activeBg = 'var(--color-profit)';
-                      if (g.startsWith('D') || g === 'F') activeBg = 'var(--color-loss)';
-
-                      return (
-                        <button
-                          key={g}
-                          onClick={() => updateField('grade', g)}
-                          style={{
-                            width: 48, height: 48,
-                            borderRadius: 8,
-                            border: `2px solid ${isSelected ? activeBg : 'var(--border-card)'}`,
-                            background: isSelected ? activeBg : 'var(--bg-input)',
-                            color: isSelected ? 'var(--bg-app)' : 'var(--text-secondary)',
-                            fontSize: 14, fontWeight: 800,
-                            cursor: 'pointer',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            transition: 'all 0.15s ease',
-                            boxShadow: isSelected ? `0 0 16px ${activeBg}50` : 'none',
-                            ...fontStyle,
-                          }}
-                        >
-                          {g}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Discipline Rating */}
-                <div style={{ marginBottom: 28 }}>
-                  <FieldLabel>Rule Adherence & Discipline</FieldLabel>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                    {[1, 2, 3, 4, 5].map((level) => {
-                      const isActive = (entry.discipline || 0) >= level;
-                      const activeColor = getDisciplineColor(entry.discipline || 0);
-                      return (
-                        <button
-                          key={level}
-                          onClick={() => updateField('discipline', level)}
-                          style={{
-                            width: 48, height: 40,
-                            border: `2px solid ${isActive ? activeColor : 'var(--border-card)'}`,
-                            background: isActive ? `${activeColor}18` : 'transparent',
-                            color: isActive ? activeColor : 'var(--text-secondary)',
-                            fontSize: 16, fontWeight: 800,
-                            cursor: 'pointer',
-                            borderRadius: 8,
-                            transition: 'all 0.15s ease',
-                            ...monoStyle,
-                          }}
-                        >
-                          {isActive ? '█' : '░'}
-                        </button>
-                      );
-                    })}
-                    <span style={{
-                      fontSize: 12, fontWeight: 800,
-                      textTransform: 'uppercase', letterSpacing: '0.1em',
-                      color: getDisciplineColor(entry.discipline || 0),
-                      marginLeft: 8,
-                      ...monoStyle,
-                    }}>
-                      {getDisciplineLabel(entry.discipline || 0)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Tilt Score */}
-                <div style={{ marginBottom: 28 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <FieldLabel>Emotional Tilt Score</FieldLabel>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--text-secondary)' }}>
-                      {entry.tiltScore} / 10
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <Thermometer size={16} style={{ color: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--text-secondary)' }} />
-                    <input 
-                      type="range" min="1" max="10" 
-                      value={entry.tiltScore || 1} 
-                      onChange={e => updateField('tiltScore', parseInt(e.target.value))} 
-                      style={{ flex: 1, accentColor: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--color-cyan)', cursor: 'pointer' }}
-                    />
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-secondary)', marginTop: 4, fontWeight: 600 }}>
-                    <span>Flow State</span>
-                    <span>Frustrated</span>
-                    <span>Full Tilt</span>
-                  </div>
-                </div>
-
-                {/* Mood & Market Conditions */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <div>
-                    <FieldLabel>Trader Mood</FieldLabel>
-                    <select
-                      value={entry.mood}
-                      onChange={e => updateField('mood', e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        fontSize: 13, fontWeight: 600,
-                        border: '1px solid var(--border-input)',
-                        cursor: 'pointer',
-                        ...inputStyle,
-                      }}
-                    >
-                      {MOODS.map(m => (
-                        <option key={m.value} value={m.value}>
-                          {m.emoji} {m.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <FieldLabel>Market Conditions</FieldLabel>
-                    <select
-                      value={entry.marketConditions}
-                      onChange={e => updateField('marketConditions', e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        fontSize: 13, fontWeight: 600,
-                        border: '1px solid var(--border-input)',
-                        cursor: 'pointer',
-                        ...inputStyle,
-                      }}
-                    >
-                      {MARKET_CONDITIONS.map(mc => (
-                        <option key={mc.value} value={mc.value}>
-                          {mc.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+              {/* Grade */}
+              <div style={{ marginBottom: 24 }}>
+                <FieldLabel>Execution Grade</FieldLabel>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {GRADES.map((g) => {
+                    const isSelected = entry.grade === g;
+                    let activeBg = 'var(--color-cyan)';
+                    if (g.startsWith('C')) activeBg = 'var(--color-profit)';
+                    if (g.startsWith('D') || g === 'F') activeBg = 'var(--color-loss)';
+                    return (
+                      <button key={g} onClick={() => updateField('grade', g)} style={{
+                        width: 44, height: 44, borderRadius: 8,
+                        border: `2px solid ${isSelected ? activeBg : 'var(--border-card)'}`,
+                        background: isSelected ? activeBg : 'var(--bg-input)',
+                        color: isSelected ? 'var(--bg-app)' : 'var(--text-secondary)',
+                        fontSize: 13, fontWeight: 800, cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.15s ease', boxShadow: isSelected ? `0 0 16px ${activeBg}50` : 'none', ...fontStyle,
+                      }}>{g}</button>
+                    );
+                  })}
                 </div>
               </div>
 
+              {/* Discipline */}
+              <div style={{ marginBottom: 24 }}>
+                <FieldLabel>Rule Adherence & Discipline</FieldLabel>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  {[1, 2, 3, 4, 5].map((level) => {
+                    const isActive = (entry.discipline || 0) >= level;
+                    const activeColor = getDisciplineColor(entry.discipline || 0);
+                    return (
+                      <button key={level} onClick={() => updateField('discipline', level)} style={{
+                        width: 44, height: 38, border: `2px solid ${isActive ? activeColor : 'var(--border-card)'}`,
+                        background: isActive ? `${activeColor}18` : 'transparent', color: isActive ? activeColor : 'var(--text-secondary)',
+                        fontSize: 16, fontWeight: 800, cursor: 'pointer', borderRadius: 8, transition: 'all 0.15s ease', ...monoStyle,
+                      }}>{isActive ? '█' : '░'}</button>
+                    );
+                  })}
+                  <span style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: getDisciplineColor(entry.discipline || 0), marginLeft: 8, ...monoStyle }}>
+                    {getDisciplineLabel(entry.discipline || 0)}
+                  </span>
+                </div>
+              </div>
 
+              {/* Tilt */}
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <FieldLabel>Emotional Tilt Score</FieldLabel>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--text-secondary)' }}>
+                    {entry.tiltScore} / 10
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <Thermometer size={16} style={{ color: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--text-secondary)' }} />
+                  <input type="range" min="1" max="10" value={entry.tiltScore || 1} onChange={e => updateField('tiltScore', parseInt(e.target.value))}
+                    style={{ flex: 1, accentColor: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--color-cyan)', cursor: 'pointer' }}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text-secondary)', marginTop: 4, fontWeight: 600 }}>
+                  <span>Flow State</span><span>Frustrated</span><span>Full Tilt</span>
+                </div>
+              </div>
+
+              {/* Mood & Market */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div>
+                  <FieldLabel>Trader Mood</FieldLabel>
+                  <select value={entry.mood} onChange={e => updateField('mood', e.target.value)}
+                    style={{ width: '100%', padding: '10px 14px', fontSize: 13, fontWeight: 600, border: '1px solid var(--border-input)', cursor: 'pointer', ...inputStyle }}>
+                    {MOODS.map(m => <option key={m.value} value={m.value}>{m.emoji} {m.label}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <FieldLabel>Market Conditions</FieldLabel>
+                  <select value={entry.marketConditions} onChange={e => updateField('marketConditions', e.target.value)}
+                    style={{ width: '100%', padding: '10px 14px', fontSize: 13, fontWeight: 600, border: '1px solid var(--border-input)', cursor: 'pointer', ...inputStyle }}>
+                    {MARKET_CONDITIONS.map(mc => <option key={mc.value} value={mc.value}>{mc.label}</option>)}
+                  </select>
+                </div>
+              </div>
             </div>
 
-            {/* ════ RIGHT COLUMN ════ */}
+            {/* RIGHT: Written Review */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-
-              {/* ── Strengths & Weaknesses ── */}
               <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
                 <SectionHeader
                   icon={<CheckCircle2 size={16} style={{ color: 'var(--text-accent)' }} />}
                   title="Strengths & Weaknesses"
                   subtitle="What worked and what didn't"
                 />
-
-                {/* What Worked */}
-                <div style={{ marginBottom: 20 }}>
+                <div style={{ marginBottom: 16 }}>
                   <FieldLabel color="var(--color-profit)">✓ What Worked Well</FieldLabel>
-                  <textarea
-                    value={entry.whatWorked || ''}
-                    onChange={e => updateField('whatWorked', e.target.value)}
-                    placeholder="• Patient entries on AAPL pullback&#10;• Followed stop loss rules&#10;• Good position sizing"
-                    rows={4}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      fontSize: 14, fontWeight: 500,
-                      lineHeight: 1.7,
-                      border: '1px solid var(--border-input)',
-                      resize: 'vertical',
-                      minHeight: 100,
-                      ...inputStyle,
-                    }}
+                  <textarea value={entry.whatWorked || ''} onChange={e => updateField('whatWorked', e.target.value)}
+                    placeholder="• Patient entries on AAPL pullback&#10;• Followed stop loss rules" rows={3}
+                    style={{ width: '100%', padding: '12px 14px', fontSize: 13, fontWeight: 500, lineHeight: 1.7, border: '1px solid var(--border-input)', resize: 'vertical', minHeight: 80, ...inputStyle }}
                   />
                 </div>
-
-                {/* Mistakes */}
                 <div>
                   <FieldLabel color="var(--color-loss)">✗ Weaknesses & Rules Broken</FieldLabel>
-                  <textarea
-                    value={entry.mistakes || ''}
-                    onChange={e => updateField('mistakes', e.target.value)}
-                    placeholder="• Over-leveraged on TSLA trade&#10;• Chased the breakout without confirmation&#10;• Didn't wait for volume"
-                    rows={4}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      fontSize: 14, fontWeight: 500,
-                      lineHeight: 1.7,
-                      border: '1px solid var(--border-input)',
-                      resize: 'vertical',
-                      minHeight: 100,
-                      ...inputStyle,
-                    }}
+                  <textarea value={entry.mistakes || ''} onChange={e => updateField('mistakes', e.target.value)}
+                    placeholder="• Over-leveraged on TSLA trade&#10;• Chased the breakout" rows={3}
+                    style={{ width: '100%', padding: '12px 14px', fontSize: 13, fontWeight: 500, lineHeight: 1.7, border: '1px solid var(--border-input)', resize: 'vertical', minHeight: 80, ...inputStyle }}
                   />
                 </div>
               </div>
 
-              {/* ── Post-Market Analysis ── */}
-              <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
+              <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)', flex: 1 }}>
                 <SectionHeader
                   icon={<Brain size={16} style={{ color: 'var(--text-accent)' }} />}
                   title="Post-Market Analysis"
                   subtitle="Reflect on the session"
                 />
-
-                <div style={{ marginBottom: 20 }}>
+                <div style={{ marginBottom: 16 }}>
                   <FieldLabel>Session Review & Diagnostics</FieldLabel>
-                  <textarea
-                    value={entry.postMarketReview || ''}
-                    onChange={e => updateField('postMarketReview', e.target.value)}
-                    placeholder="• Cut losers early but held NVDA too long&#10;• Followed stop loss rules perfectly on 3/4 trades&#10;• Market was choppy — should have reduced size"
-                    rows={5}
-                    style={{
-                      width: '100%',
-                      padding: '16px 18px',
-                      fontSize: 14, fontWeight: 500,
-                      lineHeight: 1.7,
-                      border: '1px solid var(--border-input)',
-                      resize: 'vertical',
-                      minHeight: 120,
-                      ...inputStyle,
-                    }}
+                  <textarea value={entry.postMarketReview || ''} onChange={e => updateField('postMarketReview', e.target.value)}
+                    placeholder="• Cut losers early but held NVDA too long&#10;• Market was choppy — should have reduced size" rows={3}
+                    style={{ width: '100%', padding: '12px 14px', fontSize: 13, fontWeight: 500, lineHeight: 1.7, border: '1px solid var(--border-input)', resize: 'vertical', minHeight: 80, ...inputStyle }}
                   />
                 </div>
-
                 <div>
                   <FieldLabel>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -984,112 +754,68 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                       Golden Lesson / Key Takeaway
                     </span>
                   </FieldLabel>
-                  <textarea
-                    value={entry.lessonsLearned || ''}
-                    onChange={e => updateField('lessonsLearned', e.target.value)}
-                    placeholder="Do not chase high-of-day breakouts when volume is weak. Wait for a pullback and test of VWAP before entering."
-                    rows={3}
-                    style={{
-                      width: '100%',
-                      padding: '16px 18px',
-                      fontSize: 14, fontWeight: 500,
-                      lineHeight: 1.7,
-                      resize: 'vertical',
-                      minHeight: 80,
-                      ...inputStyle,
-                      border: '2px solid var(--border-profit)',
-                      background: 'var(--accent-glow)',
-                    }}
+                  <textarea value={entry.lessonsLearned || ''} onChange={e => updateField('lessonsLearned', e.target.value)}
+                    placeholder="Do not chase high-of-day breakouts when volume is weak." rows={2}
+                    style={{ width: '100%', padding: '12px 14px', fontSize: 13, fontWeight: 500, lineHeight: 1.7, resize: 'vertical', minHeight: 60, ...inputStyle, border: '2px solid var(--border-profit)', background: 'var(--accent-glow)' }}
                   />
                 </div>
               </div>
-
-              {/* ── Charts of Day ── */}
-              <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
-                <SectionHeader
-                  icon={<Image size={16} style={{ color: 'var(--text-accent)' }} />}
-                  title="Charts of Day"
-                  subtitle="Paste a screenshot or upload an image"
-                />
-
-                {/* Hidden file input */}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileSelect}
-                  style={{ display: 'none' }}
-                />
-
-                {/* Action buttons row */}
-                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{ flex: 1, padding: '10px 14px', borderRadius: 10, background: 'var(--accent-glow)', border: '1px solid var(--border-active)', color: 'var(--text-accent)', fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, ...fontStyle }}
-                  >
-                    📁 Upload Image
-                  </button>
-                </div>
-
-                {/* contentEditable paste target - this is the key fix for Cmd+V */}
-                <div
-                  ref={pasteBoxRef}
-                  contentEditable
-                  onPaste={handlePasteBoxPaste}
-                  suppressContentEditableWarning
-                  style={{
-                    width: '100%',
-                    padding: '20px',
-                    textAlign: 'center',
-                    border: '2px dashed var(--border-active)',
-                    borderRadius: 10,
-                    marginBottom: 16,
-                    background: 'var(--bg-input)',
-                    color: 'var(--text-secondary)',
-                    fontSize: 13,
-                    cursor: 'text',
-                    outline: 'none',
-                    minHeight: 60,
-                    ...fontStyle
-                  }}
-                  onFocus={e => { e.currentTarget.style.background = 'var(--accent-glow)'; e.currentTarget.style.borderColor = 'var(--text-accent)'; }}
-                  onBlur={e => { e.currentTarget.style.background = 'var(--bg-input)'; e.currentTarget.style.borderColor = 'var(--border-active)'; if (pasteBoxRef.current) pasteBoxRef.current.innerHTML = ''; }}
-                  data-placeholder="Click here, then Cmd+V to paste a screenshot"
-                ></div>
-
-                {!(entry.imageUrl || '').startsWith('data:image') && (
-                  <input
-                    type="text"
-                    placeholder="Paste Image URL (e.g. from TradingView or Imgur)"
-                    value={entry.imageUrl || ''}
-                    onChange={e => updateField('imageUrl', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '12px 14px',
-                      fontSize: 13,
-                      border: '1px solid var(--border-input)',
-                      borderRadius: 10,
-                      marginBottom: 16,
-                      ...inputStyle,
-                    }}
-                  />
-                )}
-                
-                {(entry.imageUrl || '').trim() && (
-                  <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-card)', background: 'var(--bg-input)', position: 'relative' }}>
-                    <button 
-                      onClick={() => updateField('imageUrl', '')}
-                      style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '50%', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-                    >
-                      <XCircle size={14} />
-                    </button>
-                    <img src={entry.imageUrl} alt="Charts of Day" style={{ width: '100%', display: 'block', objectFit: 'contain' }} onError={(e) => e.target.style.display = 'none'} />
-                  </div>
-                )}
-              </div>
-
             </div>
           </div>
+
+
+          {/* ═══════════════════════════════════════════════
+              SECTION 5: CHARTS OF DAY (full width, multi-image)
+              ═══════════════════════════════════════════════ */}
+          <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)', marginBottom: 20 }}>
+            <SectionHeader
+              icon={<Image size={16} style={{ color: 'var(--text-accent)' }} />}
+              title={`Charts of Day (${images.length})`}
+              subtitle="Paste screenshots or upload images of your setups"
+            />
+
+            {/* Hidden file input (multiple) */}
+            <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleFileSelect} style={{ display: 'none' }} />
+
+            {/* Upload + Paste row */}
+            <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+              <button onClick={() => fileInputRef.current?.click()}
+                style={{ padding: '10px 18px', borderRadius: 10, background: 'var(--accent-glow)', border: '1px solid var(--border-active)', color: 'var(--text-accent)', fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, ...fontStyle }}>
+                <Upload size={14} /> Upload Images
+              </button>
+              <div
+                ref={pasteBoxRef}
+                contentEditable
+                onPaste={handlePasteBoxPaste}
+                suppressContentEditableWarning
+                style={{
+                  flex: 1, padding: '10px 16px', textAlign: 'center',
+                  border: '2px dashed var(--border-active)', borderRadius: 10,
+                  background: 'var(--bg-input)', color: 'var(--text-secondary)',
+                  fontSize: 13, cursor: 'text', outline: 'none', ...fontStyle
+                }}
+                onFocus={e => { e.currentTarget.style.background = 'var(--accent-glow)'; e.currentTarget.style.borderColor = 'var(--text-accent)'; }}
+                onBlur={e => { e.currentTarget.style.background = 'var(--bg-input)'; e.currentTarget.style.borderColor = 'var(--border-active)'; if (pasteBoxRef.current) pasteBoxRef.current.innerHTML = ''; }}
+                data-placeholder="Click here, then Cmd+V to paste a screenshot"
+              ></div>
+            </div>
+
+            {/* Image Gallery Grid */}
+            {images.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: images.length === 1 ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12 }}>
+                {images.map((src, idx) => (
+                  <div key={idx} style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-card)', background: 'var(--bg-input)', position: 'relative' }}>
+                    <button onClick={() => removeImage(idx)}
+                      style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '50%', width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 2 }}>
+                      <XCircle size={14} />
+                    </button>
+                    <img src={src} alt={`Chart ${idx + 1}`} style={{ width: '100%', display: 'block', objectFit: 'contain' }} onError={(e) => e.target.style.display = 'none'} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
     </div>
