@@ -74,41 +74,45 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
     updateField('tags', (entry.tags || []).filter(t => t !== tag));
   };
 
-  const handlePasteImage = (e) => {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf('image') !== -1) {
-        const file = items[i].getAsFile();
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 800;
-            let width = img.width;
-            let height = img.height;
+  useEffect(() => {
+    const handleGlobalPaste = (e) => {
+      const items = e.clipboardData?.items || e.originalEvent?.clipboardData?.items;
+      if (!items) return;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          e.preventDefault();
+          const file = items[i].getAsFile();
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const MAX_WIDTH = 800;
+              let width = img.width;
+              let height = img.height;
 
-            if (width > MAX_WIDTH) {
-              height = Math.round((height * MAX_WIDTH) / width);
-              width = MAX_WIDTH;
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5);
-            updateField('imageUrl', compressedBase64);
-            toast.success('Image pasted successfully!');
+              if (width > MAX_WIDTH) {
+                height = Math.round((height * MAX_WIDTH) / width);
+                width = MAX_WIDTH;
+              }
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+              const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5);
+              setEntry(prev => ({ ...prev, imageUrl: compressedBase64 }));
+              toast.success('Image pasted successfully!');
+            };
+            img.src = event.target.result;
           };
-          img.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-        e.preventDefault();
-        break;
+          reader.readAsDataURL(file);
+          break;
+        }
       }
-    }
-  };
+    };
+    window.addEventListener('paste', handleGlobalPaste);
+    return () => window.removeEventListener('paste', handleGlobalPaste);
+  }, []);
 
   useEffect(() => {
     const entries = loadJournalEntries();
@@ -992,7 +996,6 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                 />
                 
                 <div
-                  onPaste={handlePasteImage}
                   style={{
                     width: '100%',
                     padding: '24px',
@@ -1003,30 +1006,30 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                     background: 'var(--bg-input)',
                     color: 'var(--text-secondary)',
                     fontSize: 13,
-                    cursor: 'text',
                     ...fontStyle
                   }}
-                  tabIndex={0}
                 >
-                  <p style={{ margin: 0, fontWeight: 600 }}>Click here and press Ctrl+V / Cmd+V to paste an image</p>
+                  <p style={{ margin: 0, fontWeight: 600 }}>Press Ctrl+V / Cmd+V anywhere on this page to paste a chart</p>
                   <p style={{ margin: '4px 0 0 0', fontSize: 11, opacity: 0.6 }}>Or enter a URL below</p>
                 </div>
 
-                <input
-                  type="text"
-                  placeholder="Paste Image URL (e.g. from TradingView or Imgur)"
-                  value={entry.imageUrl || ''}
-                  onChange={e => updateField('imageUrl', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    fontSize: 13,
-                    border: '1px solid var(--border-input)',
-                    borderRadius: 10,
-                    marginBottom: 16,
-                    ...inputStyle,
-                  }}
-                />
+                {!(entry.imageUrl || '').startsWith('data:image') && (
+                  <input
+                    type="text"
+                    placeholder="Paste Image URL (e.g. from TradingView or Imgur)"
+                    value={entry.imageUrl || ''}
+                    onChange={e => updateField('imageUrl', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px',
+                      fontSize: 13,
+                      border: '1px solid var(--border-input)',
+                      borderRadius: 10,
+                      marginBottom: 16,
+                      ...inputStyle,
+                    }}
+                  />
+                )}
                 
                 {(entry.imageUrl || '').trim() && (
                   <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-card)', background: 'var(--bg-input)', position: 'relative' }}>
