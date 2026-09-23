@@ -86,14 +86,19 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
   };
 
   const addImage = (base64OrUrl) => {
-    const current = getImages();
-    setEntry(prev => ({ ...prev, images: [...current, base64OrUrl], imageUrl: '' }));
+    setEntry(prev => {
+      const current = (prev.images && prev.images.length > 0) ? prev.images
+        : (prev.imageUrl && prev.imageUrl.trim()) ? [prev.imageUrl.trim()] : [];
+      return { ...prev, images: [...current, base64OrUrl], imageUrl: '' };
+    });
   };
 
   const removeImage = (index) => {
-    const current = getImages();
-    const updated = current.filter((_, i) => i !== index);
-    setEntry(prev => ({ ...prev, images: updated, imageUrl: '' }));
+    setEntry(prev => {
+      const current = (prev.images && prev.images.length > 0) ? prev.images
+        : (prev.imageUrl && prev.imageUrl.trim()) ? [prev.imageUrl.trim()] : [];
+      return { ...prev, images: current.filter((_, i) => i !== index), imageUrl: '' };
+    });
   };
 
   const processImageFile = (file) => {
