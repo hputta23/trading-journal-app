@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ClipboardList, Image, Hash, CheckSquare, Thermometer, BarChart2 } from 'lucide-react';
 import { MOODS, MARKET_CONDITIONS, GRADES, loadJournalEntries, saveJournalEntry, emptyJournalEntry } from '../utils/journal';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
@@ -74,10 +74,13 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
     updateField('tags', (entry.tags || []).filter(t => t !== tag));
   };
 
+  const fileInputRef = useRef(null);
+  const pasteBoxRef = useRef(null);
+
   const processImageFile = (file) => {
     const reader = new FileReader();
     reader.onload = (event) => {
-      const img = new Image();
+      const img = new window.Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
         const MAX_WIDTH = 1200;
@@ -100,53 +103,33 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
     reader.readAsDataURL(file);
   };
 
-  const handleDivPaste = (e) => {
-    const items = e.clipboardData?.items || e.originalEvent?.clipboardData?.items;
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      processImageFile(file);
+    }
+    // Reset so user can re-select the same file
+    e.target.value = '';
+  };
+
+  const handlePasteBoxPaste = (e) => {
+    const items = e.clipboardData?.items;
     if (!items) return;
     for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf('image') !== -1) {
+      if (items[i].type.startsWith('image/')) {
         e.preventDefault();
-        e.stopPropagation();
-        processImageFile(items[i].getAsFile());
-        break;
+        const file = items[i].getAsFile();
+        if (file) processImageFile(file);
+        // Clear the contentEditable div so it doesn't show pasted content
+        if (pasteBoxRef.current) {
+          setTimeout(() => {
+            if (pasteBoxRef.current) pasteBoxRef.current.innerHTML = '';
+          }, 0);
+        }
+        return;
       }
     }
   };
-
-  const handleButtonPaste = async () => {
-    try {
-      const clipboardItems = await navigator.clipboard.read();
-      for (const clipboardItem of clipboardItems) {
-        const imageTypes = clipboardItem.types.filter(type => type.startsWith('image/'));
-        for (const imageType of imageTypes) {
-          const blob = await clipboardItem.getType(imageType);
-          processImageFile(blob);
-          return;
-        }
-      }
-      toast.error('No image found in clipboard');
-    } catch (err) {
-      console.error(err);
-      toast.error('Browser blocked paste. Try Cmd+V in the dashed box.');
-    }
-  };
-
-  useEffect(() => {
-    const handleGlobalPaste = (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      const items = e.clipboardData?.items || e.originalEvent?.clipboardData?.items;
-      if (!items) return;
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf('image') !== -1) {
-          e.preventDefault();
-          processImageFile(items[i].getAsFile());
-          break;
-        }
-      }
-    };
-    window.addEventListener('paste', handleGlobalPaste);
-    return () => window.removeEventListener('paste', handleGlobalPaste);
-  }, []);
 
   useEffect(() => {
     const entries = loadJournalEntries();
@@ -1026,21 +1009,37 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                 <SectionHeader
                   icon={<Image size={16} style={{ color: 'var(--text-accent)' }} />}
                   title="Charts of Day"
-                  subtitle="Paste a screenshot or URL of your setups"
+                  subtitle="Paste a screenshot or upload an image"
                 />
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Attach an image of your setup:</span>
-                  <button onClick={handleButtonPaste} style={{ padding: '6px 14px', borderRadius: 8, background: 'var(--accent-glow)', border: '1px solid var(--border-active)', color: 'var(--text-accent)', fontSize: 12, fontWeight: 700, cursor: 'pointer', ...fontStyle }}>
-                    📋 Paste Image
+
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  style={{ display: 'none' }}
+                />
+
+                {/* Action buttons row */}
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    style={{ flex: 1, padding: '10px 14px', borderRadius: 10, background: 'var(--accent-glow)', border: '1px solid var(--border-active)', color: 'var(--text-accent)', fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, ...fontStyle }}
+                  >
+                    📁 Upload Image
                   </button>
                 </div>
+
+                {/* contentEditable paste target - this is the key fix for Cmd+V */}
                 <div
-                  tabIndex={0}
-                  onPaste={handleDivPaste}
+                  ref={pasteBoxRef}
+                  contentEditable
+                  onPaste={handlePasteBoxPaste}
+                  suppressContentEditableWarning
                   style={{
                     width: '100%',
-                    padding: '24px',
+                    padding: '20px',
                     textAlign: 'center',
                     border: '2px dashed var(--border-active)',
                     borderRadius: 10,
@@ -1050,14 +1049,13 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                     fontSize: 13,
                     cursor: 'text',
                     outline: 'none',
+                    minHeight: 60,
                     ...fontStyle
                   }}
-                  onFocus={e => e.target.style.background = 'var(--accent-glow)'}
-                  onBlur={e => e.target.style.background = 'var(--bg-input)'}
-                >
-                  <p style={{ margin: 0, fontWeight: 600 }}>Click here and press Ctrl+V / Cmd+V to paste</p>
-                  <p style={{ margin: '4px 0 0 0', fontSize: 11, opacity: 0.6 }}>Or use the Paste button above</p>
-                </div>
+                  onFocus={e => { e.currentTarget.style.background = 'var(--accent-glow)'; e.currentTarget.style.borderColor = 'var(--text-accent)'; }}
+                  onBlur={e => { e.currentTarget.style.background = 'var(--bg-input)'; e.currentTarget.style.borderColor = 'var(--border-active)'; if (pasteBoxRef.current) pasteBoxRef.current.innerHTML = ''; }}
+                  data-placeholder="Click here, then Cmd+V to paste a screenshot"
+                ></div>
 
                 {!(entry.imageUrl || '').startsWith('data:image') && (
                   <input

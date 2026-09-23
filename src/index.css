@@ -764,3 +764,12 @@ td, th {
   visibility: visible;
   opacity: 1;
 }
+
+/* contentEditable paste box placeholder */
+[data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-secondary);
+  opacity: 0.6;
+  pointer-events: none;
+  font-weight: 600;
+}
