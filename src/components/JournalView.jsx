@@ -74,6 +74,42 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
     updateField('tags', (entry.tags || []).filter(t => t !== tag));
   };
 
+  const handlePasteImage = (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile();
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5);
+            updateField('imageUrl', compressedBase64);
+            toast.success('Image pasted successfully!');
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+        e.preventDefault();
+        break;
+      }
+    }
+  };
+
   useEffect(() => {
     const entries = loadJournalEntries();
     if (entries[currentDate]) {
@@ -510,12 +546,10 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
             </div>
           </div>
 
-          {/* ════ TWO-COLUMN GRID (post-session) ════ */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
-            {/* ════ LEFT COLUMN ════ */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
+          {/* ════ SESSION DATA ROW ════ */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5" style={{ marginBottom: 20 }}>
+            <div className="lg:col-span-1" style={{ display: 'flex', flexDirection: 'column' }}>
               {/* ── Session Performance Metrics ── */}
               <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
                 <SectionHeader
@@ -541,6 +575,147 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                   ))}
                 </div>
               </div>
+
+
+            </div>
+            <div className="lg:col-span-2" style={{ display: 'flex', flexDirection: 'column' }}>
+              {/* ── Session Executed Trades ── */}
+              <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)', flex: 1 }}>
+                <SectionHeader
+                  icon={<Award size={16} style={{ color: 'var(--text-accent)' }} />}
+                  title={`Session Trades (${todayTrades.length})`}
+                  subtitle="Trades executed during this session"
+                />
+
+                <div style={{
+                  minHeight: 200,
+                  maxHeight: 400,
+                  overflowY: 'auto',
+                  border: '1px solid var(--border-card)',
+                  background: 'var(--bg-input)',
+                  borderRadius: 10,
+                  padding: 4,
+                }}>
+                  {todayTrades.length === 0 ? (
+                    <div style={{ height: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                      <Frown size={28} style={{ color: 'var(--text-secondary)', opacity: 0.5 }} />
+                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600, textAlign: 'center' }}>
+                        No trades yet for this day
+                      </p>
+                    </div>
+                  ) : (
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid var(--border-card)' }}>
+                          {['Time', 'Ticker', 'Dir', 'Net P&L', 'Mistake', ''].map((head, hi) => (
+                            <th key={hi} style={{
+                              padding: '12px 14px',
+                              fontSize: 10, fontWeight: 700,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.12em',
+                              color: 'var(--text-secondary)',
+                              textAlign: 'left',
+                              whiteSpace: 'nowrap',
+                              ...fontStyle,
+                            }}>
+                              {head}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {todayTrades.map((t) => (
+                          <tr
+                            key={t.id}
+                            style={{
+                              borderBottom: '1px solid var(--border-card)',
+                              background: t.isOpen ? 'var(--accent-glow)' : t.netPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)',
+                              transition: 'background 0.15s ease',
+                            }}
+                          >
+                            <td style={{ padding: '12px 14px', fontSize: 12, color: 'var(--text-primary)', whiteSpace: 'nowrap', ...monoStyle, fontWeight: 600 }}>
+                              {t.time}
+                            </td>
+                            <td style={{ padding: '12px 14px' }}>
+                              <a
+                                href={`https://www.tradingview.com/chart/?symbol=${t.ticker}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  color: 'var(--text-accent)',
+                                  fontWeight: 800, fontSize: 13,
+                                  textDecoration: 'none',
+                                  display: 'flex', alignItems: 'center', gap: 4,
+                                  whiteSpace: 'nowrap',
+                                  ...monoStyle,
+                                }}
+                              >
+                                {t.ticker}
+                                <ExternalLink size={10} style={{ opacity: 0.5 }} />
+                              </a>
+                            </td>
+                            <td style={{
+                              padding: '12px 14px',
+                              fontWeight: 700, fontSize: 12,
+                              color: t.direction === 'Long' ? 'var(--color-profit)' : 'var(--color-loss)',
+                              whiteSpace: 'nowrap',
+                            }}>
+                              {t.direction === 'Long' ? 'LONG' : 'SHORT'}
+                            </td>
+                            <td style={{ padding: '12px 14px' }}>
+                              {t.isOpen ? (
+                                <span className="badge-open" style={{ fontSize: 10, padding: '4px 10px' }}>OPEN</span>
+                              ) : t.netPnl >= 0 ? (
+                                <span className="badge-profit" style={{ fontSize: 10, padding: '4px 10px' }}>{formatCurrency(t.netPnl)}</span>
+                              ) : (
+                                <span className="badge-loss" style={{ fontSize: 10, padding: '4px 10px' }}>{formatCurrency(t.netPnl)}</span>
+                              )}
+                            </td>
+                            <td style={{
+                              padding: '12px 14px',
+                              fontSize: 11, color: 'var(--color-loss)',
+                              maxWidth: 120,
+                              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                              fontWeight: 600,
+                            }} title={t.mistake || 'None'}>
+                              {t.mistake && t.mistake !== 'None' ? t.mistake.split('/')[0] : '—'}
+                            </td>
+                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                              <button
+                                onClick={() => onEditTrade(t)}
+                                style={{
+                                  padding: '6px 14px',
+                                  fontSize: 10, fontWeight: 700,
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.05em',
+                                  border: '1px solid var(--border-card)',
+                                  color: 'var(--text-secondary)',
+                                  background: 'var(--bg-sidebar)',
+                                  cursor: 'pointer',
+                                  borderRadius: 10,
+                                  transition: 'all 0.15s ease',
+                                  ...fontStyle,
+                                }}
+                              >
+                                Edit
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* ════ TWO-COLUMN GRID (post-session) ════ */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+            {/* ════ LEFT COLUMN ════ */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
               {/* ── Session Overview (Grade, Discipline, Mood, Market) ── */}
               <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
@@ -808,13 +983,35 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                 </div>
               </div>
 
-              {/* ── Chart of the Day ── */}
+              {/* ── Charts of Day ── */}
               <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
                 <SectionHeader
                   icon={<Image size={16} style={{ color: 'var(--text-accent)' }} />}
-                  title="Chart of the Day"
-                  subtitle="Paste a screenshot URL of your best/worst setup"
+                  title="Charts of Day"
+                  subtitle="Paste a screenshot or URL of your setups"
                 />
+                
+                <div
+                  onPaste={handlePasteImage}
+                  style={{
+                    width: '100%',
+                    padding: '24px',
+                    textAlign: 'center',
+                    border: '2px dashed var(--border-active)',
+                    borderRadius: 10,
+                    marginBottom: 16,
+                    background: 'var(--bg-input)',
+                    color: 'var(--text-secondary)',
+                    fontSize: 13,
+                    cursor: 'text',
+                    ...fontStyle
+                  }}
+                  tabIndex={0}
+                >
+                  <p style={{ margin: 0, fontWeight: 600 }}>Click here and press Ctrl+V / Cmd+V to paste an image</p>
+                  <p style={{ margin: '4px 0 0 0', fontSize: 11, opacity: 0.6 }}>Or enter a URL below</p>
+                </div>
+
                 <input
                   type="text"
                   placeholder="Paste Image URL (e.g. from TradingView or Imgur)"
@@ -830,141 +1027,20 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                     ...inputStyle,
                   }}
                 />
+                
                 {(entry.imageUrl || '').trim() && (
-                  <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-card)', background: 'var(--bg-input)' }}>
-                    <img src={entry.imageUrl} alt="Chart of the Day" style={{ width: '100%', display: 'block', objectFit: 'contain' }} onError={(e) => e.target.style.display = 'none'} />
+                  <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-card)', background: 'var(--bg-input)', position: 'relative' }}>
+                    <button 
+                      onClick={() => updateField('imageUrl', '')}
+                      style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '50%', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                    >
+                      <XCircle size={14} />
+                    </button>
+                    <img src={entry.imageUrl} alt="Charts of Day" style={{ width: '100%', display: 'block', objectFit: 'contain' }} onError={(e) => e.target.style.display = 'none'} />
                   </div>
                 )}
               </div>
 
-              {/* ── Session Executed Trades ── */}
-              <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)', flex: 1 }}>
-                <SectionHeader
-                  icon={<Award size={16} style={{ color: 'var(--text-accent)' }} />}
-                  title={`Session Trades (${todayTrades.length})`}
-                  subtitle="Trades executed during this session"
-                />
-
-                <div style={{
-                  minHeight: 200,
-                  maxHeight: 400,
-                  overflowY: 'auto',
-                  border: '1px solid var(--border-card)',
-                  background: 'var(--bg-input)',
-                  borderRadius: 10,
-                  padding: 4,
-                }}>
-                  {todayTrades.length === 0 ? (
-                    <div style={{ height: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-                      <Frown size={28} style={{ color: 'var(--text-secondary)', opacity: 0.5 }} />
-                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600, textAlign: 'center' }}>
-                        No trades yet for this day
-                      </p>
-                    </div>
-                  ) : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                      <thead>
-                        <tr style={{ borderBottom: '1px solid var(--border-card)' }}>
-                          {['Time', 'Ticker', 'Dir', 'Net P&L', 'Mistake', ''].map((head, hi) => (
-                            <th key={hi} style={{
-                              padding: '12px 14px',
-                              fontSize: 10, fontWeight: 700,
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.12em',
-                              color: 'var(--text-secondary)',
-                              textAlign: 'left',
-                              whiteSpace: 'nowrap',
-                              ...fontStyle,
-                            }}>
-                              {head}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {todayTrades.map((t) => (
-                          <tr
-                            key={t.id}
-                            style={{
-                              borderBottom: '1px solid var(--border-card)',
-                              background: t.isOpen ? 'var(--accent-glow)' : t.netPnl >= 0 ? 'var(--bg-kpi-profit)' : 'var(--bg-kpi-loss)',
-                              transition: 'background 0.15s ease',
-                            }}
-                          >
-                            <td style={{ padding: '12px 14px', fontSize: 12, color: 'var(--text-primary)', whiteSpace: 'nowrap', ...monoStyle, fontWeight: 600 }}>
-                              {t.time}
-                            </td>
-                            <td style={{ padding: '12px 14px' }}>
-                              <a
-                                href={`https://www.tradingview.com/chart/?symbol=${t.ticker}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                  color: 'var(--text-accent)',
-                                  fontWeight: 800, fontSize: 13,
-                                  textDecoration: 'none',
-                                  display: 'flex', alignItems: 'center', gap: 4,
-                                  whiteSpace: 'nowrap',
-                                  ...monoStyle,
-                                }}
-                              >
-                                {t.ticker}
-                                <ExternalLink size={10} style={{ opacity: 0.5 }} />
-                              </a>
-                            </td>
-                            <td style={{
-                              padding: '12px 14px',
-                              fontWeight: 700, fontSize: 12,
-                              color: t.direction === 'Long' ? 'var(--color-profit)' : 'var(--color-loss)',
-                              whiteSpace: 'nowrap',
-                            }}>
-                              {t.direction === 'Long' ? 'LONG' : 'SHORT'}
-                            </td>
-                            <td style={{ padding: '12px 14px' }}>
-                              {t.isOpen ? (
-                                <span className="badge-open" style={{ fontSize: 10, padding: '4px 10px' }}>OPEN</span>
-                              ) : t.netPnl >= 0 ? (
-                                <span className="badge-profit" style={{ fontSize: 10, padding: '4px 10px' }}>{formatCurrency(t.netPnl)}</span>
-                              ) : (
-                                <span className="badge-loss" style={{ fontSize: 10, padding: '4px 10px' }}>{formatCurrency(t.netPnl)}</span>
-                              )}
-                            </td>
-                            <td style={{
-                              padding: '12px 14px',
-                              fontSize: 11, color: 'var(--color-loss)',
-                              maxWidth: 120,
-                              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                              fontWeight: 600,
-                            }} title={t.mistake || 'None'}>
-                              {t.mistake && t.mistake !== 'None' ? t.mistake.split('/')[0] : '—'}
-                            </td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                              <button
-                                onClick={() => onEditTrade(t)}
-                                style={{
-                                  padding: '6px 14px',
-                                  fontSize: 10, fontWeight: 700,
-                                  textTransform: 'uppercase',
-                                  letterSpacing: '0.05em',
-                                  border: '1px solid var(--border-card)',
-                                  color: 'var(--text-secondary)',
-                                  background: 'var(--bg-sidebar)',
-                                  cursor: 'pointer',
-                                  borderRadius: 10,
-                                  transition: 'all 0.15s ease',
-                                  ...fontStyle,
-                                }}
-                              >
-                                Edit
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         </div>
