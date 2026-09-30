@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ClipboardList, Image, Hash, CheckSquare, Thermometer, Upload } from 'lucide-react';
-import { MOODS, MARKET_CONDITIONS, GRADES, loadJournalEntries, saveJournalEntry, emptyJournalEntry } from '../utils/journal';
+import { loadJournalEntries, saveJournalEntry, emptyJournalEntry } from '../utils/journal';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 import { toast } from 'react-hot-toast';
 
@@ -204,8 +204,6 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
       priorDayClose: (entry.priorDayClose || '').trim(),
       keyLevels: (entry.keyLevels || '').trim(),
       watchlist: (entry.watchlist || '').trim(),
-      maxLossForDay: (entry.maxLossForDay || '').trim(),
-      maxTradesForDay: (entry.maxTradesForDay || '').trim(),
       preMarketPlan: (entry.preMarketPlan || '').trim().replace(/<[^>]*>/g, ''),
       sessionGoals: (entry.sessionGoals || []).map(g => ({ ...g, text: (g.text || '').trim() })).filter(g => g.text),
       postMarketReview: (entry.postMarketReview || '').trim().replace(/<[^>]*>/g, ''),
@@ -216,28 +214,12 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
       imageUrl: '',  // Migrate old field away
       tags: entry.tags || [],
       checklist: entry.checklist || { checkedNews: false, reviewedPlaybook: false, setHardStop: false, mentalClear: false },
-      tiltScore: parseInt(entry.tiltScore) || 1,
     };
     saveJournalEntry(currentDate, sanitized);
     toast.success('Journal Saved');
   };
 
   const todayStats = calcDailyStats(todayTrades);
-
-  const getDisciplineColor = (score) => {
-    if (score >= 4) return 'var(--color-profit)';
-    if (score === 3) return 'var(--color-cyan)';
-    return 'var(--color-loss)';
-  };
-
-  const getDisciplineLabel = (score) => {
-    if (score === 5) return 'PERFECT';
-    if (score === 4) return 'DISCIPLINED';
-    if (score === 3) return 'MODERATE';
-    if (score === 2) return 'SLOPPY';
-    if (score === 1) return 'GAMBLING';
-    return 'NOT RATED';
-  };
 
   const images = getImages();
 
@@ -420,20 +402,9 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                     </div>
                   </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                  <div>
-                    <FieldLabel>Daily Max Loss ($)</FieldLabel>
-                    <input type="number" inputMode="decimal" value={entry.maxLossForDay || ''} onChange={e => updateField('maxLossForDay', e.target.value)} placeholder="e.g. 500"
-                      style={{ width: '100%', padding: '10px 14px', fontSize: 14, fontWeight: 600, border: '1px solid var(--border-input)', borderRadius: 10, ...inputStyle, ...monoStyle }}
-                    />
-                  </div>
-                  <div>
-                    <FieldLabel>Max Trades Today</FieldLabel>
-                    <input type="number" inputMode="numeric" value={entry.maxTradesForDay || ''} onChange={e => updateField('maxTradesForDay', e.target.value)} placeholder="e.g. 5"
-                      style={{ width: '100%', padding: '10px 14px', fontSize: 14, fontWeight: 600, border: '1px solid var(--border-input)', borderRadius: 10, ...inputStyle, ...monoStyle }}
-                    />
-                  </div>
-                </div>
+              <div>
+                {/* Removed max loss and max trades grid per user request */}
+              </div>
               </div>
               {/* Checklist */}
               <div>
@@ -657,103 +628,12 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
 
 
           {/* ═══════════════════════════════════════════════
-              SECTION 4: POST-SESSION REVIEW (2 columns)
+              SECTION 4: POST-SESSION REVIEW (Full Width)
               ═══════════════════════════════════════════════ */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5" style={{ marginBottom: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20, marginBottom: 20 }}>
 
-            {/* LEFT: Execution Quality */}
-            <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
-              <SectionHeader
-                icon={<Activity size={16} style={{ color: 'var(--text-accent)' }} />}
-                title="Execution Quality"
-                subtitle="Rate your performance and mindset"
-              />
-
-              {/* Grade */}
-              <div style={{ marginBottom: 24 }}>
-                <FieldLabel>Execution Grade</FieldLabel>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {GRADES.map((g) => {
-                    const isSelected = entry.grade === g;
-                    let activeBg = 'var(--color-cyan)';
-                    if (g.startsWith('C')) activeBg = 'var(--color-profit)';
-                    if (g.startsWith('D') || g === 'F') activeBg = 'var(--color-loss)';
-                    return (
-                      <button key={g} onClick={() => updateField('grade', g)} style={{
-                        width: 44, height: 44, borderRadius: 8,
-                        border: `2px solid ${isSelected ? activeBg : 'var(--border-card)'}`,
-                        background: isSelected ? activeBg : 'var(--bg-input)',
-                        color: isSelected ? 'var(--bg-app)' : 'var(--text-secondary)',
-                        fontSize: 13, fontWeight: 800, cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        transition: 'all 0.15s ease', boxShadow: isSelected ? `0 0 16px ${activeBg}50` : 'none', ...fontStyle,
-                      }}>{g}</button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Discipline */}
-              <div style={{ marginBottom: 24 }}>
-                <FieldLabel>Rule Adherence & Discipline</FieldLabel>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                  {[1, 2, 3, 4, 5].map((level) => {
-                    const isActive = (entry.discipline || 0) >= level;
-                    const activeColor = getDisciplineColor(entry.discipline || 0);
-                    return (
-                      <button key={level} onClick={() => updateField('discipline', level)} style={{
-                        width: 44, height: 38, border: `2px solid ${isActive ? activeColor : 'var(--border-card)'}`,
-                        background: isActive ? `${activeColor}18` : 'transparent', color: isActive ? activeColor : 'var(--text-secondary)',
-                        fontSize: 16, fontWeight: 800, cursor: 'pointer', borderRadius: 8, transition: 'all 0.15s ease', ...monoStyle,
-                      }}>{isActive ? '█' : '░'}</button>
-                    );
-                  })}
-                  <span style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: getDisciplineColor(entry.discipline || 0), marginLeft: 8, ...monoStyle }}>
-                    {getDisciplineLabel(entry.discipline || 0)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Tilt */}
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <FieldLabel>Emotional Tilt Score</FieldLabel>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--text-secondary)' }}>
-                    {entry.tiltScore} / 10
-                  </span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <Thermometer size={16} style={{ color: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--text-secondary)' }} />
-                  <input type="range" min="1" max="10" value={entry.tiltScore || 1} onChange={e => updateField('tiltScore', parseInt(e.target.value))}
-                    style={{ flex: 1, accentColor: entry.tiltScore >= 7 ? 'var(--color-loss)' : entry.tiltScore <= 3 ? 'var(--color-profit)' : 'var(--color-cyan)', cursor: 'pointer' }}
-                  />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text-secondary)', marginTop: 4, fontWeight: 600 }}>
-                  <span>Flow State</span><span>Frustrated</span><span>Full Tilt</span>
-                </div>
-              </div>
-
-              {/* Mood & Market */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                <div>
-                  <FieldLabel>Trader Mood</FieldLabel>
-                  <select value={entry.mood} onChange={e => updateField('mood', e.target.value)}
-                    style={{ width: '100%', padding: '10px 14px', fontSize: 13, fontWeight: 600, border: '1px solid var(--border-input)', cursor: 'pointer', ...inputStyle }}>
-                    {MOODS.map(m => <option key={m.value} value={m.value}>{m.emoji} {m.label}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <FieldLabel>Market Conditions</FieldLabel>
-                  <select value={entry.marketConditions} onChange={e => updateField('marketConditions', e.target.value)}
-                    style={{ width: '100%', padding: '10px 14px', fontSize: 13, fontWeight: 600, border: '1px solid var(--border-input)', cursor: 'pointer', ...inputStyle }}>
-                    {MARKET_CONDITIONS.map(mc => <option key={mc.value} value={mc.value}>{mc.label}</option>)}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* RIGHT: Written Review */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            {/* Written Review */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
               <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
                 <SectionHeader
                   icon={<CheckCircle2 size={16} style={{ color: 'var(--text-accent)' }} />}

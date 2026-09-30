@@ -46,8 +46,6 @@ export const emptyJournalEntry = {
   priorDayClose: '',         // Last day's Close
   keyLevels: '',             // Additional S/R levels to watch today
   watchlist: '',             // Tickers on radar today
-  maxLossForDay: '',         // Hard daily max-loss limit ($)
-  maxTradesForDay: '',       // Max # of trades allowed today
   preMarketPlan: '',         // Free-form notes / bias / catalysts
   sessionGoals: [],          // [{id, text, achieved: null|true|false}]
   tags: [],                  // Daily tags (e.g., #fomc, #choppy)
@@ -58,10 +56,6 @@ export const emptyJournalEntry = {
     mentalClear: false,
   },
   // ── Post-session fields ──
-  mood: 'neutral',
-  discipline: 3,
-  tiltScore: 1,              // Tilt scale 1-10 (1=Calm, 10=Full Tilt)
-  marketConditions: 'range',
   postMarketReview: '',
   lessonsLearned: '',
   mistakes: '',
