@@ -196,6 +196,12 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
       title: (entry.title || '').trim(),
       preMarketBias: (entry.preMarketBias || '').trim(),
       spyGapStatus: (entry.spyGapStatus || '').trim(),
+      spySupport: (entry.spySupport || '').trim(),
+      spyResistance: (entry.spyResistance || '').trim(),
+      qqqSupport: (entry.qqqSupport || '').trim(),
+      qqqResistance: (entry.qqqResistance || '').trim(),
+      priorDayOpen: (entry.priorDayOpen || '').trim(),
+      priorDayClose: (entry.priorDayClose || '').trim(),
       keyLevels: (entry.keyLevels || '').trim(),
       watchlist: (entry.watchlist || '').trim(),
       maxLossForDay: (entry.maxLossForDay || '').trim(),
@@ -454,12 +460,42 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
               </div>
             </div>
 
-            {/* Row 2: Key Levels + Watchlist */}
+            {/* Row 2: Core Market Levels (SPY, QQQ) + Prior Day */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14, marginBottom: 20 }}>
+              {/* SPY Levels */}
+              <div style={{ padding: 14, background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 10, ...fontStyle }}>SPY LEVELS</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <input type="text" placeholder="Support (e.g. 545.50)" value={entry.spySupport || ''} onChange={e => updateField('spySupport', e.target.value)} style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: '1px solid var(--border-card)', borderRadius: 6, ...inputStyle, background: 'var(--bg-card)' }} />
+                  <input type="text" placeholder="Resistance (e.g. 550.00)" value={entry.spyResistance || ''} onChange={e => updateField('spyResistance', e.target.value)} style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: '1px solid var(--border-card)', borderRadius: 6, ...inputStyle, background: 'var(--bg-card)' }} />
+                </div>
+              </div>
+
+              {/* QQQ Levels */}
+              <div style={{ padding: 14, background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 10, ...fontStyle }}>QQQ LEVELS</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <input type="text" placeholder="Support (e.g. 465.00)" value={entry.qqqSupport || ''} onChange={e => updateField('qqqSupport', e.target.value)} style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: '1px solid var(--border-card)', borderRadius: 6, ...inputStyle, background: 'var(--bg-card)' }} />
+                  <input type="text" placeholder="Resistance (e.g. 470.00)" value={entry.qqqResistance || ''} onChange={e => updateField('qqqResistance', e.target.value)} style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: '1px solid var(--border-card)', borderRadius: 6, ...inputStyle, background: 'var(--bg-card)' }} />
+                </div>
+              </div>
+
+              {/* Prior Day Context */}
+              <div style={{ padding: 14, background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 10, ...fontStyle }}>PRIOR DAY SPY O/C</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <input type="text" placeholder="Open (e.g. 546.10)" value={entry.priorDayOpen || ''} onChange={e => updateField('priorDayOpen', e.target.value)} style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: '1px solid var(--border-card)', borderRadius: 6, ...inputStyle, background: 'var(--bg-card)' }} />
+                  <input type="text" placeholder="Close (e.g. 548.20)" value={entry.priorDayClose || ''} onChange={e => updateField('priorDayClose', e.target.value)} style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: '1px solid var(--border-card)', borderRadius: 6, ...inputStyle, background: 'var(--bg-card)' }} />
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Key Levels + Watchlist */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
               <div>
-                <FieldLabel>Key S/R Levels</FieldLabel>
+                <FieldLabel>Other Key Levels</FieldLabel>
                 <textarea value={entry.keyLevels || ''} onChange={e => updateField('keyLevels', e.target.value)}
-                  placeholder={'SPY: 548.50 support / 551 resistance\nQQQ: 465 key level\nNVDA: VWAP watch'} rows={3}
+                  placeholder={'NVDA: 120 support / VWAP watch\nAAPL: 220 breakout level'} rows={3}
                   style={{ width: '100%', padding: '12px 14px', fontSize: 13, fontWeight: 500, lineHeight: 1.6, border: '1px solid var(--border-input)', resize: 'vertical', borderRadius: 10, ...inputStyle, ...fontStyle }}
                 />
               </div>

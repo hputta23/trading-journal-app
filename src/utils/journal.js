@@ -38,7 +38,13 @@ export const emptyJournalEntry = {
   // ── Pre-session fields ──
   preMarketBias: '',         // Bullish / Bearish / Neutral / Cautious
   spyGapStatus: '',          // Gap Up / Gap Down / Flat
-  keyLevels: '',             // Key S/R levels to watch today
+  spySupport: '',            // SPY Support level
+  spyResistance: '',         // SPY Resistance level
+  qqqSupport: '',            // QQQ Support level
+  qqqResistance: '',         // QQQ Resistance level
+  priorDayOpen: '',          // Last day's Open
+  priorDayClose: '',         // Last day's Close
+  keyLevels: '',             // Additional S/R levels to watch today
   watchlist: '',             // Tickers on radar today
   maxLossForDay: '',         // Hard daily max-loss limit ($)
   maxTradesForDay: '',       // Max # of trades allowed today
