@@ -197,7 +197,7 @@ export default function DashboardView({ allTrades, onSelectDate, onNavigateTab, 
   /* ─────────────────────────────────────────────────── */
   return (
     <div className="fade-in" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: 14, minHeight: '100%' }}>
-      {allClosedTrades.length === 0 ? (
+      {recentTrades.length === 0 ? (
         <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', textAlign: 'center', flex: 1, border: '1px dashed var(--border-card)' }}>
           <Activity size={48} style={{ color: 'var(--text-secondary)', opacity: 0.3, marginBottom: '20px' }} />
           <h2 style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-dark)', marginBottom: '12px' }}>Awaiting Data</h2>
