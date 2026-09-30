@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Save, Frown, ExternalLink, BookOpen, Activity, Award, CheckCircle2, Target, Brain, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ClipboardList, Image, Hash, CheckSquare, Thermometer, Upload } from 'lucide-react';
+import { Save, Frown, ExternalLink, BookOpen, Award, CheckCircle2, Target, Brain, AlertTriangle, ChevronLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ClipboardList, Image, Hash, CheckSquare, Upload } from 'lucide-react';
 import { loadJournalEntries, saveJournalEntry, emptyJournalEntry } from '../utils/journal';
 import { calcDailyStats, formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 import { toast } from 'react-hot-toast';
@@ -370,7 +370,7 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
             {/* Row 1: Market Context + Checklist */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 240px', gap: 20, marginBottom: 20 }}>
               <div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14, marginBottom: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}>
                   {/* Market Bias */}
                   <div>
                     <FieldLabel>Market Bias</FieldLabel>
@@ -402,9 +402,6 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                     </div>
                   </div>
                 </div>
-              <div>
-                {/* Removed max loss and max trades grid per user request */}
-              </div>
               </div>
               {/* Checklist */}
               <div>
@@ -628,12 +625,9 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
 
 
           {/* ═══════════════════════════════════════════════
-              SECTION 4: POST-SESSION REVIEW (Full Width)
+              SECTION 4: POST-SESSION REVIEW
               ═══════════════════════════════════════════════ */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20, marginBottom: 20 }}>
-
-            {/* Written Review */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5" style={{ marginBottom: 20 }}>
               <div className="glass-panel" style={{ ...panelStyle, padding: '24px', border: '1px solid var(--border-card)' }}>
                 <SectionHeader
                   icon={<CheckCircle2 size={16} style={{ color: 'var(--text-accent)' }} />}
@@ -682,7 +676,6 @@ export default function JournalView({ currentDate, todayTrades, onEditTrade, onS
                   />
                 </div>
               </div>
-            </div>
           </div>
 
 

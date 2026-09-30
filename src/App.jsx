@@ -13,6 +13,7 @@ import CalendarView from './components/CalendarView';
 import EntryForm from './components/EntryForm';
 import WeeklyReviewView from './components/WeeklyReviewView';
 import PlaybookView from './components/PlaybookView';
+import PriceLevelsView from './components/PriceLevelsView';
 import { loadTrades, saveTrades, loadSettings, saveSettings, getDateKey } from './utils/storage';
 import { calcDailyStats } from './utils/calculations';
 import { loadActivityLogs, saveActivityLogs, logActivity } from './utils/logger';
@@ -617,6 +618,12 @@ export default function App() {
                     settings={settings}
                     onSaveSettings={handleSaveSettings}
                   />
+                </PageWrapper>
+              )}
+
+              {activeTab === 'pricelevels' && (
+                <PageWrapper activeTab="pricelevels">
+                  <PriceLevelsView />
                 </PageWrapper>
               )}
 

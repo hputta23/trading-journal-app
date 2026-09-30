@@ -1,4 +1,4 @@
-import { Radio, DollarSign, Percent, TrendingUp, Layers, Activity, LayoutDashboard, BookOpen, BarChart3, Settings, Calendar, LogOut, Target } from 'lucide-react';
+import { Radio, DollarSign, Percent, TrendingUp, Layers, Activity, LayoutDashboard, BookOpen, BarChart3, Settings, Calendar, LogOut, Target, Crosshair } from 'lucide-react';
 import { formatCurrency, formatPercent, formatNumber } from '../utils/calculations';
 import { supabase } from '../utils/supabaseClient';
 
@@ -24,6 +24,7 @@ export default function SidebarStats({
         { id: 'weekly', label: 'Weekly Review', icon: <BookOpen size={16} /> },
         { id: 'calendar', label: 'Calendar', icon: <Calendar size={16} /> },
         { id: 'capital', label: 'Capital & Targets', icon: <Target size={16} /> },
+        { id: 'pricelevels', label: 'Price Levels', icon: <Crosshair size={16} /> },
       ]
     },
     {
@@ -119,34 +120,8 @@ export default function SidebarStats({
           </div>
         ))}
 
-        {/* ── Live Metrics ── */}
-        <div className="mt-4 space-y-2">
-          <div className="text-[10px] font-bold text-[var(--text-secondary)] tracking-widest uppercase mb-3 whitespace-nowrap px-2">
-            LIVE METRICS
-          </div>
 
-          <div className="flex flex-col gap-2 px-1">
-            {/* Net Return — full width */}
-            <div className="glass-panel rounded-xl border border-[var(--border-card)]" style={{ padding: '14px 16px' }}>
-              <span className="text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 text-[var(--text-secondary)] mb-2">
-                <DollarSign size={10} /> Net Return
-              </span>
-              <span className={`text-[18px] font-black font-mono-data block leading-none ${stats.totalNetPnl >= 0 ? 'text-[var(--color-profit)]' : 'text-[var(--color-loss)]'}`}>
-                {formatCurrency(stats.totalNetPnl)}
-              </span>
-            </div>
 
-            {/* Win Rate — full width */}
-            <div className="glass-panel rounded-xl border border-[var(--border-card)]" style={{ padding: '14px 16px' }}>
-              <span className="text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 text-[var(--text-secondary)] mb-2">
-                <Percent size={10} /> Win Rate
-              </span>
-              <span className="text-[18px] font-black font-mono-data block leading-none text-[var(--text-dark)]">
-                {formatPercent(stats.winRate)}
-              </span>
-            </div>
-          </div>
-        </div>
 
         {/* ── Actions Panel ── */}
         <div className="mt-2 space-y-2 px-1">
@@ -185,9 +160,6 @@ export default function SidebarStats({
           <div className="min-w-0 flex-1">
             <div className="text-[11px] font-bold text-[var(--text-dark)] truncate">
               {userEmail || 'Guest User'}
-            </div>
-            <div className="text-[9px] font-medium text-[var(--color-cyan)] uppercase tracking-wider mt-0.5">
-              Pro Plan
             </div>
           </div>
         </div>
