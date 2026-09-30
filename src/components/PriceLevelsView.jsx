@@ -175,6 +175,31 @@ export default function PriceLevelsView() {
             <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Top-down: Indices → Sectors → Stocks</div>
           </div>
         </div>
+        <button
+          onClick={() => {
+            // Force save the inline form if there is one open and valid
+            if (addingToCategory && newStock.ticker.trim()) {
+              const entry = { ...newStock, id: Date.now(), ticker: newStock.ticker.trim().toUpperCase(), lastUpdated: new Date().toISOString() };
+              saveLevels([entry, ...levels]);
+              setNewStock({ ...emptyEntry, category: newStock.category });
+              setAddingToCategory(null);
+            }
+            toast.success('Watchlist Saved');
+          }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '10px 22px',
+            fontSize: 12, fontWeight: 700,
+            textTransform: 'uppercase', letterSpacing: '0.1em',
+            cursor: 'pointer',
+            background: 'var(--border-active)',
+            color: 'var(--bg-app)',
+            border: 'none', borderRadius: 10,
+            ...fontStyle
+          }}
+        >
+          <Target size={16} /> Save Watchlist
+        </button>
       </div>
 
       {/* Content */}
